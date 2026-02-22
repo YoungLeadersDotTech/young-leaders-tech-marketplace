@@ -4,7 +4,7 @@
   "description": "Personal Claude Code plugin marketplace",
   "owner": {
     "name": "Young Leaders Tech",
-    "email": "contact@youngleaders.tech"
+    "url": "https://youngleaders.tech"
   },
   "plugins": [
     {
