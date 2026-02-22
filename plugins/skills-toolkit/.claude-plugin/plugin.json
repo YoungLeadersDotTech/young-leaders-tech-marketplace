@@ -1,113 +1,25 @@
 {
-  "name": "Skills Toolkit",
-  "version": "1.0.0",
+  "name": "skills-toolkit",
   "description": "Complete toolkit for creating, validating, and managing Claude Code skills with intelligent agents, interactive commands, and professional templates",
   "author": {
     "name": "Young Leaders Tech",
     "url": "https://youngleaders.tech"
   },
-  "agents": "./agents/",
-  "commands": "./commands/",
-  "skills": "./skills/",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace"
-  },
-  "keywords": [
-    "skills",
-    "toolkit",
-    "validation",
-    "templates",
-    "automation",
-    "quality-assurance",
-    "skill-creation",
-    "pii-detection"
-  ],
-  "license": "MIT",
   "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
-  "engines": {
-    "claude-code": ">=1.0.0"
-  },
-  "categories": [
-    "productivity",
-    "development-tools",
-    "quality-assurance"
+  "version": "1.0.0",
+  "commands": [
+    "./commands/create-skill.md",
+    "./commands/validate-skill.md",
+    "./commands/list-skills.md"
   ],
-  "features": {
-    "agents": [
-      {
-        "name": "skill-creator-agent",
-        "description": "Interactive guide for creating Claude Code skills with proper description engineering, PII validation, and file structure generation",
-        "file": "agents/skill-creator-agent.md"
-      },
-      {
-        "name": "skill-validator-agent",
-        "description": "Autonomous professional validator for Claude Code skills with quality standards, PII detection, and security checks",
-        "file": "agents/skill-validator-agent.md"
-      }
-    ],
-    "commands": [
-      {
-        "name": "create-skill",
-        "description": "Create a new Claude Code skill with guided interactive workflow",
-        "file": "commands/create-skill.md",
-        "usage": "/create-skill [skill-type]"
-      },
-      {
-        "name": "validate-skill",
-        "description": "Validate existing skill file for quality, security, and standards compliance",
-        "file": "commands/validate-skill.md",
-        "usage": "/validate-skill <path-to-skill>"
-      },
-      {
-        "name": "list-skills",
-        "description": "List all available skills organized by scope (personal/project/shared)",
-        "file": "commands/list-skills.md",
-        "usage": "/list-skills"
-      }
-    ],
-    "skills": [
-      {
-        "name": "stakeholder-templates",
-        "description": "Template for creating stakeholder discovery skills",
-        "category": "Templates",
-        "file": "skills/shared/stakeholder-templates/SKILL.md"
-      },
-      {
-        "name": "ground-truth-template",
-        "description": "Template for creating ground truth documentation skills",
-        "category": "Templates",
-        "file": "skills/shared/ground-truth-template/SKILL.md"
-      },
-      {
-        "name": "product-context-template",
-        "description": "Template for creating product context skills",
-        "category": "Templates",
-        "file": "skills/shared/product-context-template/SKILL.md"
-      },
-      {
-        "name": "initiative-overview-template",
-        "description": "Template for creating cross-functional initiative skills",
-        "category": "Templates",
-        "file": "skills/shared/initiative-overview-template/SKILL.md"
-      }
-    ]
-  },
-  "capabilities": {
-    "skill_creation": true,
-    "skill_validation": true,
-    "pii_detection": true,
-    "quality_scoring": true,
-    "template_based": true,
-    "interactive_workflow": true,
-    "security_checks": true
-  },
-  "installation": {
-    "script": "install.sh",
-    "targets": {
-      "agents": "~/.claude/agents/",
-      "commands": "~/.claude/commands/",
-      "skills": "~/.claude/skills/shared/"
-    }
-  }
+  "agents": [
+    "./agents/skill-creator-agent.md",
+    "./agents/skill-validator-agent.md"
+  ],
+  "skills": [
+    "./skills/shared/stakeholder-templates",
+    "./skills/shared/ground-truth-template",
+    "./skills/shared/product-context-template",
+    "./skills/shared/initiative-overview-template"
+  ]
 }
