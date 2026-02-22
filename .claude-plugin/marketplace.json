@@ -1,0 +1,17 @@
+{
+  "name": "young-leaders-tech-marketplace",
+  "version": "1.0.0",
+  "description": "Personal Claude Code plugin marketplace",
+  "owner": {
+    "name": "Young Leaders Tech",
+    "email": "contact@youngleaders.tech"
+  },
+  "plugins": [
+    {
+      "name": "skills-toolkit",
+      "source": "./plugins/skills-toolkit",
+      "version": "1.0.0",
+      "description": "Complete toolkit for creating, validating, and managing Claude Code skills with intelligent agents, commands, and templates"
+    }
+  ]
+}
