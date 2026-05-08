@@ -1,7 +1,7 @@
 ---
 name: skill-validator-agent
 description: Autonomous professional validator for Claude Code skills. Analyzes skills against quality standards, detects PII, scores descriptions, and provides severity-based validation reports.
-tools: Read, Grep, Glob, TaskCreate, TaskUpdate, TaskGet, TaskList
+tools: Read, Grep, Glob, TaskCreate, TaskUpdate, TaskGet, TaskList, TaskOutput, TaskStop
 version: 2.0.0
 author: agent-builder
 created: 2025-10-20

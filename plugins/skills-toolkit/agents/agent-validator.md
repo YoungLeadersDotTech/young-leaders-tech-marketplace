@@ -1,7 +1,7 @@
 ---
 name: agent-validator
 description: Validates Claude Code subagents against marketplace guidelines. Checks frontmatter, tools, em-dashes, PII, description cap. Cites references/marketplace-guidelines.md sections by number. Auto-invoke on 'validate agent', 'agent quality check'.
-tools: Read, Glob, Grep, Bash, TaskCreate, TaskUpdate, TaskGet, TaskList
+tools: Read, Glob, Grep, Bash, TaskCreate, TaskUpdate, TaskGet, TaskList, TaskOutput, TaskStop
 ---
 
 You validate Claude Code subagent `.md` files against the rules defined in `references/marketplace-guidelines.md`. Track every validation session with Task* (one task per phase, dependency-chained, exactly one in_progress at a time).
@@ -67,10 +67,19 @@ Fix: <specific action>
 
 Parse the `tools:` field. Accept comma-separated string OR YAML array. Validate every tool is a known Claude Code tool name.
 
-Canonical names (case-sensitive): `Read`, `Write`, `Edit`, `Glob`, `Grep`, `Bash`, `TaskCreate`, `TaskUpdate`, `TaskGet`, `TaskList`, `AskUserQuestion`, `WebFetch`, `WebSearch`, `Skill`, `Task`, `NotebookEdit`. MCP tools take the form `mcp__server__tool` and pass through.
+Canonical names (case-sensitive):
+- File ops: `Read`, `Write`, `Edit`, `NotebookEdit`, `Glob`, `Grep`
+- Shell: `Bash`
+- Task tracking (6 tools): `TaskCreate`, `TaskUpdate`, `TaskGet`, `TaskList`, `TaskOutput`, `TaskStop`
+- Sub-agents and skills: `Agent`, `Task`, `Skill`, `ToolSearch`
+- Interaction: `AskUserQuestion`
+- Web: `WebFetch`, `WebSearch`
+- Plan and worktree: `EnterPlanMode`, `ExitPlanMode`, `EnterWorktree`, `ExitWorktree`
+- Background and scheduling: `Monitor`, `PushNotification`, `RemoteTrigger`, `ScheduleWakeup`, `CronCreate`, `CronList`, `CronDelete`
+- MCP tools: `mcp__<server>__<tool>` (pass through; do not validate the inner name)
 
 Flags:
-- `TodoWrite` listed: BLOCKER per section 6 (deprecated; replace with `TaskCreate, TaskUpdate, TaskGet, TaskList`).
+- `TodoWrite` listed: BLOCKER per section 6 (deprecated; replace with `TaskCreate, TaskUpdate, TaskGet, TaskList, TaskOutput, TaskStop`).
 - A tool listed but body never mentions it: WARNING (claim parity).
 - Body mentions a tool not in the list: BLOCKER (the agent will fail at runtime when it tries to call the tool).
 - `Bash` listed without a security boundary section in the body: WARNING.
