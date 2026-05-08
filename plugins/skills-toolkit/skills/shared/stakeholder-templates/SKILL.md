@@ -1,6 +1,6 @@
 ---
-name: stakeholder-discovery-template
-description: Generic stakeholder discovery template for creating new project-specific stakeholder skills. Auto-invoke when user requests stakeholder skill creation, stakeholder analysis framework, or team context templates. Do NOT load during actual stakeholder discussions (use project-specific skills instead).
+name: stakeholder-templates
+description: Generic stakeholder discovery template for creating project-specific stakeholder skills. Auto-invoke on 'stakeholder skill', 'stakeholder framework', 'team context template'. Do NOT load during actual stakeholder discussions.
 allowed-tools: [Grep]
 version: 1.0.0
 category: Templates
@@ -41,7 +41,7 @@ last-updated: [YYYY-MM-DD]
 
 **Example Good Description**:
 ```
-Stakeholder context for Phoenix UX research project when discussing user testing, research synthesis, or design validation. Auto-invoke when user mentions Phoenix, UX research stakeholders, or design team collaboration. Do NOT load for general UX discussions unrelated to Phoenix.
+Stakeholder context for Apollo UX research project when discussing user testing, research synthesis, or design validation. Auto-invoke when user mentions Apollo, UX research stakeholders, or design team collaboration. Do NOT load for general UX discussions unrelated to Apollo.
 ```
 
 ## Skill Content Structure Template
@@ -113,9 +113,9 @@ Before finalizing skill, verify:
 
 **Creating New Stakeholder Skill**:
 ```
-User: "Create a stakeholder skill for the Phoenix UX research team"
+User: "Create a stakeholder skill for the Apollo UX research team"
 
-Claude: [Loads this template skill, uses structure to create Phoenix-specific skill]
+Claude: [Loads this template skill, uses structure to create Apollo-specific skill]
 ```
 
 **Finding Template for Reference**:

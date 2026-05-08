@@ -1,6 +1,6 @@
 {
   "name": "young-leaders-tech-marketplace",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Personal Claude Code plugin marketplace",
   "owner": {
     "name": "Young Leaders Tech",
@@ -10,8 +10,14 @@
     {
       "name": "skills-toolkit",
       "source": "./plugins/skills-toolkit",
+      "version": "2.0.0",
+      "description": "Toolkit for authoring and validating Claude Code skills and agents. Adds agent-author for end-to-end build/edit/package, agent-validator citing marketplace-guidelines, plus 13 templates. Auto-invoke on 'create skill', 'validate agent', 'build agent'."
+    },
+    {
+      "name": "terminal-setup-macos",
+      "source": "./plugins/terminal-setup-macos",
       "version": "1.0.0",
-      "description": "Complete toolkit for creating, validating, and managing Claude Code skills with intelligent agents, commands, and templates"
+      "description": "Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown-preview kit (MacDown, grip, entr, OSC 8 paths)"
     }
   ]
 }

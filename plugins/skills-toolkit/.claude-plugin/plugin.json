@@ -1,12 +1,12 @@
 {
   "name": "skills-toolkit",
-  "description": "Complete toolkit for creating, validating, and managing Claude Code skills with intelligent agents, interactive commands, and professional templates",
+  "description": "Toolkit for authoring and validating Claude Code skills and agents. Adds agent-author for end-to-end build/edit/package, agent-validator citing marketplace-guidelines, plus 13 templates. Auto-invoke on 'create skill', 'validate agent', 'build agent'.",
   "author": {
     "name": "Young Leaders Tech",
     "url": "https://youngleaders.tech"
   },
   "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "commands": [
     "./commands/create-skill.md",
     "./commands/validate-skill.md",
@@ -14,7 +14,9 @@
   ],
   "agents": [
     "./agents/skill-creator-agent.md",
-    "./agents/skill-validator-agent.md"
+    "./agents/skill-validator-agent.md",
+    "./agents/agent-author.md",
+    "./agents/agent-validator.md"
   ],
   "skills": [
     "./skills/shared/stakeholder-templates",

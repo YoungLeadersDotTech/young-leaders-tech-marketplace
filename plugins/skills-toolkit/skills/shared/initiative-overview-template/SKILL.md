@@ -1,6 +1,6 @@
 ---
 name: initiative-overview-template
-description: Generic cross-functional initiative template for creating strategic initiative overview skills. Auto-invoke when user requests initiative skill creation, cross-team coordination framework, or strategic program templates. Do NOT load during specific project work (use project-specific skills instead).
+description: Generic cross-functional initiative template for creating strategic initiative overview skills. Auto-invoke on 'initiative skill', 'cross-team coordination framework', 'strategic program template'. Do NOT load during specific project work.
 allowed-tools: [Grep]
 version: 1.0.0
 category: Templates

@@ -1,7 +1,7 @@
 ---
 name: skill-creator-agent
-description: Interactive guide for creating Claude Code skills with proper description engineering, PII validation, and file structure generation. Invokes when user requests skill creation, needs help writing SKILL.md files, or wants to add context to Claude Code.
-tools: [Read, Grep, Glob, TodoWrite]
+description: Interactive guide for creating Claude Code skills with description engineering, PII validation, and file structure generation. Auto-invoke when user requests skill creation, needs help writing SKILL.md, or wants to add context.
+tools: Read, Grep, Glob, TaskCreate, TaskUpdate, TaskGet, TaskList
 version: 2.0.0
 author: agent-builder
 created: 2025-10-20
@@ -22,7 +22,7 @@ Transform user requirements into production-ready Claude Code skills following P
 
 ## Workflow: 5 Interactive Phases
 
-**TodoWrite Template** (create immediately):
+**Task* Template** (create immediately via TaskCreate):
 ```
 1. "Gather requirements and determine skill type"
 2. "Guide description engineering (WHEN/WHEN NOT patterns)"
@@ -73,7 +73,7 @@ Transform user requirements into production-ready Claude Code skills following P
 
 **Example Good Description** (show as template):
 ```yaml
-description: Stakeholder context for Phoenix UX research project when discussing user testing, research synthesis, or design validation. Auto-invoke when user mentions Phoenix, UX research stakeholders, or design team collaboration. Do NOT load for general UX discussions unrelated to Phoenix.
+description: Stakeholder context for Apollo UX research project when discussing user testing, research synthesis, or design validation. Auto-invoke when user mentions Apollo, UX research stakeholders, or design team collaboration. Do NOT load for general UX discussions unrelated to Apollo.
 ```
 
 **Example Bad Description** (show what to avoid):
@@ -193,7 +193,7 @@ last-updated: [YYYY-MM-DD]
 
 **Specific Scope**:
 ```yaml
-✅ GOOD: "Phoenix UX research project"
+✅ GOOD: "Apollo UX research project"
 ❌ BAD:  "UX projects"
 ```
 
@@ -205,7 +205,7 @@ last-updated: [YYYY-MM-DD]
 **Purpose**: Team/person context for specific projects
 **Triggers**: Project name + stakeholder/team keywords
 **Content**: Roles, goals, pain points, communication preferences, decision patterns
-**Example**: "Phoenix UX team stakeholders"
+**Example**: "Apollo UX team stakeholders"
 
 ### Ground Truth Skills
 **Purpose**: Canonical facts, definitions, validation criteria
@@ -217,7 +217,7 @@ last-updated: [YYYY-MM-DD]
 **Purpose**: Product vision, goals, constraints, strategy
 **Triggers**: Product name + feature/strategy keywords
 **Content**: Vision, target users, goals, constraints, features, UX principles
-**Example**: "EasyPay product context"
+**Example**: "Acme Checkout product context"
 
 ### Initiative Skills
 **Purpose**: Cross-functional initiative coordination
@@ -259,7 +259,7 @@ After each phase completion:
 ## Critical Reminders
 
 **BEFORE STARTING**:
-1. ✓ Create TodoWrite list (5 phases)
+1. ✓ Create Task* entries (5 phases via TaskCreate, dependency-chained)
 2. ✓ Understand: Creating Claude Code SKILL.md (not business skills)
 3. ✓ Load appropriate template based on skill type
 
@@ -267,7 +267,7 @@ After each phase completion:
 1. ✓ Focus on description engineering (WHEN + WHEN NOT)
 2. ✓ Check for PII at every step
 3. ✓ Validate before finalizing
-4. ✓ Mark exactly ONE todo as in_progress
+4. ✓ Mark exactly ONE task as in_progress (TaskUpdate status)
 
 **NEVER**:
 - ❌ Skip PII validation
