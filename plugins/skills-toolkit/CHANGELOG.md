@@ -2,6 +2,16 @@
 
 All notable changes to `skills-toolkit` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.2] - 2026-05-08
+
+### Fixed
+- `skill-creator-agent` frontmatter `tools:` was missing `AskUserQuestion` despite the agent being described as an interactive guide. Added per the canonical tools reference rule that every interactive agent must include `AskUserQuestion`.
+- `agent-validator` Phase 3 canonical tool registry was incomplete and the previous v2.0.1 attempt to fix it conflated two separate tool primitives. Rebuilt the registry against the canonical Claude Code tools reference with named groups: file ops (4), search (2), execution (2 - now including `KillShell`), web (2), orchestration (7), task management (4), subagent lifecycle (2 - `TaskOutput`/`TaskStop`), MCP and tool discovery (3 - now including `ListMcpResourcesTool`, `ReadMcpResourceTool`), background and scheduling, and pass-through MCP server tools.
+- `agent-validator` Phase 3 flags now include explicit warnings for: `TaskOutput`/`TaskStop` listed without `Task` (over-permissioning antipattern; these tools manage background subagents and have no effect without a `Task` invocation using `run_in_background: true`); deprecated `MCPSearch` (use `ToolSearch`); interactive agents missing `AskUserQuestion`.
+
+### Reverted
+- v2.0.1 changes were reverted: that release added `TaskOutput` and `TaskStop` to all four agent frontmatters under the assumption that the Task* family is six tools. Per the canonical tools reference, task management (`TaskCreate, TaskUpdate, TaskGet, TaskList`) and subagent lifecycle (`TaskOutput, TaskStop`) are separate primitives. The latter pair only has effect when `Task` (subagent spawning) is also present in the `tools:` list. None of the four plugin agents spawn background subagents, so v2.0.1 was the over-permissioning antipattern that the validator should now detect.
+
 ## [2.0.0] - 2026-05-08
 
 ### Added

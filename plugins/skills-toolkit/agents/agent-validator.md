@@ -67,13 +67,25 @@ Fix: <specific action>
 
 Parse the `tools:` field. Accept comma-separated string OR YAML array. Validate every tool is a known Claude Code tool name.
 
-Canonical names (case-sensitive): `Read`, `Write`, `Edit`, `Glob`, `Grep`, `Bash`, `TaskCreate`, `TaskUpdate`, `TaskGet`, `TaskList`, `AskUserQuestion`, `WebFetch`, `WebSearch`, `Skill`, `Task`, `NotebookEdit`. MCP tools take the form `mcp__server__tool` and pass through.
+Canonical names (case-sensitive). Categories follow the canonical Claude Code tools reference:
+- File operations (4): `Read`, `Write`, `Edit`, `NotebookEdit`
+- Search (2): `Glob`, `Grep`
+- Execution (2): `Bash`, `KillShell`
+- Web (2): `WebFetch`, `WebSearch`
+- Orchestration (7): `Task`, `EnterWorktree`, `ExitWorktree`, `AskUserQuestion`, `Skill`, `EnterPlanMode`, `ExitPlanMode`
+- Task management (4): `TaskCreate`, `TaskUpdate`, `TaskGet`, `TaskList`
+- Subagent lifecycle (2): `TaskOutput`, `TaskStop` (require `Task` in same `tools:` list - see Flags below)
+- MCP and tool discovery (3): `ToolSearch`, `ListMcpResourcesTool`, `ReadMcpResourceTool`
+- Background and scheduling: `Monitor`, `PushNotification`, `RemoteTrigger`, `ScheduleWakeup`, `CronCreate`, `CronList`, `CronDelete`
+- MCP server tools: `mcp__<server>__<tool>` (pass through; do not validate the inner name)
 
 Flags:
-- `TodoWrite` listed: BLOCKER per section 6 (deprecated; replace with `TaskCreate, TaskUpdate, TaskGet, TaskList`).
+- `TodoWrite` or `MCPSearch` listed: BLOCKER per section 6 (deprecated; replace with `TaskCreate, TaskUpdate, TaskGet, TaskList` and `ToolSearch` respectively).
+- `TaskOutput` or `TaskStop` listed without `Task` (subagent spawning) also listed: WARNING (over-permissioning - these tools manage background subagents and have no effect without a `Task` invocation that uses `run_in_background: true`).
 - A tool listed but body never mentions it: WARNING (claim parity).
 - Body mentions a tool not in the list: BLOCKER (the agent will fail at runtime when it tries to call the tool).
 - `Bash` listed without a security boundary section in the body: WARNING.
+- Interactive agent (description contains "interactive", "guide", "asks", "prompts") missing `AskUserQuestion`: WARNING (canonical reference recommends `AskUserQuestion` for ALL interactive agents).
 
 ### Phase 4: Body
 
