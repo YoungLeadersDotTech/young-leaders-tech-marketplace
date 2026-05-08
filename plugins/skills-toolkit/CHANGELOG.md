@@ -2,12 +2,6 @@
 
 All notable changes to `skills-toolkit` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.1] - 2026-05-08
-
-### Fixed
-- `agent-validator` Phase 3 canonical tools list was incomplete: missing `TaskOutput` and `TaskStop` (Task* family is 6 tools, not 4) plus a number of other valid Claude Code tools. Reorganised the list into named groups (file ops, shell, task tracking, sub-agents, interaction, web, plan/worktree, background/scheduling, MCP) and added: `TaskOutput`, `TaskStop`, `Agent`, `ToolSearch`, `EnterPlanMode`, `ExitPlanMode`, `EnterWorktree`, `ExitWorktree`, `Monitor`, `PushNotification`, `RemoteTrigger`, `ScheduleWakeup`, `CronCreate`, `CronList`, `CronDelete`. Without this fix the validator would have BLOCKER-flagged legitimate agents using these tools.
-- All four plugin agents (`agent-author`, `agent-validator`, `skill-creator-agent`, `skill-validator-agent`) frontmatter `tools:` now lists the full 6-tool Task* family (`TaskCreate, TaskUpdate, TaskGet, TaskList, TaskOutput, TaskStop`). Previously omitted `TaskOutput` and `TaskStop`.
-
 ## [2.0.0] - 2026-05-08
 
 ### Added

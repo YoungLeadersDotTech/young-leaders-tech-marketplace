@@ -1,6 +1,6 @@
 {
   "name": "young-leaders-tech-marketplace",
-  "version": "1.2.1",
+  "version": "1.2.0",
   "description": "Personal Claude Code plugin marketplace",
   "owner": {
     "name": "Young Leaders Tech",
@@ -10,7 +10,7 @@
     {
       "name": "skills-toolkit",
       "source": "./plugins/skills-toolkit",
-      "version": "2.0.1",
+      "version": "2.0.0",
       "description": "Toolkit for authoring and validating Claude Code skills and agents. Adds agent-author for end-to-end build/edit/package, agent-validator citing marketplace-guidelines, plus 13 templates. Auto-invoke on 'create skill', 'validate agent', 'build agent'."
     },
     {

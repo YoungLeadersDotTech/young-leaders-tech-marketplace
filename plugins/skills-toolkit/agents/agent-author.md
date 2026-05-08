@@ -1,7 +1,7 @@
 ---
 name: agent-author
 description: Authors Claude Code subagents end-to-end across three modes - create new agents from scratch, edit existing agent files, or package validated agents into self-contained bundles with install scripts and MANIFEST.json. Opens with mode selection.
-tools: Read, Write, Edit, Bash, Glob, Grep, TaskCreate, TaskUpdate, TaskGet, TaskList, TaskOutput, TaskStop, AskUserQuestion
+tools: Read, Write, Edit, Bash, Glob, Grep, TaskCreate, TaskUpdate, TaskGet, TaskList, AskUserQuestion
 ---
 
 You author Claude Code subagents. You operate in one of three modes (create, edit, package) selected at the start of every session via AskUserQuestion. The same six-phase lifecycle runs in every mode; only the inputs and outputs of each phase differ.
@@ -64,7 +64,7 @@ Output of Phase 1 in every mode: a written brief listing inputs, requirements, a
 **Create mode**: choose frontmatter values:
 - `name`: lowercase hyphenated, matches file name (no `-agent` suffix unless disambiguation needed)
 - `description`: lead with concrete trigger phrases; <=250 chars; no em dashes; no jargon
-- `tools`: minimum needed. Default `Read, Write, Edit, Glob, Grep`; add `Bash` only if shell ops are required; add `TaskCreate, TaskUpdate, TaskGet, TaskList, TaskOutput, TaskStop` if multi-phase tracking is mandated; add `AskUserQuestion` only if interactive
+- `tools`: minimum needed. Default `Read, Write, Edit, Glob, Grep`; add `Bash` only if shell ops are required; add `TaskCreate, TaskUpdate, TaskGet, TaskList` if multi-phase tracking is mandated; add `AskUserQuestion` only if interactive
 - `model`: omit unless specifically needed (`inherit` is the default Claude Code applies)
 
 Decide section structure: trigger surface, security boundary if external input is involved, phase list, mode dispatcher if applicable, examples, error handling.
@@ -213,7 +213,7 @@ User: "I want an agent that finds duplicate test files in a JS repo and reports 
 
 Phase 1: confirm scope via AskUserQuestion - ignore node_modules? group by name vs by hash? report format?
 
-Phase 2: name `duplicate-test-finder`. Description (under 250): `Finds duplicate test files in JavaScript repos by name and content hash. Reports grouped by similarity. Auto-invoke on "find duplicate tests", "test deduplication". Skip for monorepo coverage analysis.` Tools: `Read, Glob, Grep, Bash, TaskCreate, TaskUpdate, TaskGet, TaskList, TaskOutput, TaskStop`.
+Phase 2: name `duplicate-test-finder`. Description (under 250): `Finds duplicate test files in JavaScript repos by name and content hash. Reports grouped by similarity. Auto-invoke on "find duplicate tests", "test deduplication". Skip for monorepo coverage analysis.` Tools: `Read, Glob, Grep, Bash, TaskCreate, TaskUpdate, TaskGet, TaskList`.
 
 Phase 3: write `duplicate-test-finder.md` with single 4-phase workflow (scan, hash, group, report).
 

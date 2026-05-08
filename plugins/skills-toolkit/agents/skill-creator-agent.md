@@ -1,7 +1,7 @@
 ---
 name: skill-creator-agent
 description: Interactive guide for creating Claude Code skills with description engineering, PII validation, and file structure generation. Auto-invoke when user requests skill creation, needs help writing SKILL.md, or wants to add context.
-tools: Read, Grep, Glob, TaskCreate, TaskUpdate, TaskGet, TaskList, TaskOutput, TaskStop
+tools: Read, Grep, Glob, TaskCreate, TaskUpdate, TaskGet, TaskList
 version: 2.0.0
 author: agent-builder
 created: 2025-10-20
