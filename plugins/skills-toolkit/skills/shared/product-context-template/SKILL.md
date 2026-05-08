@@ -1,6 +1,7 @@
 ---
 name: product-context-template
 description: Generic product context template for creating product vision, goals, and constraints skills. Auto-invoke on 'product skill', 'product context framework', 'strategic alignment template'. Do NOT load during actual product work.
+disable-model-invocation: true
 allowed-tools: [Grep]
 version: 1.0.0
 category: Templates
@@ -19,6 +20,7 @@ This template guides the creation of product context skills - strategic informat
 ---
 name: [product-name]-context
 description: Product context for [PRODUCT_NAME] including vision, goals, and constraints when discussing [FEATURE_AREA_1], [FEATURE_AREA_2], or [USE_CASE]. Auto-invoke when user mentions [PRODUCT_NAME], [KEY_FEATURE], or [TARGET_USER_SEGMENT]. Do NOT load for general [DOMAIN] discussions unrelated to [PRODUCT_NAME].
+disable-model-invocation: true
 allowed-tools: []
 version: 1.0.0
 category: Product

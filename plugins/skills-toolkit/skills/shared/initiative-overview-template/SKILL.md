@@ -1,6 +1,7 @@
 ---
 name: initiative-overview-template
 description: Generic cross-functional initiative template for creating strategic initiative overview skills. Auto-invoke on 'initiative skill', 'cross-team coordination framework', 'strategic program template'. Do NOT load during specific project work.
+disable-model-invocation: true
 allowed-tools: [Grep]
 version: 1.0.0
 category: Templates
@@ -19,6 +20,7 @@ This template guides the creation of initiative overview skills - strategic info
 ---
 name: [initiative-slug]-overview
 description: Initiative overview for [INITIATIVE_NAME] including goals, timeline, and cross-team coordination when discussing [WORK_STREAM_1], [WORK_STREAM_2], or [DELIVERABLE]. Auto-invoke when user mentions [INITIATIVE_NAME], [KEY_MILESTONE], or [INVOLVED_TEAM]. Do NOT load for general [DOMAIN] discussions unrelated to this initiative.
+disable-model-invocation: true
 allowed-tools: []
 version: 1.0.0
 category: Initiative

@@ -95,7 +95,14 @@ Each entry should name the file or component changed and explain WHY in one clau
 
 ## 6. Frontmatter Description Cap
 
-Anthropic enforces a 250-character cap on every `description:` field in agent, skill, and command frontmatter. The rule is `len(description) <= 250` after YAML parse (NOT raw line length, which counts `description: ` prefix and quote characters). Over the cap and the description is truncated mid-word at runtime, which breaks auto-invoke trigger matching.
+Anthropic enforces a 250-character cap on every `description:` field in agent, skill, and command frontmatter. The rule is `len(description) <= 250` after YAML parse (NOT raw line length, which counts `description: ` prefix and quote characters). Over the cap and the description is truncated mid-word in the skill listing Claude uses for auto-invocation matching, which breaks trigger matching for any keywords past the cap.
+
+Source citations (Anthropic Claude Code docs, `skills.md`):
+- "To optimize context usage, descriptions exceeding 250 characters are truncated in the skill listing."
+- "Optimize descriptions by placing the key use case at the beginning, as each entry is capped at 250 characters."
+- See https://github.com/ericbuess/claude-code-docs/blob/main/docs/skills.md
+
+Front-load the most discriminating triggers - the tail of the description is what gets cut.
 
 Validation:
 

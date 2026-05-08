@@ -1,6 +1,7 @@
 ---
 name: stakeholder-templates
 description: Generic stakeholder discovery template for creating project-specific stakeholder skills. Auto-invoke on 'stakeholder skill', 'stakeholder framework', 'team context template'. Do NOT load during actual stakeholder discussions.
+disable-model-invocation: true
 allowed-tools: [Grep]
 version: 1.0.0
 category: Templates
@@ -19,6 +20,7 @@ This template guides the creation of project-specific stakeholder skills. Replac
 ---
 name: [project]-[domain]-stakeholders
 description: Stakeholder context for [PROJECT_NAME] [DOMAIN] when discussing [USE_CASE_1], [USE_CASE_2], or [USE_CASE_3]. Auto-invoke when user mentions [PROJECT_TRIGGER], [DOMAIN_TRIGGER], or [TEAM_TRIGGER]. Do NOT load for general [DOMAIN] discussions unrelated to [PROJECT_NAME].
+disable-model-invocation: true
 allowed-tools: []
 version: 1.0.0
 category: Stakeholders

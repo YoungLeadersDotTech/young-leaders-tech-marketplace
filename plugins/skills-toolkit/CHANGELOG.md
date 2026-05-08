@@ -2,6 +2,13 @@
 
 All notable changes to `skills-toolkit` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.3] - 2026-05-08
+
+### Changed
+- `plugin.json` `agents`, `commands`, and `skills` arrays are now alphabetically sorted (CI naming validator rule per the canonical Claude Code skill frontmatter reference). Zero behaviour change.
+- All 4 shared SKILL.md files declare `disable-model-invocation: true`. They are static templates with verbatim output - this loads them as context only (no LLM reasoning pass), saving tokens on auto-invoke.
+- `references/marketplace-guidelines.md` section 6 (Frontmatter Description Cap) now cites the Anthropic Claude Code docs source for the 250-character rule and explains the truncation behaviour ("descriptions exceeding 250 characters are truncated in the skill listing"). Front-loading guidance added.
+
 ## [2.0.2] - 2026-05-08
 
 ### Fixed

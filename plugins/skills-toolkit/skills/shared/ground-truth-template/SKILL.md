@@ -1,6 +1,7 @@
 ---
 name: ground-truth-template
 description: Generic ground truth template for creating verifiable reference skills. Auto-invoke on 'ground truth skill', 'validation criteria', 'canonical documentation template'. Do NOT load during actual ground truth usage.
+disable-model-invocation: true
 allowed-tools: [Grep]
 version: 1.0.0
 category: Templates
@@ -19,6 +20,7 @@ This template guides the creation of ground truth skills - verifiable, canonical
 ---
 name: [project]-[domain]-ground-truth
 description: Ground truth documentation for [PROJECT_NAME] [DOMAIN] providing canonical definitions, verified facts, and validation criteria. Auto-invoke when user discusses [TOPIC_1], [TOPIC_2], or validates [VALIDATION_SCENARIO]. Do NOT load for general [DOMAIN] discussions without [PROJECT_NAME] context.
+disable-model-invocation: true
 allowed-tools: []
 version: 1.0.0
 category: Ground Truth
