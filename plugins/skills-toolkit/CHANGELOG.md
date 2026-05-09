@@ -2,6 +2,17 @@
 
 All notable changes to `skills-toolkit` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.4] - 2026-05-09
+
+### Changed
+- Flattened plugin source layout: 4 skill folders moved from `plugins/skills-toolkit/skills/shared/<name>/` to `plugins/skills-toolkit/skills/<name>/`. Brings skills-toolkit into line with the marketplace's other plugins (terminal-setup-macos, update-readme), which use the flat `skills/<name>/` convention.
+- `plugin.json` `skills:` array updated to drop the `/shared` path prefix (4 entries).
+- `install.sh` source-side glob updated from `skills/shared/*/` to `skills/*/`. Install destination unchanged: templates still install to `~/.claude/skills/shared/<name>/` so the user-side three-scope convention (personal / projects / shared) is preserved.
+
+### Notes
+- The `shared/` wrapper at the plugin source level mirrored the install destination, but Claude Code reads plugin source paths from `plugin.json` directly - the wrapper added nothing for plugin consumers and visually misled readers browsing the repo. The user-side install location keeps `shared/` because that scope convention is real and load-bearing.
+- No SKILL.md content changes. No agent or command file changes. No behaviour change for anyone installing via the marketplace.
+
 ## [2.0.3] - 2026-05-08
 
 ### Changed

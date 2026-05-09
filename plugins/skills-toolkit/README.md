@@ -71,7 +71,7 @@ Discover available skills organized by scope:
 
 Shows personal, project, and shared skills with metadata.
 
-### 4 Shared Skill Templates (`skills/shared/`)
+### 4 Shared Skill Templates (`skills/`)
 
 Reusable scaffolds for new skills you author. Each ships description-engineering guidance, placeholder structures, validation checklists, security guidelines, and worked examples.
 
@@ -157,7 +157,7 @@ The installer will:
 1. Detect your Claude Code configuration directory
 2. Install agents to `.claude/agents/`
 3. Install commands to `.claude/commands/`
-4. Install skill templates to `.claude/skills/shared/`
+4. Install skill templates to `.claude/skills/`
 5. Verify installation success
 
 ### Manual Installation
@@ -170,7 +170,7 @@ cp agents/*.md ~/.claude/agents/
 cp commands/*.md ~/.claude/commands/
 
 # Install templates
-cp -r skills/shared/* ~/.claude/skills/shared/
+cp -r skills/* ~/.claude/skills/
 ```
 
 ### Verify Installation
@@ -222,7 +222,7 @@ Get a comprehensive report:
 See all your skills organized by:
 - Personal skills (`~/.claude/skills/personal/`)
 - Project skills (`.claude/skills/projects/`)
-- Shared templates (`.claude/skills/shared/`)
+- Shared templates (`.claude/skills/`)
 
 ## Key Features
 
@@ -429,7 +429,7 @@ ls ~/.claude/commands/list-skills.md
 **Solution**:
 ```bash
 # Verify templates installed
-ls ~/.claude/skills/shared/
+ls ~/.claude/skills/
 
 # Should show:
 # - stakeholder-templates/
