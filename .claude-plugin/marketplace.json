@@ -1,6 +1,6 @@
 {
   "name": "young-leaders-tech-marketplace",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "Personal Claude Code plugin marketplace",
   "owner": {
     "name": "Young Leaders Tech",
@@ -18,6 +18,12 @@
       "source": "./plugins/terminal-setup-macos",
       "version": "1.0.0",
       "description": "Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown-preview kit (MacDown, grip, entr, OSC 8 paths)"
+    },
+    {
+      "name": "update-readme",
+      "source": "./plugins/update-readme",
+      "version": "1.0.0",
+      "description": "Universal README updater. Scans target, classifies repo type (plugin, marketplace, library, monorepo), asks detail level, generates. Auto-invoke on 'update readme', 'refresh readme'. Skip Toast services, one-line edits, empty repos."
     }
   ]
 }
