@@ -11,10 +11,11 @@ Add the marketplace once and Claude Code picks up everything in `plugins/`.
 
 ## Quick install
 
-In Claude Code, add this marketplace once:
+In Claude Code, add this marketplace once. **Use the SSH form** - the plugin
+marketplace install path requires SSH auth even if HTTPS works for everything else:
 
 ```text
-/plugin marketplace add YoungLeadersDotTech/young-leaders-tech-marketplace
+/plugin marketplace add git@github.com:YoungLeadersDotTech/young-leaders-tech-marketplace.git
 ```
 
 Then install whichever plugins you want by name:
@@ -33,16 +34,29 @@ Or browse interactively:
 
 After installing, run `/reload-plugins` to activate them in the current session.
 
+### "Permission denied (publickey)" when adding the marketplace?
+
+You don't have SSH auth set up for GitHub yet. The fix: run `gh auth login` once
+for HTTPS and once for SSH (pick the SSH protocol on the second run, accept the
+default key). HTTPS handles regular Git operations; SSH is what
+`/plugin marketplace add git@github...` actually uses.
+
+> HTTPS is used for regular Git operations. SSH is required for the plugin
+> marketplace install command (`/plugin marketplace add git@github...`). If you
+> skip SSH auth, you'll see "Permission denied (publickey)" when trying to
+> install plugins.
+>
+> - adapted from `FULL-SETUP-GUIDE.md` section 1.4
+
 ### Other ways to add the marketplace
 
-If GitHub shorthand isn't an option (e.g. private mirror):
-
-```text
-/plugin marketplace add git@github.com:YoungLeadersDotTech/young-leaders-tech-marketplace.git
-/plugin marketplace add https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace.git
-/plugin marketplace add ./local-clone-path           # for local dev
-/plugin marketplace add https://...marketplace.json  # direct JSON URL
-```
+| Form | Command | When |
+|---|---|---|
+| SSH (recommended above) | `/plugin marketplace add git@github.com:YoungLeadersDotTech/young-leaders-tech-marketplace.git` | Works once SSH auth is set up |
+| HTTPS git URL | `/plugin marketplace add https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace.git` | If you only have HTTPS auth and the marketplace download path doesn't trip on it |
+| GitHub shorthand | `/plugin marketplace add YoungLeadersDotTech/young-leaders-tech-marketplace` | Works when `gh` is authenticated |
+| Local path | `/plugin marketplace add ./local-clone-path` | For local development |
+| Direct JSON URL | `/plugin marketplace add https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace/raw/master/.claude-plugin/marketplace.json` | Fallback only |
 
 Verify with `/plugin marketplace list`.
 
