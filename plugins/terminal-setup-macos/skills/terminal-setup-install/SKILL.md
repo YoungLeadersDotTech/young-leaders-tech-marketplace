@@ -167,7 +167,7 @@ Use this exact AskUserQuestion (multi-select):
   3. **mdwatch - live terminal re-render** - Pairs entr with glow -p so the terminal preview re-renders the moment you save. Deep link: `<blog_url>#mdwatch`
   4. **Clickable file paths (mdls + o)** - OSC 8 hyperlinks in any modern terminal; mdls lists .md files as Cmd-clickable links. Deep link: `<blog_url>#clickable-paths`
 
-Replace `<blog_url>` with the canonical published URL of the meta-guide blog post. If the user has not provided a URL, ask first or use the placeholder `https://YOURBLOG/terminal-setup-meta-guide` and document this in the AskUserQuestion description.
+Replace `<blog_url>` with the canonical published URL of the meta-guide blog post. Default: `https://www.youngleaders.tech/terminal-setup-pdf-meta-guide`. Override only if the user has supplied a different canonical URL.
 
 ### Step 10 - Per-extra installs
 
