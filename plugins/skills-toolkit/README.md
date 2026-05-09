@@ -1,6 +1,6 @@
 # Skills Toolkit for Claude Code
 
-**Version**: 2.0.0
+**Version**: 2.0.4
 **Author**: Young Leaders Tech
 **License**: MIT
 
@@ -515,23 +515,17 @@ Contributions welcome! Consider:
 
 ## Version History
 
-For full release notes see [CHANGELOG.md](./CHANGELOG.md).
+Current: **v2.0.4** (2026-05-09).
 
-### v2.0.0 (2026-05-08)
-- Added `agent-author` (merged from former agent-builder + agent-editor + agent-packager)
-- Added `agent-validator` (rewritten clean, cites marketplace-guidelines)
-- Added `references/marketplace-guidelines.md` ground-truth reference
-- Added 13 agent and infrastructure templates under `templates/`
-- Added `examples/` directory (sample-subagent + sample-portable-agent)
-- Migrated all `TodoWrite` references to `Task*` family across both validator agents
-- Trimmed all frontmatter descriptions to <=250 chars
-- Removed all employer-specific and project-specific terminology; replaced with generic placeholder names (Apollo, Acme Checkout) in examples
-- Fixed `stakeholder-templates` folder/name mismatch
-- Removed non-canonical `pattern: direct` from list-skills command
-- Eval committee score: 86.4/100; skill-validator: PASS on all 13 in-scope files
+For full release notes across all versions see [CHANGELOG.md](./CHANGELOG.md).
+Highlights:
 
-### v1.0.0 (2026-03-01)
-- Initial release: 2 agents, 3 commands, 4 shared skill templates
+- **v2.0.4** - flat plugin source layout (`skills/<name>/`, no more `skills/shared/` wrapper)
+- **v2.0.3** - alphabetised `plugin.json` arrays; `disable-model-invocation: true` on all four templates; cited Anthropic 250-char source in `marketplace-guidelines.md`
+- **v2.0.2** - canonical tools registry alignment in `agent-validator`; added missing `AskUserQuestion` to `skill-creator-agent`
+- **v2.0.1** - reverted (over-permissioning antipattern, see CHANGELOG)
+- **v2.0.0** - merged former agent-builder/editor/packager into `agent-author`, added `agent-validator`, `references/marketplace-guidelines.md`, 13 templates, `examples/`
+- **v1.0.0** - initial release
 
 ## License
 
