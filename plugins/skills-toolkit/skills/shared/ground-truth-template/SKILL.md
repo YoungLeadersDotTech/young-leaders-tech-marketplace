@@ -1,6 +1,7 @@
 ---
 name: ground-truth-template
-description: Generic ground truth documentation template for creating verifiable reference skills. Auto-invoke when user requests ground truth skill creation, validation criteria framework, or canonical documentation templates. Do NOT load during actual ground truth usage (use project-specific skills instead).
+description: Generic ground truth template for creating verifiable reference skills. Auto-invoke on 'ground truth skill', 'validation criteria', 'canonical documentation template'. Do NOT load during actual ground truth usage.
+disable-model-invocation: true
 allowed-tools: [Grep]
 version: 1.0.0
 category: Templates
@@ -19,6 +20,7 @@ This template guides the creation of ground truth skills - verifiable, canonical
 ---
 name: [project]-[domain]-ground-truth
 description: Ground truth documentation for [PROJECT_NAME] [DOMAIN] providing canonical definitions, verified facts, and validation criteria. Auto-invoke when user discusses [TOPIC_1], [TOPIC_2], or validates [VALIDATION_SCENARIO]. Do NOT load for general [DOMAIN] discussions without [PROJECT_NAME] context.
+disable-model-invocation: true
 allowed-tools: []
 version: 1.0.0
 category: Ground Truth
@@ -44,7 +46,7 @@ next-review: [YYYY-MM-DD]
 
 **Example Good Description**:
 ```
-Ground truth documentation for Phoenix payment processing providing canonical transaction states, error codes, and retry policies. Auto-invoke when user discusses payment flows, error handling, or validates transaction logic. Do NOT load for general payment discussions outside Phoenix.
+Ground truth documentation for Apollo payment processing providing canonical transaction states, error codes, and retry policies. Auto-invoke when user discusses payment flows, error handling, or validates transaction logic. Do NOT load for general payment discussions outside Apollo.
 ```
 
 ## Ground Truth Content Structure
@@ -228,9 +230,9 @@ Before finalizing ground truth skill, verify:
 
 **Creating New Ground Truth Skill**:
 ```
-User: "Create a ground truth skill for Phoenix payment error codes"
+User: "Create a ground truth skill for Apollo payment error codes"
 
-Claude: [Loads this template skill, uses structure to create Phoenix-specific ground truth]
+Claude: [Loads this template skill, uses structure to create Apollo-specific ground truth]
 ```
 
 **Validating Implementation**:

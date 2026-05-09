@@ -1,34 +1,43 @@
 # Skills Toolkit for Claude Code
 
-**Version**: 1.0.0
+**Version**: 2.0.0
 **Author**: Young Leaders Tech
 **License**: MIT
 
 ## Overview
 
-**Skills Toolkit** is a comprehensive plugin for Claude Code that provides everything you need to create, validate, and manage Claude Code skills. It includes intelligent agents, interactive commands, and professional templates to make skill creation fast, consistent, and high-quality.
+`skills-toolkit` is the authoring + validation plugin for Claude Code skills and agents in this marketplace. It ships four agents (skill-creator, skill-validator, agent-author, agent-validator), three slash commands, four reusable shared-skill templates, thirteen agent and infrastructure templates, and a marketplace-guidelines reference doc that the validator agents cite when reporting findings.
 
 ## What's Included
 
-### 🤖 2 Intelligent Agents
+### 4 Intelligent Agents
 
 #### skill-creator-agent
-Interactive guide for creating Claude Code skills with:
+Interactive guide for creating Claude Code skill files (SKILL.md):
 - 5-phase creation workflow
-- Description engineering guidance (WHEN/WHEN NOT patterns)
-- PII validation and security checks
+- Description engineering (WHEN + WHEN NOT triggers, <=250-char cap)
+- PII validation
 - Template-based structure generation
-- Quality validation before finalization
+- Task* progress tracking
 
 #### skill-validator-agent
-Autonomous professional validator that checks:
+Read-only professional validator for skills:
 - YAML frontmatter and markdown structure
-- Content quality and description effectiveness
-- PII detection (emails, phones, sensitive data)
-- Security compliance
+- Description quality scoring
+- PII detection (emails, phones, secrets)
 - Claude Code ecosystem compatibility
 
-### ⚡ 3 Slash Commands
+#### agent-author (NEW in 2.0.0)
+End-to-end agent authoring with three modes selected via AskUserQuestion at session start:
+- `create`: build a new subagent from scratch
+- `edit`: modify an existing agent file
+- `package`: bundle a validated agent with install.sh and MANIFEST.json
+Six-phase lifecycle (Analyse, Design, Generate, Bundle, Validate, Document). Replaces the legacy three-agent agent-builder + agent-editor + agent-packager chain.
+
+#### agent-validator (NEW in 2.0.0)
+Validates Claude Code subagent files against `references/marketplace-guidelines.md`. Six-phase lifecycle. Reports findings with severity (BLOCKER, WARNING, INFO) and section citation. Auto-detects bundle and plugin context for cross-file consistency checks.
+
+### 3 Slash Commands
 
 #### `/create-skill`
 Launch the interactive skill creation workflow:
@@ -62,14 +71,9 @@ Discover available skills organized by scope:
 
 Shows personal, project, and shared skills with metadata.
 
-### 📋 4 Professional Templates
+### 4 Shared Skill Templates (`skills/shared/`)
 
-All templates include:
-- Description engineering guidance
-- Complete placeholder structures
-- Validation checklists
-- Security guidelines (zero PII)
-- Usage examples
+Reusable scaffolds for new skills you author. Each ships description-engineering guidance, placeholder structures, validation checklists, security guidelines, and worked examples.
 
 #### Stakeholder Template
 For team/person context on specific projects:
@@ -100,6 +104,45 @@ For cross-functional initiative coordination:
 - Cross-team coordination
 - Dependencies and risks
 - Status tracking
+
+### 13 Agent and Infrastructure Templates (`templates/`)
+
+Ready-to-crib templates `agent-author` consumes during create / package modes:
+
+| Template | Purpose |
+|---|---|
+| `claude-subagent-template.md` | Canonical agent .md frontmatter + body skeleton |
+| `portable-agent-template.md` | Standalone agent for use outside a plugin |
+| `install-script-template.sh` | Smart install.sh with --global / --project / --sync-back |
+| `bundle-readme-template.md` | Auto-generated bundle README |
+| `hook-template.sh` | Generic hook skeleton |
+| `hook-sessionstart-template.sh` | SessionStart hook |
+| `hook-pretooluse-template.sh` | PreToolUse hook |
+| `hook-posttooluse-template.sh` | PostToolUse hook |
+| `agent-coordination-template.md` | Multi-agent coordination patterns |
+| `change-propagation-guide-template.md` | Versioning across cross-agent dependencies |
+| `agent-builder-logging-template.md` | Logging skeleton for agent operations |
+| `validation-checklist-template.md` | Reusable validation gates |
+| `structured-choice-template.md` | AskUserQuestion patterns |
+
+### Reference: `references/marketplace-guidelines.md`
+
+Single ground-truth doc that `agent-validator` and `skill-validator-agent` cite. Codifies:
+- 4-file rule (CHANGELOG, VERSION, plugin.json, marketplace.json)
+- Semver decision table
+- Same-commit ordering rule
+- Two version fields (top-level + plugin entry)
+- CHANGELOG format (Keep a Changelog)
+- Frontmatter description cap (<=250 chars)
+- Em-dash ban (U+2014)
+- Migration pattern (global skill -> plugin skill)
+- Claude Code plugin schema reference
+- Severity taxonomy (BLOCKER / WARNING / INFO)
+
+### Examples (`examples/`)
+
+- `sample-subagent.md`: a minimal working agent file you can copy and rename.
+- `sample-portable-agent/`: a standalone agent bundle (instructions + README).
 
 ## Installation
 
@@ -199,7 +242,7 @@ The toolkit guides you to create high-quality skill descriptions with:
 
 **Example**:
 ```yaml
-description: Stakeholder context for Phoenix UX research when discussing user testing, research synthesis, or design validation. Auto-invoke when user mentions Phoenix, UX research stakeholders, or design team. Do NOT load for general UX discussions unrelated to Phoenix.
+description: Stakeholder context for Apollo UX research when discussing user testing, research synthesis, or design validation. Auto-invoke when user mentions Apollo, UX research stakeholders, or design team. Do NOT load for general UX discussions unrelated to Apollo.
 ```
 
 ### PII Protection
@@ -236,7 +279,7 @@ User: /create-skill stakeholder
 
 skill-creator-agent: Let's create a stakeholder skill. What project is this for?
 
-User: Phoenix UX Research
+User: Apollo UX Research
 
 skill-creator-agent: Great! What specific areas should this skill cover?
 
@@ -244,12 +287,12 @@ User: User testing, research synthesis, design validation
 
 skill-creator-agent: Perfect. What terms should trigger this skill?
 
-User: Phoenix, UX research, design team
+User: Apollo, UX research, design team
 
 [Agent guides through description engineering, structure generation, validation]
 
 skill-creator-agent: ✅ Skill creation complete!
-File: .claude/skills/projects/phoenix/stakeholders/SKILL.md
+File: .claude/skills/projects/apollo/stakeholders/SKILL.md
 Validation: PASSED (95/100)
 
 Main Claude: [Writes SKILL.md file to specified location]
@@ -258,7 +301,7 @@ Main Claude: [Writes SKILL.md file to specified location]
 ### Example 2: Validate Before Production
 
 ```
-User: /validate-skill .claude/skills/projects/phoenix/stakeholders/SKILL.md
+User: /validate-skill .claude/skills/projects/apollo/stakeholders/SKILL.md
 
 skill-validator-agent:
 ================================================================================
@@ -287,8 +330,8 @@ Personal Skills (2):
 └── learning-goals/ - Current learning objectives
 
 Project Skills (3):
-└── phoenix/stakeholders/ - Phoenix UX research team context
-└── easypay/ground-truth/ - Payment processing error codes
+└── apollo/stakeholders/ - Apollo UX research team context
+└── checkout/ground-truth/ - Payment processing error codes
 └── pricing/initiative/ - Pricing innovation initiative overview
 
 Shared Templates (4):
@@ -426,7 +469,7 @@ ls ~/.claude/skills/shared/
 
 **Required**:
 - Claude Code with skills support
-- Read, Grep, Glob, TodoWrite tools
+- Read, Grep, Glob, TaskCreate, TaskUpdate, TaskGet, TaskList tools
 
 **Optional**:
 - Git (for version control)
@@ -472,14 +515,23 @@ Contributions welcome! Consider:
 
 ## Version History
 
-### v1.0.0 (2025-10-20)
-- Initial release
-- 2 agents: skill-creator-agent, skill-validator-agent
-- 3 commands: /create-skill, /validate-skill, /list-skills
-- 4 templates: stakeholder, ground-truth, product, initiative
-- Comprehensive validation framework
-- PII detection and security checks
-- Professional documentation
+For full release notes see [CHANGELOG.md](./CHANGELOG.md).
+
+### v2.0.0 (2026-05-08)
+- Added `agent-author` (merged from former agent-builder + agent-editor + agent-packager)
+- Added `agent-validator` (rewritten clean, cites marketplace-guidelines)
+- Added `references/marketplace-guidelines.md` ground-truth reference
+- Added 13 agent and infrastructure templates under `templates/`
+- Added `examples/` directory (sample-subagent + sample-portable-agent)
+- Migrated all `TodoWrite` references to `Task*` family across both validator agents
+- Trimmed all frontmatter descriptions to <=250 chars
+- Removed all employer-specific and project-specific terminology; replaced with generic placeholder names (Apollo, Acme Checkout) in examples
+- Fixed `stakeholder-templates` folder/name mismatch
+- Removed non-canonical `pattern: direct` from list-skills command
+- Eval committee score: 86.4/100; skill-validator: PASS on all 13 in-scope files
+
+### v1.0.0 (2026-03-01)
+- Initial release: 2 agents, 3 commands, 4 shared skill templates
 
 ## License
 
@@ -489,7 +541,6 @@ MIT License - See LICENSE file for details
 
 **Created by**: Young Leaders Tech
 **Powered by**: Claude Code
-**Built with**: agent-builder toolkit
 
 ---
 

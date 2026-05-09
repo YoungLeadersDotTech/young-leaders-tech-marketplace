@@ -1,6 +1,7 @@
 ---
 name: product-context-template
-description: Generic product context template for creating product vision, goals, and constraints skills. Auto-invoke when user requests product skill creation, product context framework, or strategic alignment templates. Do NOT load during actual product work (use project-specific skills instead).
+description: Generic product context template for creating product vision, goals, and constraints skills. Auto-invoke on 'product skill', 'product context framework', 'strategic alignment template'. Do NOT load during actual product work.
+disable-model-invocation: true
 allowed-tools: [Grep]
 version: 1.0.0
 category: Templates
@@ -19,6 +20,7 @@ This template guides the creation of product context skills - strategic informat
 ---
 name: [product-name]-context
 description: Product context for [PRODUCT_NAME] including vision, goals, and constraints when discussing [FEATURE_AREA_1], [FEATURE_AREA_2], or [USE_CASE]. Auto-invoke when user mentions [PRODUCT_NAME], [KEY_FEATURE], or [TARGET_USER_SEGMENT]. Do NOT load for general [DOMAIN] discussions unrelated to [PRODUCT_NAME].
+disable-model-invocation: true
 allowed-tools: []
 version: 1.0.0
 category: Product
@@ -43,7 +45,7 @@ last-updated: [YYYY-MM-DD]
 
 **Example Good Description**:
 ```
-Product context for EasyPay payment processing including merchant onboarding, flexible leasing, and international support when discussing payment flows, compliance requirements, or merchant experience. Auto-invoke when user mentions EasyPay, merchant setup, or leasing options. Do NOT load for general payment discussions outside EasyPay.
+Product context for Acme Checkout payment processing covering merchant onboarding, flexible billing, and international support. Auto-invoke when user mentions Acme Checkout, merchant setup, or billing options. Do NOT load for general payment discussions outside Acme Checkout.
 ```
 
 ## Product Context Content Structure
@@ -263,9 +265,9 @@ Before finalizing product context skill, verify:
 
 **Creating New Product Context Skill**:
 ```
-User: "Create a product context skill for EasyPay"
+User: "Create a product context skill for Acme Checkout"
 
-Claude: [Loads this template skill, uses structure to create EasyPay-specific context]
+Claude: [Loads this template skill, uses structure to create Acme Checkout-specific context]
 ```
 
 **Feature Development Guidance**:

@@ -1,6 +1,5 @@
 ---
 description: List available skills with organized structure showing personal, project, and shared skills
-pattern: direct
 ---
 
 List all available Claude Code skills with clear scope organization.

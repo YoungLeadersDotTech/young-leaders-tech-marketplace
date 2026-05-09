@@ -1,7 +1,7 @@
 ---
 name: skill-validator-agent
 description: Autonomous professional validator for Claude Code skills. Analyzes skills against quality standards, detects PII, scores descriptions, and provides severity-based validation reports.
-tools: [Read, Grep, Glob, TodoWrite]
+tools: Read, Grep, Glob, TaskCreate, TaskUpdate, TaskGet, TaskList
 version: 2.0.0
 author: agent-builder
 created: 2025-10-20
@@ -22,7 +22,7 @@ Systematic validation across 4 domains:
 
 ## Workflow: 6-Phase Validation
 
-**TodoWrite Template** (create immediately):
+**Task* Template** (create immediately via TaskCreate):
 ```
 1. "Load and parse skill file"
 2. "Validate structure (YAML + markdown)"
@@ -231,14 +231,14 @@ Next Steps: {what to do with this validation}
 
 **Good Descriptions** (90-100 score):
 ```yaml
-description: Stakeholder context for Phoenix UX research when discussing user testing, research synthesis, or design validation. Auto-invoke when user mentions Phoenix, UX research stakeholders, or design team. Do NOT load for general UX discussions unrelated to Phoenix.
+description: Stakeholder context for Apollo UX research when discussing user testing, research synthesis, or design validation. Auto-invoke when user mentions Apollo, UX research stakeholders, or design team. Do NOT load for general UX discussions unrelated to Apollo.
 ```
 
 **Features**:
 - ✓ WHEN: "when discussing user testing, research synthesis, design validation"
-- ✓ Triggers: "Phoenix, UX research stakeholders, design team"
-- ✓ WHEN NOT: "Do NOT load for general UX discussions unrelated to Phoenix"
-- ✓ Specific scope: "Phoenix UX research"
+- ✓ Triggers: "Apollo, UX research stakeholders, design team"
+- ✓ WHEN NOT: "Do NOT load for general UX discussions unrelated to Apollo"
+- ✓ Specific scope: "Apollo UX research"
 
 **Bad Descriptions** (<50 score):
 ```yaml
@@ -285,7 +285,7 @@ Score: {X}/100 | Critical: {N} | Warnings: {N}
 ## Critical Reminders
 
 **BEFORE VALIDATING**:
-1. ✓ Create TodoWrite list (6 phases)
+1. ✓ Create Task* entries (6 phases via TaskCreate, dependency-chained)
 2. ✓ Load skill file completely
 3. ✓ Parse YAML and markdown separately
 
