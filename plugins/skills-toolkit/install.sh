@@ -93,8 +93,8 @@ install_skills() {
 
     mkdir -p "${skills_dir}"
 
-    # Copy all template directories
-    for template_dir in skills/shared/*/; do
+    # Copy all template directories (source path is now skills/<name>/, install destination keeps the shared/ scope)
+    for template_dir in skills/*/; do
         template_name=$(basename "${template_dir}")
         mkdir -p "${skills_dir}/${template_name}"
         cp -r "${template_dir}"* "${skills_dir}/${template_name}/"

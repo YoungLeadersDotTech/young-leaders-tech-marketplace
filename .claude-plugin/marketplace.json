@@ -10,7 +10,7 @@
     {
       "name": "skills-toolkit",
       "source": "./plugins/skills-toolkit",
-      "version": "2.0.3",
+      "version": "2.0.4",
       "description": "Toolkit for authoring and validating Claude Code skills and agents. Adds agent-author for end-to-end build/edit/package, agent-validator citing marketplace-guidelines, plus 13 templates. Auto-invoke on 'create skill', 'validate agent', 'build agent'."
     },
     {
