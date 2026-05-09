@@ -11,15 +11,40 @@ Add the marketplace once and Claude Code picks up everything in `plugins/`.
 
 ## Quick install
 
-Add this marketplace to Claude Code using the raw URL of `marketplace.json`:
+In Claude Code, add this marketplace once:
 
 ```text
-https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace/raw/master/.claude-plugin/marketplace.json
+/plugin marketplace add YoungLeadersDotTech/young-leaders-tech-marketplace
 ```
 
-> Use the `raw` URL, not the `blob` URL, or the marketplace fails to load.
+Then install whichever plugins you want by name:
 
-Then `/plugin install <name>` for whichever plugins you want.
+```text
+/plugin install skills-toolkit@young-leaders-tech-marketplace
+/plugin install terminal-setup-macos@young-leaders-tech-marketplace
+/plugin install update-readme@young-leaders-tech-marketplace
+```
+
+Or browse interactively:
+
+```text
+/plugin
+```
+
+After installing, run `/reload-plugins` to activate them in the current session.
+
+### Other ways to add the marketplace
+
+If GitHub shorthand isn't an option (e.g. private mirror):
+
+```text
+/plugin marketplace add git@github.com:YoungLeadersDotTech/young-leaders-tech-marketplace.git
+/plugin marketplace add https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace.git
+/plugin marketplace add ./local-clone-path           # for local dev
+/plugin marketplace add https://...marketplace.json  # direct JSON URL
+```
+
+Verify with `/plugin marketplace list`.
 
 ## Available plugins
 
@@ -29,18 +54,20 @@ Then `/plugin install <name>` for whichever plugins you want.
 | [terminal-setup-macos](./plugins/terminal-setup-macos/README.md) | 1.0.0 | Idempotent macOS terminal installer covering Ghostty, Oh My Zsh, Powerlevel10k, Glow, and MesloLGS Nerd Font, plus an optional markdown-preview kit (MacDown, grip, entr, OSC 8 clickable paths). Encodes the gotchas the original install guides got wrong. |
 | [update-readme](./plugins/update-readme/README.md) | 1.0.0 | Universal README updater. Scans the target, classifies repo type (plugin, marketplace, library, monorepo), asks detail level, then generates. Six-phase workflow with `Task*` tracking and `AskUserQuestion` gates at type confirmation, detail level, and write-or-dry-run. |
 
-## Browse and install via the helper script
+## Local development helper
 
-If you have the marketplace cloned locally:
+If you've cloned this marketplace and want to install a plugin straight from disk
+(useful while authoring), the bundled helper script wraps each plugin's own
+`install.sh`:
 
 ```bash
 ./install-plugin.sh list
 ./install-plugin.sh install skills-toolkit
-./install-plugin.sh install terminal-setup-macos
-./install-plugin.sh install update-readme
 ```
 
-Each plugin's `install.sh` runs in `--global` mode by default.
+Each plugin's `install.sh` runs in `--global` mode by default. This path is for
+local development; published consumers should use `/plugin marketplace add`
+above instead.
 
 ## Adding a plugin
 
