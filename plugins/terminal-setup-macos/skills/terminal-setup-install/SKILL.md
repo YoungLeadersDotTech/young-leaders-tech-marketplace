@@ -1,11 +1,11 @@
 ---
 name: terminal-setup-install
-description: Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown-preview kit (MacDown, grip, entr, OSC 8 paths). Auto-invoke when user is setting up a Mac terminal stack from scratch or running the meta-guide install flow.
+description: Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown-preview kit (MacDown 3000, grip, entr, OSC 8 paths). Auto-invoke when user is setting up a Mac terminal stack from scratch or running the meta-guide install flow.
 allowed-tools: [Bash, Read, Write, Edit, AskUserQuestion]
-version: 1.0.0
+version: 1.1.0
 category: Setup
 tags: [terminal, macos, ghostty, ohmyzsh, powerlevel10k, glow, markdown]
-last-updated: 2026-05-07
+last-updated: 2026-05-10
 ---
 
 # terminal-setup-install
@@ -162,7 +162,7 @@ Use this exact AskUserQuestion (multi-select):
 - **Header:** "MD extras"
 - **multiSelect:** `true`
 - **Options:**
-  1. **MacDown + .md handler** - Native macOS split-view markdown editor. After install, double-clicking any .md in Finder opens it. Deep link: `<blog_url>#macdown`
+  1. **MacDown 3000 + .md handler** - Native macOS split-view markdown editor (notarised fork of MacDown that auto-refreshes when the file is changed externally). After install, double-clicking any .md in Finder opens it. Deep link: `<blog_url>#macdown`
   2. **grip - live browser preview** - Serves a GitHub-flavoured preview at localhost:6419 and auto-reloads on save. Deep link: `<blog_url>#grip`
   3. **mdwatch - live terminal re-render** - Pairs entr with glow -p so the terminal preview re-renders the moment you save. Deep link: `<blog_url>#mdwatch`
   4. **Clickable file paths (mdls + o)** - OSC 8 hyperlinks in any modern terminal; mdls lists .md files as Cmd-clickable links. Deep link: `<blog_url>#clickable-paths`
@@ -171,27 +171,38 @@ Replace `<blog_url>` with the canonical published URL of the meta-guide blog pos
 
 ### Step 10 - Per-extra installs
 
-If user picked **MacDown + .md handler**:
+If user picked **MacDown 3000 + .md handler**:
+
+Why MacDown 3000 instead of the original MacDown: the original does not refresh
+its preview when the file is changed by an external process (e.g. an agent
+editing the file while MacDown has it open). You have to close and reopen the
+file to see changes. MacDown 3000 (notarised fork by Schuyler Erle, MIT,
+official Homebrew cask) refreshes live. Same look and feel, fixes the one
+limitation that matters.
+
+The casks conflict, so uninstall the original first if it's there:
 
 ```bash
-brew install --cask macdown
+brew list --cask macdown >/dev/null 2>&1 && brew uninstall --cask macdown
+brew install --cask macdown-3000
 brew install duti
-# Launch MacDown once so LaunchServices registers its bundle ID
-open -g /Applications/MacDown.app
+# Launch MacDown 3000 once so LaunchServices registers its bundle ID
+open -g "/Applications/MacDown 3000.app"
 sleep 2
-osascript -e 'tell application "MacDown" to quit' 2>/dev/null || true
-# Use the CORRECT bundle ID. Older guides have io.macdown.MacDown which is wrong.
-duti -s com.uranusjr.macdown .md all
-duti -s com.uranusjr.macdown .markdown all
+osascript -e 'tell application "MacDown 3000" to quit' 2>/dev/null || true
+# Bundle ID for MacDown 3000 (different from the original MacDown):
+duti -s app.macdown.macdown3000 .md all
+duti -s app.macdown.macdown3000 .markdown all
 duti -x md   # verify
 ```
 
-If a phantom `io.macdown.MacDown` registration is already cached (e.g. user previously followed an older guide), rebuild LaunchServices:
+If a phantom `com.uranusjr.macdown` or `io.macdown.MacDown` registration is
+cached from an older install, rebuild LaunchServices:
 
 ```bash
 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -r -domain local -domain system -domain user
-/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister /Applications/MacDown.app
-duti -s com.uranusjr.macdown .md all
+/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister "/Applications/MacDown 3000.app"
+duti -s app.macdown.macdown3000 .md all
 ```
 
 If user picked **grip**:
@@ -274,8 +285,10 @@ Tell the user:
 | Gotcha | Encoded behaviour |
 |---|---|
 | Parallel `brew install --cask` hits Ruby lock | Installs run sequentially |
-| MacDown bundle ID `io.macdown.MacDown` is WRONG | Skill uses `com.uranusjr.macdown` |
-| Phantom LaunchServices entry from older guides | Skill rebuilds LS database when needed |
+| Original MacDown does not auto-refresh on external file edits | Skill installs MacDown 3000 (notarised fork) which does |
+| Original `macdown` cask conflicts with `macdown-3000` | Skill uninstalls the original first when present |
+| MacDown 3000 bundle ID is `app.macdown.macdown3000` (not `com.uranusjr.macdown`) | Skill uses the new ID for `duti` |
+| Phantom LaunchServices entry from older MacDown installs | Skill rebuilds LS database when needed |
 | `shell-integration = true` triggers Ghostty config error | Skill writes `shell-integration = zsh` |
 | OMZ overwrites `~/.zshrc` and loses customisations | Skill captures customisations Step 2, restores Step 8 |
 | SDKMAN must be last in `~/.zshrc` | Skill places SDKMAN init at end with marker comment |
@@ -288,7 +301,7 @@ Tell the user:
 - **Homebrew not installed**: Abort with link to brew.sh.
 - **Already-installed core stack, just want extras**: Skip Steps 3-8 entirely, jump straight to Step 9.
 - **Custom `~/.zshrc` is too unusual to safely re-merge**: Surface the captured customisations to the user as a diff and ask them to confirm before applying.
-- **MacDown registration fails after LS rebuild**: Tell user to manually open MacDown once via Spotlight, then re-run the skill from Step 10 onwards.
+- **MacDown 3000 registration fails after LS rebuild**: Tell user to manually open MacDown 3000 once via Spotlight, then re-run the skill from Step 10 onwards.
 - **`format-clickable-path.js` missing for the OSC 8 option**: Skip with a clear message; do not add `mdls`/`o` aliases that will error out.
 
 ## See also
