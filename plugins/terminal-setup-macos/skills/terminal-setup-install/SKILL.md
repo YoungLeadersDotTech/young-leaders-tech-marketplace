@@ -156,18 +156,29 @@ export SDKMAN_DIR="$HOME/.sdkman"
 
 ### Step 9 - AskUserQuestion: optional extras
 
+<!-- TODO-DEEPLINKS: deep-link URLs below currently point to the Substack DRAFT
+preview. When the blog post is published, replace all four URLs with the
+canonical `/i/<post-id>/<heading-slug>` section URLs Substack emits for the
+published post. Each option below has its own TODO-DEEPLINK marker. Search this
+file for `TODO-DEEPLINK` to find every spot. -->
+
 Use this exact AskUserQuestion (multi-select):
 
 - **Question:** "Which optional markdown-preview extras would you like installed?"
 - **Header:** "MD extras"
 - **multiSelect:** `true`
 - **Options:**
-  1. **MacDown 3000 + .md handler** - Native macOS split-view markdown editor (notarised fork of MacDown that auto-refreshes when the file is changed externally). After install, double-clicking any .md in Finder opens it. Deep link: `<blog_url>#macdown`
-  2. **grip - live browser preview** - Serves a GitHub-flavoured preview at localhost:6419 and auto-reloads on save. Deep link: `<blog_url>#grip`
-  3. **mdwatch - live terminal re-render** - Pairs entr with glow -p so the terminal preview re-renders the moment you save. Deep link: `<blog_url>#mdwatch`
-  4. **Clickable file paths (mdls + o)** - OSC 8 hyperlinks in any modern terminal; mdls lists .md files as Cmd-clickable links. Deep link: `<blog_url>#clickable-paths`
+  1. **MacDown 3000 + .md handler** - Native macOS split-view markdown editor (notarised fork of MacDown that auto-refreshes when the file is changed externally). After install, double-clicking any .md in Finder opens it. <!-- TODO-DEEPLINK: replace draft URL when blog is published --> Deep link: `https://www.youngleaders.tech/p/7982b16d-9aa5-4281-b370-6647134cdf7d?postPreview=paid#macdown-3000`
+  2. **grip - live browser preview** - Serves a GitHub-flavoured preview at localhost:6419 and auto-reloads on save. <!-- TODO-DEEPLINK: replace draft URL when blog is published --> Deep link: `https://www.youngleaders.tech/p/7982b16d-9aa5-4281-b370-6647134cdf7d?postPreview=paid#grip`
+  3. **mdwatch - live terminal re-render** - Pairs entr with glow -p so the terminal preview re-renders the moment you save. <!-- TODO-DEEPLINK: replace draft URL when blog is published --> Deep link: `https://www.youngleaders.tech/p/7982b16d-9aa5-4281-b370-6647134cdf7d?postPreview=paid#mdwatch`
+  4. **Clickable file paths (mdls + o)** - OSC 8 hyperlinks in any modern terminal; mdls lists .md files as Cmd-clickable links. <!-- TODO-DEEPLINK: replace draft URL when blog is published --> Deep link: `https://www.youngleaders.tech/p/7982b16d-9aa5-4281-b370-6647134cdf7d?postPreview=paid#clickable-paths`
 
-Replace `<blog_url>` with the canonical published URL of the meta-guide blog post. Default: `https://www.youngleaders.tech/terminal-setup-pdf-meta-guide`. Override only if the user has supplied a different canonical URL.
+**TODO-DEEPLINKS - post-publish task:** the four URLs above are draft-preview
+links and will stop working once the post is published. After publish, capture
+the four section URLs (format: `https://www.youngleaders.tech/i/<numeric-post-id>/<heading-slug>`)
+and replace the four lines above. Substack section URLs are derived from heading
+text; the planned heading slugs are `macdown-3000`, `grip`, `mdwatch`,
+`clickable-paths`.
 
 ### Step 10 - Per-extra installs
 

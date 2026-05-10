@@ -5,7 +5,11 @@ Glow, MesloLGS Nerd Font, plus an optional markdown-preview kit (MacDown 3000, g
 entr, OSC 8 clickable paths).
 
 The companion to the
-[**"Print this PDF, drop it in Claude Code, get a fully kitted terminal"** blog post](https://www.youngleaders.tech/terminal-setup-pdf-meta-guide).
+[**"Print this PDF, drop it in Claude Code, get a fully kitted terminal"** blog post](https://www.youngleaders.tech/p/7982b16d-9aa5-4281-b370-6647134cdf7d?postPreview=paid).
+<!-- TODO-DEEPLINK: blog post is currently a Substack draft preview URL. Replace
+with the canonical published URL `https://www.youngleaders.tech/terminal-setup-pdf-meta-guide`
+once the post is live. -->
+
 
 The blog post is the explainer with screenshots. This plugin is the executable. Both
 end at the same place; pick whichever entry point suits.
