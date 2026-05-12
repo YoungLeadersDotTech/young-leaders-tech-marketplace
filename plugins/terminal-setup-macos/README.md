@@ -16,12 +16,25 @@ end at the same place; pick whichever entry point suits.
 
 ## Install
 
-```bash
-# From the marketplace root
-./install-plugin.sh terminal-setup-macos
+In Claude Code, add the marketplace once (SSH form - see [root README](../../README.md#quick-install) for HTTPS and other options):
+
+```text
+/plugin marketplace add git@github.com:YoungLeadersDotTech/young-leaders-tech-marketplace.git
 ```
 
-Or, if the marketplace is already added to Claude Code, just run the slash command:
+Then install this plugin:
+
+```text
+/plugin install terminal-setup-macos@young-leaders-tech-marketplace
+```
+
+Activate in the current session:
+
+```text
+/reload-plugins
+```
+
+Then run the installer slash command:
 
 ```text
 /terminal-setup-install

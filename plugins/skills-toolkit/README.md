@@ -1,6 +1,6 @@
 # Skills Toolkit for Claude Code
 
-**Version**: 2.0.4
+**Version**: 2.0.5
 **Author**: Young Leaders Tech
 **License**: MIT
 
@@ -144,47 +144,33 @@ Single ground-truth doc that `agent-validator` and `skill-validator-agent` cite.
 - `sample-subagent.md`: a minimal working agent file you can copy and rename.
 - `sample-portable-agent/`: a standalone agent bundle (instructions + README).
 
-## Installation
+## Install
 
-### Quick Install
+In Claude Code, add the marketplace once (SSH form - see [root README](../../README.md#quick-install) for HTTPS and other options):
 
-```bash
-cd skills-toolkit-plugin
-./install.sh
+```text
+/plugin marketplace add git@github.com:YoungLeadersDotTech/young-leaders-tech-marketplace.git
 ```
 
-The installer will:
-1. Detect your Claude Code configuration directory
-2. Install agents to `.claude/agents/`
-3. Install commands to `.claude/commands/`
-4. Install skill templates to `.claude/skills/`
-5. Verify installation success
+Then install this plugin:
 
-### Manual Installation
-
-```bash
-# Install agents
-cp agents/*.md ~/.claude/agents/
-
-# Install commands
-cp commands/*.md ~/.claude/commands/
-
-# Install templates
-cp -r skills/* ~/.claude/skills/
+```text
+/plugin install skills-toolkit@young-leaders-tech-marketplace
 ```
 
-### Verify Installation
+Activate in the current session:
 
-```bash
-# Check agents
-ls ~/.claude/agents/skill-*
+```text
+/reload-plugins
+```
 
-# Check commands
-ls ~/.claude/commands/*-skill.md
+### Verify install
 
-# Test a command
+```text
 /list-skills
 ```
+
+You should see the four shared skill templates plus the plugin's commands and agents available.
 
 ## Quick Start
 
