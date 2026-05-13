@@ -1,6 +1,6 @@
 # update-readme
 
-**Version**: 1.0.0
+**Version**: 1.0.1
 **Author**: Young Leaders Tech
 **License**: MIT
 
@@ -77,16 +77,28 @@ cover anything you might ship.
 
 ## Install
 
-From the marketplace root:
-
-```bash
-./install-plugin.sh install update-readme
-```
-
-Or add the marketplace URL once and Claude Code picks up all three plugins:
+In Claude Code, add the marketplace once (SSH form - see [root README](../../README.md#quick-install) for HTTPS and other options):
 
 ```text
-https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace/raw/master/.claude-plugin/marketplace.json
+/plugin marketplace add git@github.com:YoungLeadersDotTech/young-leaders-tech-marketplace.git
+```
+
+Then install this plugin:
+
+```text
+/plugin install update-readme@young-leaders-tech-marketplace
+```
+
+Activate in the current session:
+
+```text
+/reload-plugins
+```
+
+Then run the slash command from any directory:
+
+```text
+/update-readme
 ```
 
 ## Maintainer

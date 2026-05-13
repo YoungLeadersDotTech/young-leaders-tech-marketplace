@@ -2,6 +2,11 @@
 
 All notable changes to `skills-toolkit` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.5] - 2026-05-12
+
+### Changed
+- README.md install section rewritten to the canonical Claude Code plugin marketplace flow (`/plugin marketplace add` + `/plugin install skills-toolkit@young-leaders-tech-marketplace` + `/reload-plugins`). Removed the legacy `cd skills-toolkit-plugin && ./install.sh` and manual `cp agents/*.md ~/.claude/agents/` instructions which predated this plugin being marketplace-installable.
+
 ## [2.0.4] - 2026-05-09
 
 ### Changed
