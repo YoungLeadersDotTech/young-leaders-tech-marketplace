@@ -58,9 +58,19 @@ brew --version >/dev/null 2>&1 || { echo "Homebrew not installed; install it fir
 [ -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ] && P10K_INSTALLED=yes || P10K_INSTALLED=no
 which glow >/dev/null 2>&1 && GLOW_INSTALLED=yes || GLOW_INSTALLED=no
 ls "$HOME/Library/Fonts/" 2>/dev/null | grep -qi meslolgs && FONT_INSTALLED=yes || FONT_INSTALLED=no
+# MacDown check - must be MacDown 3000 (the auto-refreshing fork), not the original MacDown
+[ -d "/Applications/MacDown 3000.app" ] && MACDOWN3000_INSTALLED=yes || MACDOWN3000_INSTALLED=no
+[ -d "/Applications/MacDown.app" ] && brew list --cask macdown >/dev/null 2>&1 && MACDOWN_ORIGINAL=yes || MACDOWN_ORIGINAL=no
 ```
 
 Report each as a tick or "skip - already installed". If everything is already installed, skip to Step 8 (extras).
+
+**MacDown preflight rules:**
+- MacDown 3000 installed → `✓ MacDown 3000 - skip`
+- Original MacDown installed but NOT MacDown 3000 → `⚠️ MacDown (original) found - will replace with MacDown 3000 in Step 10`
+- Neither installed → `○ MacDown 3000 - not installed`
+
+Do NOT treat the original MacDown as equivalent to MacDown 3000. The original does not auto-refresh on external file edits and uses a different bundle ID (`com.uranusjr.macdown` vs `app.macdown.macdown3000`).
 
 ### Step 2 - Backup .zshrc
 

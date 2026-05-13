@@ -16,7 +16,7 @@
     {
       "name": "terminal-setup-macos",
       "source": "./plugins/terminal-setup-macos",
-      "version": "1.1.1",
+      "version": "1.1.2",
       "description": "Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown-preview kit (MacDown 3000, grip, entr, OSC 8 paths)"
     },
     {
