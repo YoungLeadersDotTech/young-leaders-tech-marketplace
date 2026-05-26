@@ -252,9 +252,77 @@ alias mdwatch='f() { echo "$1" | entr -c glow -p "$1" }; f'
 
 If user picked **Clickable file paths**:
 
-Check that `~/.claude/global-utils/clickable-paths/format-clickable-path.js` exists. If not, warn the user that the underlying utility isn't installed and offer to skip this option (clicking happens in `mdls`/`o` only when the utility is in place; absence of the utility means `mdls` errors out).
+**Step A - Install the OSC 8 formatter utility:**
 
-If present, append to `~/.zshrc`:
+```bash
+mkdir -p "$HOME/.claude/global-utils/clickable-paths"
+SKILL_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+# Copy the bundled (fixed) formatter - includes Ghostty + FORCE_HYPERLINK support
+cp "$SKILL_DIR/../../scripts/global-utils/format-clickable-path.js" \
+   "$HOME/.claude/global-utils/clickable-paths/format-clickable-path.js"
+```
+
+If the script location can't be determined, fall back to checking whether `~/.claude/global-utils/clickable-paths/format-clickable-path.js` already exists. If absent in both cases, warn the user and offer to skip.
+
+**Step B - Install the Claude Code PostToolUse hook:**
+
+This hook makes bare filenames in Bash tool output clickable automatically - no manual `mdls` needed.
+
+```bash
+# Copy the hook script
+cp "$SKILL_DIR/../../scripts/post-bash-filename-links.py" \
+   "$HOME/.claude/hooks/post-bash-filename-links.py"
+```
+
+Then patch `~/.claude/settings.json` to wire up the hook. Use Python to read/write so JSON stays valid:
+
+```python
+import json, os
+
+settings_path = os.path.expanduser('~/.claude/settings.json')
+
+# Load existing settings (create minimal structure if missing)
+if os.path.exists(settings_path):
+    with open(settings_path) as f:
+        settings = json.load(f)
+else:
+    settings = {}
+
+settings.setdefault('hooks', {})
+settings['hooks'].setdefault('PostToolUse', [])
+
+# Find or create the Bash PostToolUse entry
+bash_entry = next(
+    (e for e in settings['hooks']['PostToolUse'] if e.get('matcher') == 'Bash'),
+    None
+)
+if bash_entry is None:
+    bash_entry = {'matcher': 'Bash', 'hooks': []}
+    settings['hooks']['PostToolUse'].append(bash_entry)
+
+bash_entry.setdefault('hooks', [])
+
+new_hook = {
+    'type': 'command',
+    'command': 'python3 ~/.claude/hooks/post-bash-filename-links.py',
+    'timeout': 8
+}
+
+# Idempotent - don't add twice
+already = any('post-bash-filename-links' in h.get('command', '')
+               for h in bash_entry['hooks'])
+if not already:
+    bash_entry['hooks'].append(new_hook)
+    with open(settings_path, 'w') as f:
+        json.dump(settings, f, indent=4)
+    print('✓ Claude Code hook wired up in ~/.claude/settings.json')
+else:
+    print('✓ Claude Code hook already present - skipped')
+```
+
+**Step C - Add zsh aliases for manual use:**
+
+Append to `~/.zshrc`:
 
 ```bash
 mdls() {
@@ -281,6 +349,10 @@ o() {
   open "$abs"
 }
 ```
+
+**How the two approaches differ:**
+- **Hook** (Step B): automatic - every Bash tool call in Claude Code scans stdout for bare filenames and makes them clickable without any manual action
+- **`mdls`/`o` aliases** (Step C): manual - run `mdls docs/workflows/` or `o somefile.md` explicitly in a terminal
 
 ### Step 11 - Sanity tests
 
