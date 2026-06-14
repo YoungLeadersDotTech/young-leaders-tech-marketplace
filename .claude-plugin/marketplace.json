@@ -1,6 +1,6 @@
 {
   "name": "young-leaders-tech-marketplace",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Personal Claude Code plugin marketplace",
   "owner": {
     "name": "Young Leaders Tech",
@@ -30,6 +30,12 @@
       "source": "./plugins/standalone-skills",
       "version": "1.0.0",
       "description": "Self-contained, Cowork-ready skills with no cross-skill or external plugin dependencies. Currently bundles diy-build-companion: plan and run DIY builds with energy-aware work blocks, cross-device Google Drive state, and a child-safety veto gate."
+    },
+    {
+      "name": "eval-committee",
+      "source": "./plugins/eval-committee",
+      "version": "1.0.0",
+      "description": "Committee-based evaluator. Several expert personas score a skill, agent, prompt, or output against a shared rubric and combine into a weighted verdict. Generic by default; loads optional presets when present."
     }
   ]
 }
