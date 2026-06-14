@@ -1,0 +1,13 @@
+{
+  "name": "standalone-skills",
+  "description": "Self-contained, Cowork-ready skills with no cross-skill or external plugin dependencies. Currently bundles diy-build-companion. Each skill keeps its own references inside its folder.",
+  "author": {
+    "name": "Young Leaders Tech",
+    "url": "https://youngleaders.tech"
+  },
+  "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
+  "version": "1.0.0",
+  "skills": [
+    "./skills/diy-build-companion"
+  ]
+}
