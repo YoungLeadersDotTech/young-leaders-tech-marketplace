@@ -1,6 +1,6 @@
 # Young Leaders Tech Marketplace
 
-A small, opinionated Claude Code plugin marketplace.
+A small, opinionated Claude Code plugin marketplace. Works with both Claude Code and [OpenCode](https://opencode.ai) (each plugin's skills are exposed via `opencode.json`, and `AGENTS.md` carries the cross-runtime resolution rules).
 
 ## What this is
 
@@ -139,9 +139,12 @@ plugins/
 README.md                           # this file
 ```
 
+## License
+
+MIT - see [LICENSE](./LICENSE). You are free to use, modify, and distribute these plugins; attribution appreciated.
+
 ## Maintainer
 
 Young Leaders Tech &middot; <https://youngleaders.tech>
 
-<!-- Last verified: 2026-05-09 -->
-<!-- TODO: add LICENSE file at repo root (plugin READMEs reference MIT but no LICENSE file is committed) -->
+<!-- Last verified: 2026-06-14 -->
