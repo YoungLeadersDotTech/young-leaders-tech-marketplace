@@ -1,7 +1,7 @@
 # Marketplace Guidelines
 
-> Last reviewed: 2026-05-08
-> Schema version: 1.0
+> Last reviewed: 2026-06-18
+> Schema version: 1.1
 > Applies to: `young-leaders-tech-marketplace` v1.x
 
 Rules every plugin in this marketplace must follow. The `agent-validator` and `skill-validator-agent` cite this file as ground truth before approving any plugin-bound artefact.
@@ -16,20 +16,23 @@ Validators classify findings using these levels and quote the section that defin
 | WARNING | 5, 9 (cosmetic fields), 8 | Surface to user; allow override with explicit acknowledgement |
 | INFO | 2 (semver judgement calls), 4 (description rewrites), 10 | Note in report; no action required |
 
-## 1. The 4-File Rule
+## 1. The 5-File Rule
 
-Any change inside `plugins/<name>/` MUST update all four of these files in the same commit:
+Any change inside `plugins/<name>/` MUST update all five of these files in the same commit:
 
 ```
 plugins/<name>/CHANGELOG.md            # add a new dated semver entry
 plugins/<name>/VERSION                 # single line, semver only
 plugins/<name>/.claude-plugin/plugin.json  # bump "version" field
 .claude-plugin/marketplace.json        # bump plugin entry version + top-level version
+plugins/<name>/README.md               # update version header + skills table if skills changed
 ```
 
-Missing any one of the four = stale plugin cache for users. The plugin manager keys off `version` to decide whether to re-download; if `marketplace.json` says a version users already have, no update fires.
+Missing any one of the five = a stale plugin cache for users, or a README that disagrees with the manifest. The plugin manager keys off `version` to decide whether to re-download; if `marketplace.json` says a version users already have, no update fires.
 
-**New plugin (first commit)**: create all four files in the introducing commit. Treat absence of prior VERSION as `0.0.0 -> 1.0.0` (a marketplace-level MINOR bump because a new plugin entered the catalogue).
+The README counts because it is the human-readable contract for the plugin: a version header or skills table that lags the manifest misleads anyone browsing the marketplace. When a change does not touch skills (for example a reference-doc edit), still bump the README version header; only the skills table is conditional on skills changing.
+
+**New plugin (first commit)**: create all five files in the introducing commit. Treat absence of prior VERSION as `0.0.0 -> 1.0.0` (a marketplace-level MINOR bump because a new plugin entered the catalogue).
 
 **VERSION file format**: single line, semver, with a trailing newline. Comparisons must strip trailing whitespace before equality checks (`VERSION` content `1.2.0\n` equals plugin.json `"version": "1.2.0"`).
 
@@ -45,7 +48,7 @@ A skill or agent rename counts as MAJOR (existing invocations break). Rename is 
 
 ## 3. Same-Commit Ordering Rule
 
-Never bump `marketplace.json` before content lands. The 4 file updates and the new content go in the SAME commit (or PR), not separate commits.
+Never bump `marketplace.json` before content lands. The 5 file updates and the new content go in the SAME commit (or PR), not separate commits.
 
 Why: if `marketplace.json` is bumped first, users install the empty version, then when content lands the plugin manager sees the same version number and never re-downloads.
 
@@ -146,7 +149,7 @@ When porting a global skill (`~/.claude/skills/X/`) or external bundle into a ma
 
 1. Apply any pending fixes to the source FIRST (so the plugin copy is the fixed version, not the bug-laden one).
 2. Create the plugin directory and copy files.
-3. Apply the 4-file rule (CHANGELOG, VERSION, plugin.json, marketplace.json).
+3. Apply the 5-file rule (CHANGELOG, VERSION, plugin.json, marketplace.json, README).
 4. Push commit.
 5. Run `/reload-plugins` to confirm the plugin loads.
 6. ONLY THEN delete the source (global skill or original bundle).
@@ -256,8 +259,9 @@ Before committing any change to `plugins/<name>/`:
 - [ ] plugin.json `version` matches VERSION
 - [ ] marketplace.json plugin entry `version` matches VERSION
 - [ ] marketplace.json top-level `version` bumped
+- [ ] README.md version header / skills table updated (skills table only if skills changed)
 - [ ] All frontmatter `description` fields <=250 chars
 - [ ] `grep -rlP '\x{2014}' plugins/<name>/` is empty
 - [ ] No employer-specific or client-specific terminology has leaked into a generic plugin (run a grep against any keywords from your work context that should not appear in personal-marketplace artefacts; pattern is repo-specific)
 - [ ] No real PII (emails, phone numbers, secrets, real names other than the user's own)
-- [ ] All four file updates and the new content are in the SAME commit
+- [ ] All five file updates and the new content are in the SAME commit

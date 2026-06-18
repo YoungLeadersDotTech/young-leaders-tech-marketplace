@@ -1,6 +1,6 @@
 # Skills Toolkit for Claude Code
 
-**Version**: 2.0.5
+**Version**: 2.0.6
 **Author**: Young Leaders Tech
 **License**: MIT
 
@@ -128,7 +128,7 @@ Ready-to-crib templates `agent-author` consumes during create / package modes:
 ### Reference: `references/marketplace-guidelines.md`
 
 Single ground-truth doc that `agent-validator` and `skill-validator-agent` cite. Codifies:
-- 4-file rule (CHANGELOG, VERSION, plugin.json, marketplace.json)
+- 5-file rule (CHANGELOG, VERSION, plugin.json, marketplace.json, README)
 - Semver decision table
 - Same-commit ordering rule
 - Two version fields (top-level + plugin entry)

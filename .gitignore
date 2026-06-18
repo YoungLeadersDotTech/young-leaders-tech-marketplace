@@ -1,0 +1,10 @@
+.DS_Store
+
+# Local tool / editor state - never commit
+.claude/settings.local.json
+.serena/
+
+# Build / runtime artefacts (also scoped per-plugin where they appear)
+.toast-build/
+__pycache__/
+*.pyc
