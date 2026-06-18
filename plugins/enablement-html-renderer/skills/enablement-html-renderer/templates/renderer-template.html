@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<style>
+  :root{
+    --bg:#fafaf8; --ink:#1a1a1a; --muted:#5a5a52; --line:#e2e0d8;
+    --accent:#2f5d50; --accent2:#c4622d; --panel:#fff;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#16161a;--ink:#ececec;--muted:#a0a0a0;--line:#2c2c33;--panel:#1e1e24;--accent:#7fb3a3;--accent2:#e0915f;}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:820px;margin:0 auto;padding:0 20px 80px}
+  header.top{padding:28px 0 16px;border-bottom:1px solid var(--line)}
+  .kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  h1{font-size:1.7rem;margin:.2em 0 .1em;line-height:1.2}
+  .coreidea{color:var(--muted);font-size:1.05rem;margin:.4em 0 0}
+  .selbar{position:sticky;top:0;z-index:10;background:var(--bg);
+    padding:10px 0 8px;border-bottom:1px solid var(--line)}
+  .selbar .row1{display:flex;align-items:center;gap:8px;justify-content:space-between}
+  .selbar .lbl{font-size:13px;color:var(--muted);flex:none}
+  .selbar .utils{display:flex;gap:6px;flex:none}
+  /* format pills: one row, scroll sideways on narrow screens instead of wrapping */
+  .selbar .fmts{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;padding:8px 0 2px;margin:0}
+  .selbar .fmts::-webkit-scrollbar{display:none}
+  .selbar .fmts button{flex:0 0 auto;white-space:nowrap}
+  .selbar button{font:inherit;font-size:14px;padding:7px 14px;border:1px solid var(--line);
+    background:var(--panel);color:var(--ink);border-radius:999px;cursor:pointer}
+  .selbar button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .selbar .util{border-radius:8px;font-size:13px;padding:6px 11px}
+  @media (max-width:560px){
+    .selbar .lbl{display:none}
+    .selbar .util{padding:6px 9px}
+  }
+  section.block{padding:24px 0;border-bottom:1px solid var(--line)}
+  section.block h2{font-size:1.25rem;margin:0 0 .5em}
+  ul.bul{margin:.2em 0;padding-left:1.2em}
+  ul.bul li{margin:.35em 0}
+  .prose p{margin:.6em 0}
+  .visual figure{margin:0}
+  /* SVGs inherit the theme ink via currentColor so they flip in dark mode.
+     The render-time normaliser (normalizeSvg) rewrites legacy hardcoded
+     palettes to currentColor / accent vars, so old diagrams flip too. */
+  .visual svg{max-width:100%;height:auto;border:1px solid var(--line);border-radius:10px;
+    background:var(--panel);color:var(--ink)}
+  .visual svg text{fill:currentColor}
+  .visual figcaption{color:var(--muted);font-size:.92rem;margin-top:.5em}
+  /* comic: real comic-strip feel, not captioned boxes. Hand-drawn SVG character,
+     speech bubbles, panel-number tabs, varied panel rhythm. */
+  .comic{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .comic .panel:last-child:nth-child(odd){grid-column:1 / -1}
+  .panel{border:2.5px solid var(--ink);border-radius:6px;background:#fffdf7;
+    padding:0;position:relative;overflow:hidden;box-shadow:3px 3px 0 var(--ink);min-height:170px;display:flex;flex-direction:column}
+  @media (prefers-color-scheme: dark){.panel{background:#222028}}
+  .panel .num{position:absolute;top:0;left:0;background:var(--ink);color:#fffdf7;
+    font-weight:800;font-size:12px;padding:2px 9px;border-radius:0 0 6px 0;z-index:2;font-family:ui-monospace,monospace}
+  .panel .art{flex:1;display:flex;align-items:flex-end;justify-content:center;padding:8px 8px 0;min-height:96px}
+  .panel .art svg{width:100%;height:auto;max-height:120px}
+  .panel .cap{font-weight:700;font-size:.9rem;padding:6px 12px 2px;letter-spacing:.01em}
+  .panel .bubble{margin:0 12px 12px;background:#fffdf7;border:2px solid var(--ink);border-radius:14px;
+    padding:7px 11px;font-size:.92rem;line-height:1.35;position:relative;color:#1a1a1a}
+  .panel .bubble:before{content:"";position:absolute;top:-9px;left:22px;border:5px solid transparent;border-bottom-color:var(--ink)}
+  .panel .bubble:after{content:"";position:absolute;top:-6px;left:23px;border:4px solid transparent;border-bottom-color:#fffdf7}
+  @media print{.panel{box-shadow:none}}
+  .meta{display:grid;gap:20px;grid-template-columns:1fr;margin-top:8px}
+  .card{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:16px}
+  .card h3{margin:0 0 .5em;font-size:1.05rem}
+  .tasks li{margin:.4em 0}
+  .tasks .who{font-weight:600}
+  .links a{color:var(--accent)}
+  footer.foot{padding-top:20px;color:var(--muted);font-size:.85rem}
+  .hide{display:none}
+  /* section meta: time badge + video deep-link */
+  .secmeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:.1em 0 .6em}
+  .badge{font-size:12px;padding:2px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+  .badge.video{color:var(--accent2);border-color:var(--accent2)}
+  /* callouts: severity layer that survives every format */
+  .callout{border-left:4px solid var(--line);background:var(--panel);padding:9px 12px;border-radius:0 8px 8px 0;margin:.5em 0;font-size:.95rem}
+  .callout .lbl{font-weight:700;font-size:12px;letter-spacing:.04em;text-transform:uppercase;margin-right:.4em}
+  .callout.critical{border-left-color:#c0392b} .callout.critical .lbl{color:#c0392b}
+  .callout.never{border-left-color:#a01b2e} .callout.never .lbl{color:#a01b2e}
+  .callout.warn{border-left-color:#c4622d} .callout.warn .lbl{color:#c4622d}
+  .callout.tip{border-left-color:var(--accent)} .callout.tip .lbl{color:var(--accent)}
+  /* copy-paste command blocks */
+  .cmds{position:relative;background:#0f1f1b;color:#d6e8e2;border-radius:8px;padding:12px 14px;margin:.5em 0;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-x:auto}
+  @media (prefers-color-scheme: light){.cmds{background:#10231e}}
+  .cmds .copy{position:absolute;top:8px;right:8px;font:inherit;font-size:11px;background:#2f5d50;color:#fff;border:0;border-radius:6px;padding:4px 9px;cursor:pointer}
+  .cmds pre{margin:0;white-space:pre-wrap}
+  /* cheat sheet */
+  .cheatsheet .cs-card{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:16px}
+  .cheatsheet h3{margin:.1em 0 .4em}
+  .cheatsheet .copyall{font:inherit;font-size:13px;background:var(--accent);color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;margin-bottom:10px}
+  @media print{
+    .selbar{display:none}
+    .cmds .copy,.cheatsheet .copyall{display:none}
+    .stackprint section.block .fmt{display:block !important;margin-bottom:10px}
+    a[href]:after{content:" (" attr(href) ")";font-size:.8em;color:#666}
+    body{background:#fff;color:#000}
+    .cmds{background:#f4f4f0;color:#111;border:1px solid #ccc}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="kicker" id="kicker">__KIND__</div>
+    <h1 id="title">__TITLE__</h1>
+    <p class="coreidea" id="coreidea">__CORE_IDEA__</p>
+  </header>
+
+  <nav class="selbar" role="toolbar" aria-label="Choose your format">
+    <div class="row1">
+      <span class="lbl">Read it as:</span>
+      <div class="utils">
+        <button class="util" id="allBtn" aria-pressed="false">Show all</button>
+        <button class="util" id="printBtn">Print / PDF</button>
+      </div>
+    </div>
+    <div class="fmts" role="group" aria-label="Format">
+      <button data-fmt="bullets" aria-pressed="true">Bullets</button>
+      <button data-fmt="prose" aria-pressed="false">Prose</button>
+      <button data-fmt="visual" aria-pressed="false">Visual</button>
+      <button data-fmt="comic" aria-pressed="false">Comic</button>
+      <button data-fmt="cheatsheet" aria-pressed="false">Cheat sheet</button>
+    </div>
+  </nav>
+
+  <main id="content"></main>
+
+  <aside class="meta" id="meta"></aside>
+
+  <footer class="foot" id="foot"></footer>
+</div>
+
+<script>
+// __DATA__ is injected by the skill: the shaped content bundle.
+const DATA = /*__DATA_START__*/ {
+  title: "Sample title",
+  kind: "training",
+  coreIdea: "The one thing to leave with.",
+  sections: [
+    {
+      heading: "Example section",
+      bullets: ["Point one", "Point two", "Point three"],
+      prose: "<p>The same idea in connected sentences.</p>",
+      visualSvg: "<svg viewBox='0 0 300 80' role='img' aria-label='flow'><rect x='10' y='25' width='80' height='30' rx='6' fill='none' stroke='currentColor'/><text x='50' y='45' font-size='11' text-anchor='middle'>Input</text><line x1='90' y1='40' x2='130' y2='40' stroke='currentColor'/><rect x='130' y='25' width='80' height='30' rx='6' fill='none' stroke='var(--accent)'/><text x='170' y='45' font-size='11' text-anchor='middle'>Output</text></svg>",
+      visualCaption: "Input becomes output.",
+      comic: [
+        {scene:"The setup", say:"Here is the problem.", mood:"calm", prop:"coffee"},
+        {scene:"The turn", say:"Here is the trick.", mood:"alarmed", prop:"warning"},
+        {scene:"The payoff", say:"Now it just works.", mood:"relieved", prop:"check"}
+      ]
+    }
+  ],
+  agenda: [],
+  tasks: [],
+  links: []
+} /*__DATA_END__*/;
+
+let fmt = "bullets", showAll = false;
+const FORMATS = ["bullets","prose","visual","comic","cheatsheet"];
+
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+// esc(): plain-text fields (headings, bullets, comic text, tasks, link labels) are
+// untrusted and HTML-escaped so code snippets and stray angle brackets render, never inject.
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+// safeUrl(): only allow http(s) and mailto; block javascript:/data: in shared files.
+function safeUrl(u){ try{ const p=new URL(u, location.href); return ["http:","https:","mailto:"].includes(p.protocol) ? u : "#"; }catch(e){ return "#"; } }
+// prose and visualSvg are authored by the skill itself (trusted source of truth), so they
+// pass through as HTML by design. Every other field above goes through esc().
+
+// linkify: turn bare http(s) URLs into real links so references are never dead text.
+// Two entry points: linkifyPlain escapes untrusted text then links it; linkifyProse links inside
+// authored HTML without re-escaping and without touching markup or content already inside an <a>.
+const URL_RE = /\bhttps?:\/\/[^\s<>"')]+/g;
+function urlAnchor(u){ let url=u, trail=""; const t=url.match(/[.,;:]+$/); if(t){ trail=url.slice(-t[0].length); url=url.slice(0,-t[0].length); } return "<a href='"+esc(safeUrl(url))+"' rel='noopener noreferrer'>"+esc(url)+"</a>"+esc(trail); }
+// linkifyPlain(): for untrusted plain-text fields. Escapes, then wraps URLs.
+function linkifyPlain(s){
+  s = String(s==null?"":s);
+  let out="", idx=0, m; URL_RE.lastIndex=0; const urls=[];
+  while((m=URL_RE.exec(s))) urls.push([m.index, m.index+m[0].length, m[0]]);
+  for(const [a,b,u] of urls){ out+=esc(s.slice(idx,a))+urlAnchor(u); idx=b; }
+  return out + esc(s.slice(idx));
+}
+// linkifyProse(): for trusted prose HTML. Only links text nodes; never re-escapes, never enters
+// existing markup or anchors (so author-written links and tags are left intact).
+function linkifyProse(html){
+  html = String(html==null?"":html); let out="", depth=0; const parts = html.split(/(<[^>]+>)/);
+  const txt = t => { let r="", idx=0, m; URL_RE.lastIndex=0; const urls=[]; while((m=URL_RE.exec(t))) urls.push([m.index,m.index+m[0].length,m[0]]);
+    for(const [a,b,u] of urls){ r+=t.slice(idx,a)+urlAnchor(u); idx=b; } return r+t.slice(idx); };
+  for(const p of parts){ if(p.startsWith("<")){ out+=p; if(/^<a\b/i.test(p)) depth++; else if(/^<\/a/i.test(p)&&depth>0) depth--; } else { out += depth>0 ? p : txt(p); } }
+  return out;
+}
+
+// normalizeSvg(): make author diagrams theme-aware. Legacy diagrams hardcoded
+// near-black (#1a1a1a) and the brand green (#2f5d50), which vanished in dark mode.
+// Remap those to currentColor (inherits --ink, flips with theme) and the accent var,
+// so both old and new diagrams stay legible in light and dark. Stroke and stroke-only
+// text become currentColor; fill:none is left alone; explicit light fills are kept.
+function normalizeSvg(svg){
+  if(!svg) return svg;
+  return svg
+    // dark ink -> currentColor (strokes, fills, text)
+    .replace(/(['"#])1a1a1a/gi, (m,p)=> p==="#" ? "currentColor" : p+"currentColor")
+    .replace(/#1a1a1a/gi, "currentColor")
+    .replace(/stroke=(['"])#?2f5d50\1/gi, "stroke='var(--accent)'")
+    .replace(/fill=(['"])#?2f5d50\1/gi, "fill='var(--accent)'")
+    .replace(/#2f5d50/gi, "var(--accent)")
+    .replace(/#c4622d/gi, "var(--accent2)");
+}
+
+// A recurring hand-drawn developer character. Same person across panels; the eyes, brows,
+// mouth, and a small per-mood accent all change together so each panel reads as a distinct
+// emotion (calm / stressed / alarmed / relieved), not the same face with a different curve.
+// FACE is the mouth; EYES, BROW, and ACCENT vary per mood; PROP is the held object.
+const FACE = {
+  calm:    "<path d='M50 58 q6 2 12 0' fill='none' stroke='#1a1a1a' stroke-width='2.4' stroke-linecap='round'/>",
+  stressed:"<path d='M49 60 q7 -5 14 0' fill='none' stroke='#1a1a1a' stroke-width='2.4' stroke-linecap='round'/>",
+  alarmed: "<ellipse cx='56' cy='59' rx='4.5' ry='6' fill='#7a1f1f' stroke='#1a1a1a' stroke-width='2'/>",
+  relieved:"<path d='M48 57 q8 8 16 0' fill='none' stroke='#1a1a1a' stroke-width='2.6' stroke-linecap='round'/>"
+};
+const EYES = {
+  calm:    "<circle cx='49' cy='47' r='2.4' fill='#1a1a1a'/><circle cx='63' cy='47' r='2.4' fill='#1a1a1a'/>",
+  stressed:"<circle cx='49' cy='47' r='1.8' fill='#1a1a1a'/><circle cx='63' cy='47' r='1.8' fill='#1a1a1a'/>",
+  alarmed: "<circle cx='49' cy='47' r='4.2' fill='#fff' stroke='#1a1a1a' stroke-width='1.6'/><circle cx='49' cy='47' r='2' fill='#1a1a1a'/><circle cx='63' cy='47' r='4.2' fill='#fff' stroke='#1a1a1a' stroke-width='1.6'/><circle cx='63' cy='47' r='2' fill='#1a1a1a'/>",
+  relieved:"<path d='M45 48 q4 -4 8 0' fill='none' stroke='#1a1a1a' stroke-width='2.2' stroke-linecap='round'/><path d='M59 48 q4 -4 8 0' fill='none' stroke='#1a1a1a' stroke-width='2.2' stroke-linecap='round'/>"
+};
+const BROW = {
+  calm:    "<path d='M45 41 h9 M58 41 h9' stroke='#1a1a1a' stroke-width='2.4' fill='none' stroke-linecap='round'/>",
+  stressed:"<path d='M44 41 q5 -3 10 -1 M58 40 q5 -2 10 1' stroke='#1a1a1a' stroke-width='2.4' fill='none' stroke-linecap='round'/>",
+  alarmed: "<path d='M43 36 q6 -3 11 0 M57 36 q6 -3 11 0' stroke='#1a1a1a' stroke-width='2.4' fill='none' stroke-linecap='round'/>",
+  relieved:"<path d='M44 40 q5 1 10 0 M58 40 q5 1 10 0' stroke='#1a1a1a' stroke-width='2.4' fill='none' stroke-linecap='round'/>"
+};
+const ACCENT = {
+  none:"",
+  calm:"",
+  stressed:"<path d='M74 41 q3 5 0 8 q-3 -3 0 -8 Z' fill='#7fb3e0' stroke='#1a1a1a' stroke-width='1'/>",
+  alarmed:"<path d='M40 20 l-2 -4 M56 16 l0 -4 M72 20 l2 -4' stroke='#1a1a1a' stroke-width='1.6' stroke-linecap='round'/>",
+  relieved:"<ellipse cx='44' cy='53' rx='3' ry='1.6' fill='#ff9d8a' opacity='0.55'/><ellipse cx='68' cy='53' rx='3' ry='1.6' fill='#ff9d8a' opacity='0.55'/>"
+};
+const PROP = {
+  none:"",
+  coffee:"<g transform='translate(88,72)'><rect x='0' y='0' width='15' height='12' rx='2' fill='#fff' stroke='#1a1a1a' stroke-width='2'/><path d='M15 3 q6 0 6 4.5 t-6 4.5' fill='none' stroke='#1a1a1a' stroke-width='2'/><path d='M4 -6 q-2 -4 2 -7 M9 -6 q-2 -4 2 -7' stroke='#c4622d' stroke-width='1.6' fill='none'/></g>",
+  warning:"<g transform='translate(86,56)'><path d='M11 0 L22 19 L0 19 Z' fill='#f4c430' stroke='#1a1a1a' stroke-width='2' stroke-linejoin='round'/><path d='M11 6 v6' stroke='#1a1a1a' stroke-width='2.4' stroke-linecap='round'/><circle cx='11' cy='15.5' r='1.4' fill='#1a1a1a'/></g>",
+  check:"<g transform='translate(88,60)'><circle cx='10' cy='10' r='10' fill='#2f5d50'/><path d='M5 10 l3.4 3.4 L16 6' fill='none' stroke='#fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/></g>"
+};
+function character(mood, prop){
+  const m = FACE[mood] ? mood : "calm";
+  const pr = PROP[prop] ? prop : "none";
+  return "<svg viewBox='0 0 130 110' role='img' aria-label='comic panel illustration'>"
+    + "<line x1='6' y1='98' x2='124' y2='98' stroke='#1a1a1a' stroke-width='2'/>"
+    + "<rect x='30' y='84' width='54' height='14' rx='2' fill='#cfe3dc' stroke='#1a1a1a' stroke-width='2'/>"
+    + "<rect x='34' y='62' width='46' height='24' rx='2' fill='#fff' stroke='#1a1a1a' stroke-width='2'/>"
+    + "<path d='M40 84 q16 -15 40 0' fill='none' stroke='#1a1a1a' stroke-width='2'/>"
+    + (ACCENT[m] || "")
+    + "<circle cx='35' cy='47' r='3.2' fill='#ffe0c2' stroke='#1a1a1a' stroke-width='2'/><circle cx='77' cy='47' r='3.2' fill='#ffe0c2' stroke='#1a1a1a' stroke-width='2'/>"
+    + "<circle cx='56' cy='46' r='21' fill='#ffe0c2' stroke='#1a1a1a' stroke-width='2.5'/>"
+    + "<path d='M38 39 Q37 25 56 24 Q75 25 74 39 Q66 33 56 33 Q46 33 38 39 Z' fill='#3a2f2a'/>"
+    + BROW[m] + EYES[m] + FACE[m]
+    + PROP[pr]
+    + "</svg>";
+}
+function comicPanel(p, i){
+  const cap = linkifyPlain(p.scene||"");   // back-compat: old bundles had only scene + say
+  const say = linkifyPlain(p.say||"");
+  return "<div class='panel'><span class='num'>"+(i+1)+"</span>"
+    + "<div class='art'>"+character(p.mood, p.prop)+"</div>"
+    + (cap?"<div class='cap'>"+cap+"</div>":"")
+    + (say?"<div class='bubble'>"+say+"</div>":"")
+    + "</div>";
+}
+
+const CALLOUT_LABEL = {critical:"Critical", never:"Never", warn:"Warning", tip:"Tip"};
+function calloutsHTML(sec){
+  return (sec.callouts||[]).map(co=>{
+    const lvl = ["critical","never","warn","tip"].includes(co.level)?co.level:"tip";
+    return "<div class='callout "+lvl+"'><span class='lbl'>"+CALLOUT_LABEL[lvl]+"</span>"+linkifyPlain(co.text)+"</div>";
+  }).join("");
+}
+function commandsHTML(sec){
+  if(!(sec.commands||[]).length) return "";
+  const body = sec.commands.map(esc).join("\n");
+  return "<div class='cmds'><button class='copy' data-copy="+'"'+esc(sec.commands.join("\n"))+'"'+">Copy</button><pre>"+body+"</pre></div>";
+}
+function secMetaHTML(sec){
+  const bits=[];
+  if(sec.estMinutes) bits.push("<span class='badge'>~"+esc(sec.estMinutes)+" min</span>");
+  if(sec.videoUrl) bits.push("<a class='badge video' href='"+esc(safeUrl(sec.videoUrl))+"' rel='noopener noreferrer'>Watch this part</a>");
+  return bits.length ? "<div class='secmeta'>"+bits.join("")+"</div>" : "";
+}
+function renderSection(sec){
+  const wrap = el("section","block");
+  wrap.appendChild(el("h2",null,linkifyPlain(sec.heading)));
+  if(secMetaHTML(sec)) wrap.insertAdjacentHTML("beforeend", secMetaHTML(sec));
+  const make = {
+    bullets: () => el("div","fmt bullets","<ul class='bul'>"+(sec.bullets||[]).map(b=>"<li>"+linkifyPlain(b)+"</li>").join("")+"</ul>"),
+    prose:   () => el("div","fmt prose", sec.prose?linkifyProse(sec.prose):"<p><em>No prose form for this section.</em></p>"),
+    visual:  () => el("div","fmt visual","<figure>"+(sec.visualSvg?normalizeSvg(sec.visualSvg):"<p><em>No diagram for this section.</em></p>")+(sec.visualCaption?"<figcaption>"+linkifyPlain(sec.visualCaption)+"</figcaption>":"")+"</figure>"),
+    comic:   () => el("div","fmt comic",(sec.comic||[]).map((p,i)=>comicPanel(p,i)).join("")||"<p><em>No comic for this section.</em></p>")
+  };
+  const fmts = showAll ? ["bullets","prose","visual","comic"] : [fmt];
+  fmts.forEach(f=>{
+    wrap.appendChild(make[f]());
+    // callouts and commands ride along with every prose format so severity and
+    // copy-paste lines are never lost when the reader switches view.
+    wrap.insertAdjacentHTML("beforeend", calloutsHTML(sec) + commandsHTML(sec));
+  });
+  return wrap;
+}
+
+// The cheat sheet is assembled, not per-section: one copy-all card of the essentials.
+function renderCheatSheet(){
+  const c = document.getElementById("content");
+  const lines = [];
+  lines.push(DATA.title||"");
+  (DATA.sections||[]).forEach(s=>{
+    lines.push("");
+    lines.push("## "+(s.heading||""));
+    (s.callouts||[]).filter(co=>co.level==="critical"||co.level==="never").forEach(co=>lines.push("! "+(CALLOUT_LABEL[co.level]||"")+": "+co.text));
+    (s.commands||[]).forEach(cmd=>lines.push("  $ "+cmd));
+    (s.bullets||[]).slice(0,3).forEach(b=>lines.push("- "+b));
+  });
+  const plain = lines.join("\n");
+  const card = el("div","fmt cheatsheet");
+  let html = "<div class='cs-card'><button class='copyall' data-copy="+'"'+esc(plain)+'"'+">Copy whole cheat sheet</button>";
+  (DATA.sections||[]).forEach(s=>{
+    html += "<h3>"+linkifyPlain(s.heading||"")+"</h3>";
+    html += calloutsHTML({callouts:(s.callouts||[]).filter(co=>co.level==="critical"||co.level==="never")});
+    html += "<ul class='bul'>"+(s.bullets||[]).slice(0,3).map(b=>"<li>"+linkifyPlain(b)+"</li>").join("")+"</ul>";
+    html += commandsHTML(s);
+  });
+  html += "</div>";
+  card.innerHTML = html;
+  c.appendChild(card);
+}
+
+function render(){
+  const c = document.getElementById("content"); c.innerHTML="";
+  if(fmt==="cheatsheet" && !showAll){ renderCheatSheet(); }
+  else { (DATA.sections||[]).forEach(s=>c.appendChild(renderSection(s))); }
+  document.body.classList.toggle("stackprint", showAll);
+
+  const m = document.getElementById("meta"); m.innerHTML="";
+  if((DATA.agenda||[]).length){ m.appendChild(el("div","card","<h3>Agenda covered</h3><ul class='bul'>"+DATA.agenda.map(a=>"<li>"+linkifyPlain(a)+"</li>").join("")+"</ul>")); }
+  if((DATA.tasks||[]).length){ m.appendChild(el("div","card","<h3>Tasks</h3><ul class='bul tasks'>"+DATA.tasks.map(t=>"<li><span class='who'>"+linkifyPlain(t.who)+"</span>: "+linkifyPlain(t.what)+(t.due?" <em>("+linkifyPlain(t.due)+")</em>":"")+"</li>").join("")+"</ul>")); }
+  if((DATA.links||[]).length){ m.appendChild(el("div","card links","<h3>Watch / read more</h3><ul class='bul'>"+DATA.links.map(l=>"<li><a href='"+esc(safeUrl(l.url))+"' rel='noopener noreferrer'>"+esc(l.label)+"</a></li>").join("")+"</ul>")); }
+}
+
+// Delegated copy handler for command blocks and the cheat-sheet card.
+document.addEventListener("click", e=>{
+  const btn = e.target.closest("[data-copy]"); if(!btn) return;
+  const text = btn.getAttribute("data-copy");
+  const done = ()=>{ const old=btn.textContent; btn.textContent="Copied"; setTimeout(()=>btn.textContent=old,1200); };
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done).catch(done); }
+  else { const ta=document.createElement("textarea"); ta.value=text; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy");}catch(e2){} ta.remove(); done(); }
+});
+
+function setFormat(next, push){
+  fmt = FORMATS.includes(next) ? next : "bullets"; showAll = false;
+  document.getElementById("allBtn").setAttribute("aria-pressed","false");
+  document.querySelectorAll(".selbar button[data-fmt]").forEach(x=>x.setAttribute("aria-pressed", x.dataset.fmt===fmt?"true":"false"));
+  if(push && location.hash.slice(1)!==fmt){ history.replaceState(null,"","#"+fmt); }
+  render();
+}
+
+document.querySelectorAll(".selbar button[data-fmt]").forEach(b=>{
+  b.addEventListener("click",()=> setFormat(b.dataset.fmt, true));
+});
+document.getElementById("allBtn").addEventListener("click",function(){
+  showAll=!showAll; this.setAttribute("aria-pressed", showAll?"true":"false");
+  if(showAll) document.querySelectorAll(".selbar button[data-fmt]").forEach(x=>x.setAttribute("aria-pressed","false"));
+  render();
+});
+document.getElementById("printBtn").addEventListener("click",()=>window.print());
+// Deep-link: share file.html#prose to open straight into a chosen format.
+window.addEventListener("hashchange",()=> setFormat(location.hash.slice(1), false));
+
+document.getElementById("title").textContent = DATA.title||"";
+document.getElementById("kicker").textContent = (DATA.kind||"").toUpperCase();
+document.getElementById("coreidea").textContent = DATA.coreIdea||"";
+document.getElementById("foot").innerHTML = "Pick the format that fits how you learn. Same content, your way.";
+setFormat(location.hash.slice(1) || "bullets", false);
+</script>
+</body>
+</html>
