@@ -178,9 +178,11 @@ viewport problems or a diagram that renders dark-on-dark (the exact bug that shi
 twice). Two mitigations, neither a full substitute for a real open:
 
 - For colour, run `scripts/rasterize_diagrams.py` on the rendered file (a hard gate
-  below). It rasterises every Visual diagram in both light and dark themes and fails
-  when the diagram ink would not contrast with the theme background, so a dark-on-dark
-  regression becomes a loud failure instead of a silent one.
+  below). It resolves every Visual diagram in both light and dark themes (the same
+  currentColor / accent-var substitution the browser does) and fails when a diagram's
+  ink would not contrast with the theme background, so a dark-on-dark regression becomes
+  a loud failure instead of a silent one. The check is pure-Python with no third-party
+  dependency, so it runs identically in Cowork and Claude Code.
 - For layout, the format selector is the part most likely to break on a narrow phone
   screen, and nothing headless catches that. The current design keeps format pills on
   a single horizontally scrollable row (they never wrap into a thicket) with the label
@@ -188,8 +190,8 @@ twice). Two mitigations, neither a full substitute for a real open:
 
 Whenever the control strip or the diagram theming changes, treat a real on-device
 open (phone width, dark mode toggled) as the validating signal before raising the
-score. The rasterise gate protects against colour regressions between those opens; it
-does not replace them.
+score. The diagram-contrast gate protects against colour regressions between those opens;
+it does not replace them.
 
 ---
 
@@ -205,8 +207,11 @@ python3 scripts/rasterize_diagrams.py <rendered-output.html>  # diagrams legible
 
 The scripts are vendored into this plugin's own `scripts/` folder, so the skill
 validates self-contained without depending on the skills-toolkit plugin.
-`rasterize_diagrams.py` needs `cairosvg` (`pip install cairosvg --break-system-packages`);
-if it is absent the gate exits non-zero and says so rather than passing silently.
+`rasterize_diagrams.py` is dependency-free: it computes light/dark contrast in pure Python
+and fails on a hardcoded near-greyscale colour that would not flip with the theme. It also
+writes one preview per diagram per theme for eyeballing - a PNG if `cairosvg` happens to be
+installed, otherwise a standalone SVG - but the pass/fail never depends on that optional
+library, so it runs the same in Cowork and Claude Code.
 
 Plus the two non-script gates: name-collision (this name is not a single verb and
 does not collide) and artefact-type triage (this is a skill that runs on demand,

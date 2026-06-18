@@ -2,6 +2,23 @@
 
 All notable changes to the enablement-html-renderer plugin.
 
+## [1.2.2] - 2026-06-18
+
+### Changed
+- `scripts/rasterize_diagrams.py` is now dependency-free, so the diagram-contrast hard gate
+  runs in Cowork (where `pip install` is blocked) as well as Claude Code. Previously the gate
+  hard-required `cairosvg` and exited 2 ("could not run") whenever it was absent, blocking
+  Validate. The pass/fail was already pure-Python (luminance + saturation); `cairosvg` was only
+  writing PNG previews the decision never read back.
+- Preview generation is now best-effort and never affects the result: a PNG when `cairosvg`
+  happens to be installed, otherwise a standalone, self-contained SVG (a full-bleed theme
+  background plus the resolved diagram, opens in any browser). A failed render is reported, not
+  counted as a contrast failure.
+- Exit codes: `0` legible in both themes, `1` a real contrast failure, `2` only for file-not-found
+  or no diagrams. The missing-dependency exit-2 path is gone.
+- Updated SKILL.md and README to describe the gate honestly (dependency-free static contrast
+  check with optional previews) rather than claiming PNG rasterisation via `cairosvg`.
+
 ## [1.2.1] - 2026-06-18
 
 ### Changed
