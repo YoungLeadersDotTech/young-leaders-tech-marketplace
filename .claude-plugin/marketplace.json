@@ -1,10 +1,6 @@
 {
   "name": "young-leaders-tech-marketplace",
-<<<<<<< HEAD
   "version": "1.5.6",
-=======
-  "version": "1.5.5",
->>>>>>> e695636 (fix: sync opencode and scrub public docs)
   "description": "Personal Claude Code plugin marketplace",
   "owner": {
     "name": "Young Leaders Tech",

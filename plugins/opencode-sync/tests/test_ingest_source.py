@@ -80,6 +80,29 @@ class IngestSourceTests(unittest.TestCase):
         out_dir = ingest_source.default_agent_out_dir({"global"}, None)
         self.assertEqual(out_dir, str(Path.home() / ".config" / "opencode" / "agent"))
 
+    def test_wire_memory_instructions_include_project_memory_when_present(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "MEMORY.md").write_text("# Test Memory\n")
+
+            instructions = ingest_source.wire_memory_instructions(root)
+
+            self.assertEqual(
+                instructions,
+                ["MEMORY.md", "AGENTS.md", "~/.claude/memory/memory.md"],
+            )
+
+    def test_wire_memory_instructions_fall_back_without_project_memory(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+
+            instructions = ingest_source.wire_memory_instructions(root)
+
+            self.assertEqual(
+                instructions,
+                ["AGENTS.md", "~/.claude/memory/memory.md"],
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

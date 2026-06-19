@@ -417,6 +417,14 @@ def default_agent_out_dir(target_keys, explicit_out_dir):
     return ".opencode/agent"
 
 
+def wire_memory_instructions(root):
+    instructions = []
+    if (root / "MEMORY.md").exists():
+        instructions.append("MEMORY.md")
+    instructions.extend(["AGENTS.md", "~/.claude/memory/memory.md"])
+    return instructions
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("source", nargs="?", help="local path or git URL of the marketplace/plugin/repo")
@@ -501,7 +509,7 @@ def main():
         if paths:
             cfg["skills"] = {"paths": paths}
         if args.wire_memory:
-            cfg["instructions"] = ["AGENTS.md", "~/.claude/memory/memory.md"]
+            cfg["instructions"] = wire_memory_instructions(root)
         if deny:
             cfg["permission"] = {"skill": {"*": "allow", **{d: "deny" for d in deny}}}
         if disc["mcp"]:
