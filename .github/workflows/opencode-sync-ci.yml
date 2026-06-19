@@ -1,0 +1,41 @@
+name: opencode-sync CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "plugins/opencode-sync/**"
+      - ".claude-plugin/marketplace.json"
+      - ".github/workflows/opencode-sync-ci.yml"
+  pull_request:
+    paths:
+      - "plugins/opencode-sync/**"
+      - ".claude-plugin/marketplace.json"
+      - ".github/workflows/opencode-sync-ci.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run ingest regression tests
+        run: |
+          python3 -m unittest plugins/opencode-sync/tests/test_ingest_source.py
+
+      - name: Validate skill for both runtimes
+        run: |
+          python3 plugins/opencode-sync/skills/opencode-sync/scripts/validate_dual.py --target both plugins/opencode-sync/skills/opencode-sync/SKILL.md
+
+      - name: Drift check if manifest exists
+        run: |
+          if [ -f plugins/opencode-sync/.opencode-sync/manifest.json ]; then
+            python3 plugins/opencode-sync/skills/opencode-sync/scripts/check_drift.py --check --manifest plugins/opencode-sync/.opencode-sync/manifest.json
+          else
+            echo "no plugins/opencode-sync/.opencode-sync/manifest.json - skipping drift check"
+          fi

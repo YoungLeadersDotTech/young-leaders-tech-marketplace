@@ -2,6 +2,23 @@
 
 All notable changes to the opencode-sync skill.
 
+## [1.6.1] - 2026-06-19
+
+### Fixed
+- Synced the post-1.6.0 ingest fixes from the standalone `opencode-sync` repo:
+  marketplace ingests now respect the enabled plugin allow-list, prune stale `skills.paths`
+  entries on re-run, keep discovered agents and MCP scoped to the enabled plugin roots, and
+  read both `{"mcpServers": {...}}` and direct plugin-cache `.mcp.json` shapes.
+- Generated agents now default to `~/.config/opencode/agent` whenever any global config target
+  is involved, matching the documented global-visibility behaviour.
+
+### Changed
+- Synced the canonical `SKILL.md`, ingest implementation, and regression coverage from the
+  standalone Claude-side repo. Kept the marketplace `README.md` public-safe instead of copying
+  over product-specific narrative verbatim.
+- Added `tests/test_ingest_source.py` to lock the ingest behaviour that drifted after the
+  marketplace migration.
+
 ## [1.6.0] - 2026-06-18
 
 ### Changed
@@ -14,7 +31,7 @@ All notable changes to the opencode-sync skill.
   into `.claude/skills/`, point OpenCode `skills.paths` at it, or zip it for a Cowork upload.
 - CI (`.github/workflows/ci.yml`) updated to the new `skills/opencode-sync/scripts/` and
   `skills/opencode-sync/SKILL.md` paths; the drift manifest stays at repo root.
-- Added a root `VERSION` file (1.6.0) and `.toast-build/` to `.gitignore`.
+- Added a root `VERSION` file (1.6.0) and the local build directory to `.gitignore`.
 
 ### Notes
 - No skill logic changed. This is a packaging change (plugin wrapper added), so the skill body,
@@ -98,7 +115,7 @@ All notable changes to the opencode-sync skill.
 ## [1.1.1] - 2026-06-13
 
 ### Changed
-- CC-03 recalibrated to match the toast skill-validator ground truth: `TodoWrite` in
+- CC-03 recalibrated to match the marketplace skill-validator ground truth: `TodoWrite` in
   allowed-tools is FAIL (use Task* variants), generic `Task` is now WARN not FAIL
   (Task / Agent is a valid subagent-dispatch tool). Added `Agent` to known tools.
 

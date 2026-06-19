@@ -1,6 +1,6 @@
 # update-readme
 
-**Version**: 1.0.1
+**Version**: 1.0.3
 **Author**: Young Leaders Tech
 **License**: MIT
 
@@ -8,9 +8,9 @@
 
 `update-readme` is a universal README refresher for any repository or sub-object.
 It auto-detects the type of the thing it is documenting (Claude Code plugin, plugin
-marketplace, generic library, Toast service, monorepo, personal repo), confirms that
-classification with you, asks how detailed a README you want, and then generates one
-using sections appropriate to the type.
+marketplace, generic library, service repository, monorepo, personal repo), confirms
+that classification with you, asks how detailed a README you want, and then generates
+one using sections appropriate to the type.
 
 It is the inverse of every "README template" repo - rather than handing you a
 boilerplate to fill in by hand, it scans what you already have and writes the README
@@ -28,8 +28,8 @@ that fits.
 4. **Asks the detail level** - minimal / standard / comprehensive / custom.
 5. **Generates the README** using a section catalogue keyed on type + detail level.
    Different types produce different shapes (a marketplace gets a plugins table; a
-   plugin gets command and agent tables; a Toast service gets Datadog and IDP links;
-   etc.).
+   plugin gets command and agent tables; a service repo gets operational links when
+   they exist; etc.).
 6. **Previews and confirms** - shows you the draft, lets you write, dry-run, edit a
    section, or cancel.
 
@@ -45,7 +45,7 @@ that fits.
 
 - Claude Code plugin marketplace (root README)
 - Individual Claude Code plugin
-- Toast service repository (Java / Kotlin / Dropwizard / Camel)
+- Service repository (Java / Kotlin / Dropwizard / Camel)
 - Generic open source library or app (Python / JS / Go / Rust)
 - Personal repository (dotfiles, scripts, notes)
 - Monorepo (asks which subproject)
@@ -63,10 +63,9 @@ template using your detail-level preference.
 
 ## Why this exists
 
-The toast-developer-docs:update-readme skill has a great methodology (parallel scan,
-classify, validate links before writing, dry-run support) but its output is hard-wired
-to Toast service repos. This plugin keeps the methodology and broadens the output to
-cover anything you might ship.
+This plugin preserves the same scan, classify, preview, and write discipline you want
+from a serious README workflow, but keeps the shipped output generic enough for any repo
+you can publish.
 
 ## Companion to
 

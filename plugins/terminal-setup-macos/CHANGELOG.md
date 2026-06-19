@@ -2,10 +2,24 @@
 
 All notable changes to `terminal-setup-macos` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-06-19
+
+### Changed
+- Shortened the skill description to stay under the working 250-character cap.
+- Added explicit OpenCode/Cowork AskUserQuestion fallback wording so the skill degrades cleanly
+  outside Claude Code.
+
+## [1.2.1] - 2026-06-19
+
+### Changed
+- Removed the remaining internal-guide reference from the public skill docs.
+- Generalised one changelog example around clickable filename resolution so it no longer names a
+  project-specific file.
+
 ## [1.2.0] - 2026-05-26
 
 ### Added
-- **Automatic Claude Code hook for clickable filenames** (`scripts/post-bash-filename-links.py`). When the "Clickable file paths" extra is selected, the installer now also drops this PostToolUse hook into `~/.claude/hooks/` and patches `~/.claude/settings.json` to wire it up. The hook scans every Bash tool's stdout for bare filenames with known extensions, resolves them to absolute paths (cwd → work-registry → Projects → home, with a depth-5 fallback walk), and rewrites them as OSC 8 hyperlinks with the short filename as display text - so `btt-ai-ways-of-working-faq.md` appears as a short clickable link rather than a full path.
+- **Automatic Claude Code hook for clickable filenames** (`scripts/post-bash-filename-links.py`). When the "Clickable file paths" extra is selected, the installer now also drops this PostToolUse hook into `~/.claude/hooks/` and patches `~/.claude/settings.json` to wire it up. The hook scans every Bash tool's stdout for bare filenames with known extensions, resolves them to absolute paths (cwd → work-registry → Projects → home, with a depth-5 fallback walk), and rewrites them as OSC 8 hyperlinks with the short filename as display text - so `project-notes.md` appears as a short clickable link rather than a full path.
 - **`ghostty` added to `supportsClickablePaths()`** in `format-clickable-path.js`. Ghostty was previously only matched via the fallback `xterm-ghostty` → `includes('xterm')` check; it is now an explicit entry in the supported terminals list.
 - **`FORCE_HYPERLINK=1` environment variable support** in `format-clickable-path.js`. Mirrors the official Claude Code `FORCE_HYPERLINK` override mechanism so the utility and Claude Code agree on whether OSC 8 is active.
 - Bundled scripts now live under `scripts/` in the plugin:

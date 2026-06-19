@@ -90,7 +90,7 @@ never re-escaping and never re-linking content already inside an `<a>`. Net effe
 dead URL; write the full URL in any field and it resolves itself. Link-panel `labels` are left
 un-linkified to avoid nested anchors (the row already links to its `url`), and code in `commands`
 is never linkified. Issue-key auto-linking is intentionally not the default in the public build,
-because a shared plugin should not assume one private tracker.
+because a shared plugin should not assume one tracker.
 
 **Theming `visualSvg` (so diagrams survive dark mode).** Do not hardcode near-black
 or brand colours for diagram strokes and text; they vanish on a dark background.
