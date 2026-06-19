@@ -1,6 +1,6 @@
 {
   "name": "young-leaders-tech-marketplace",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Personal Claude Code plugin marketplace",
   "owner": {
     "name": "Young Leaders Tech",
@@ -34,7 +34,7 @@
     {
       "name": "enablement-html-renderer",
       "source": "./plugins/enablement-html-renderer",
-      "version": "1.2.1",
+      "version": "1.2.2",
       "description": "Packages finished enablement material into one self-contained HTML file where the reader toggles format: bullets, prose, visual diagram, comic, or cheat sheet. Theme-aware diagrams, URL auto-linking, and an AI-ism voice gate."
     }
   ]

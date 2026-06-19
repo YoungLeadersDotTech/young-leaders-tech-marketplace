@@ -1,6 +1,6 @@
 # enablement-html-renderer
 
-**Version 1.2.1**
+**Version 1.2.2**
 
 Packages finished enablement material into one self-contained HTML file where the reader chooses
 the format. A handoff target, not a starting point: other skills (meeting, content-pipeline,
@@ -21,7 +21,9 @@ diy-build-companion) produce the substance, this packages it.
   links. The public build stays tracker-agnostic, so issue keys remain plain text.
 - **Theme-aware diagrams.** A `normalizeSvg` pass remaps the legacy hardcoded palette to
   `currentColor` and the accent vars at render time, so Visual-format diagrams stay legible in
-  both light and dark mode rather than rendering dark-on-dark.
+  both light and dark mode rather than rendering dark-on-dark. A dependency-free contrast gate
+  (`scripts/rasterize_diagrams.py`) checks every diagram in both themes and fails on a hardcoded
+  colour that would not flip, so it runs anywhere with no install.
 - **AI-ism voice gate.** `scripts/check_ai_isms.py` (sourced from the content-pipeline Phase 4
   avoid-patterns) keeps the prose in the source blog's voice rather than drifting into generic AI
   phrasing. It is wired into the SKILL Shape phase and hard gates.

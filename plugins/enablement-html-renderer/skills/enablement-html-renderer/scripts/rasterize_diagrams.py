@@ -1,26 +1,30 @@
 #!/usr/bin/env python3
 """
-rasterize_diagrams.py - catch Visual-format regressions that headless DOM tests miss.
+rasterize_diagrams.py - catch Visual-format colour regressions that headless DOM tests miss.
 
-jsdom verifies structure and escaping but does not compute rendered colour or layout,
-so it cannot see a diagram that renders dark-on-dark (the exact bug that shipped twice).
-This script extracts every visualSvg from a rendered enablement HTML file, simulates
-both the light and dark themes (cairosvg cannot resolve currentColor / CSS vars, so the
-theme colours are substituted the way the browser would), rasterises each to PNG, and
-runs a coarse legibility check: the diagram ink must contrast with the theme background.
+jsdom verifies structure and escaping but does not compute rendered colour, so it cannot
+see a diagram that renders dark-on-dark (the exact bug that shipped twice). This script
+extracts every Visual diagram from a rendered enablement HTML file, resolves both the
+light and dark themes the way the browser would (substituting currentColor and the CSS
+vars), and runs a coarse legibility check: the diagram ink, and any colour the author
+hardcoded, must contrast with the theme background.
 
-It is a safety net, not a substitute for a real on-device open, but it turns a silent
-visual regression into a loud failure during Validate.
+The pass/fail decision is pure-Python arithmetic (luminance + saturation) with NO third-party
+dependency, so it runs the same in Cowork and in Claude Code. For optional human inspection it
+also writes one preview per diagram per theme: a PNG if cairosvg happens to be installed,
+otherwise a standalone, self-contained SVG (opens in any browser, no install). Preview
+generation never affects the gate result - a missing library or a failed render is reported,
+not counted as a contrast failure.
+
+It is a safety net, not a substitute for a real on-device open, but it turns a silent visual
+regression into a loud failure during Validate.
 
 Usage:
     python3 rasterize_diagrams.py <rendered-output.html> [--out /tmp/diag]
 Exit codes:
     0 = every diagram legible in both themes
     1 = a diagram failed the contrast check in at least one theme
-    2 = could not run (missing dependency or no diagrams found)
-
-Dependency: cairosvg (pip install cairosvg --break-system-packages). If it is not
-available the script exits 2 and tells you, rather than passing silently.
+    2 = could not run (file not found, or no diagrams to check)
 """
 from __future__ import annotations
 
@@ -32,6 +36,12 @@ import sys
 # Theme colour maps, mirroring the template :root and the dark media query.
 LIGHT = {"ink": "#1a1a1a", "accent": "#2f5d50", "accent2": "#c4622d", "bg": "#fafaf8", "panel": "#ffffff"}
 DARK = {"ink": "#ececec", "accent": "#7fb3a3", "accent2": "#e0915f", "bg": "#16161a", "panel": "#1e1e24"}
+
+# Contrast gap (difference in relative luminance, 0..1) below which ink is treated as
+# illegible against the background. A near-greyscale hardcoded colour under this gap is the
+# dark-on-dark (or light-on-light) risk; saturated semantic marks are exempt (see saturation).
+CONTRAST_MIN = 0.25
+SATURATION_MAX = 0.25
 
 
 def luminance(hex_colour: str) -> float:
@@ -84,17 +94,38 @@ def themed(svg: str, theme: dict) -> str:
     return s
 
 
+def with_background(svg: str, bg: str) -> str:
+    # Prepend a full-bleed background rect so a saved preview shows on the theme background,
+    # the same way the .visual svg{background:var(--panel)} rule frames it in the browser.
+    return re.sub(r"(<svg\b[^>]*>)", r"\1" + f"<rect width='100%' height='100%' fill='{bg}'/>",
+                  svg, count=1)
+
+
+def write_preview(svg_themed: str, theme: dict, outdir: pathlib.Path, stem: str) -> tuple[str, str]:
+    # Best-effort preview, never part of the gate. PNG if cairosvg is importable, else a
+    # standalone SVG that opens anywhere with no dependency. Returns (path, note).
+    framed = with_background(svg_themed, theme["bg"])
+    try:
+        import cairosvg  # optional; present in some Claude Code envs, absent in Cowork
+        png = outdir / f"{stem}.png"
+        cairosvg.svg2png(bytestring=svg_themed.encode(), write_to=str(png),
+                         output_width=1280, background_color=theme["bg"])
+        return str(png), ""
+    except ImportError:
+        out = outdir / f"{stem}.svg"
+        out.write_text(framed, encoding="utf-8")
+        return str(out), " (SVG preview; install cairosvg for PNG)"
+    except Exception as e:  # noqa: BLE001  - a render hiccup must not fail the gate
+        out = outdir / f"{stem}.svg"
+        out.write_text(framed, encoding="utf-8")
+        return str(out), f" (SVG preview; PNG render skipped: {e})"
+
+
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("html")
     ap.add_argument("--out", default="/tmp/diag")
     args = ap.parse_args(argv)
-
-    try:
-        import cairosvg  # noqa: F401
-    except ImportError:
-        print("cairosvg not installed. Run: pip install cairosvg --break-system-packages", file=sys.stderr)
-        return 2
 
     path = pathlib.Path(args.html)
     if not path.exists():
@@ -102,7 +133,7 @@ def main(argv: list[str]) -> int:
         return 2
     svgs = extract_svgs(path.read_text())
     if not svgs:
-        print("No visualSvg diagrams found to rasterise.", file=sys.stderr)
+        print("No Visual diagrams found to check.", file=sys.stderr)
         return 2
 
     outdir = pathlib.Path(args.out)
@@ -116,23 +147,15 @@ def main(argv: list[str]) -> int:
         for theme_name, theme in (("light", LIGHT), ("dark", DARK)):
             s = themed(svg, theme)
             # The diagram's main ink is currentColor -> theme ink. It must contrast with bg.
-            contrast = abs(luminance(theme["ink"]) - luminance(theme["bg"]))
-            png = outdir / f"diagram-{i}-{theme_name}.png"
-            try:
-                import cairosvg
-                cairosvg.svg2png(bytestring=s.encode(), write_to=str(png),
-                                 output_width=1280, background_color=theme["bg"])
-            except Exception as e:  # noqa: BLE001
-                print(f"[FAIL] diagram {i} ({theme_name}): could not rasterise: {e}", file=sys.stderr)
-                failed += 1
-                continue
             bg_lum = luminance(theme["bg"])
+            contrast = abs(luminance(theme["ink"]) - bg_lum)
             # A hardcoded colour is a dark-on-dark (or light-on-light) risk only when it is
             # both low-contrast against the background AND near-greyscale. Saturated semantic
             # colours (red/amber/green marks) read on either theme, so they are exempt.
             low_fixed = [c for c in fixed
-                         if abs(luminance(c) - bg_lum) < 0.25 and saturation(c) < 0.25]
-            if contrast < 0.25:
+                         if abs(luminance(c) - bg_lum) < CONTRAST_MIN and saturation(c) < SATURATION_MAX]
+            preview, note = write_preview(s, theme, outdir, f"diagram-{i}-{theme_name}")
+            if contrast < CONTRAST_MIN:
                 print(f"[FAIL] diagram {i} ({theme_name}): theme ink barely contrasts with "
                       f"background (gap {contrast:.2f}).", file=sys.stderr)
                 failed += 1
@@ -143,13 +166,13 @@ def main(argv: list[str]) -> int:
                       file=sys.stderr)
                 failed += 1
             else:
-                print(f"[ok]   diagram {i} ({theme_name}): legible (contrast {contrast:.2f}) -> {png}")
+                print(f"[ok]   diagram {i} ({theme_name}): legible (contrast {contrast:.2f}) -> {preview}{note}")
 
     if failed:
-        print(f"\n{failed} diagram/theme combination(s) failed. Open the PNGs in {outdir} and "
+        print(f"\n{failed} diagram/theme combination(s) failed. Open the previews in {outdir} and "
               f"check the diagram is legible, then fix the visualSvg theming.", file=sys.stderr)
         return 1
-    print(f"\nAll {len(svgs)} diagram(s) legible in light and dark. PNGs in {outdir}. "
+    print(f"\nAll {len(svgs)} diagram(s) legible in light and dark. Previews in {outdir}. "
           f"This is a safety net: still open the file on a real device before raising the score.")
     return 0
 
