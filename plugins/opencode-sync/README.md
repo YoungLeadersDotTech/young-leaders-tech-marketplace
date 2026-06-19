@@ -143,6 +143,17 @@ There are two separate visibility surfaces in OpenCode:
 
 If your skills are visible but your agents are not, the first thing to check is **where the sync wrote the generated agent files**.
 
+## Memory Wiring
+
+`--wire-memory` is the OpenCode-side replacement for the read half of memory-os.
+
+- If the source repo tracks `MEMORY.md` at its root, opencode-sync now wires that first.
+- It then wires `AGENTS.md`.
+- It finally wires the global memory index at `~/.claude/memory/memory.md`.
+
+That gets OpenCode closer to memory-os's project-memory-first behaviour, but it does not fully
+replace the Claude hooks. The exact gap is documented in `references/memory-wiring.md`.
+
 ## Prompt Box Autocomplete
 
 Skills and commands are different in OpenCode:

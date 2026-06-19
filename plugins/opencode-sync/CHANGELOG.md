@@ -2,6 +2,15 @@
 
 All notable changes to the opencode-sync skill.
 
+## [1.6.2] - 2026-06-19
+
+### Changed
+- `--wire-memory` now includes repo-root `MEMORY.md` ahead of `AGENTS.md` and the global memory
+  index when the source repo tracks a project memory file, bringing OpenCode closer to the
+  memory-os project-memory-first read order without hardcoding user-specific scratch paths.
+- Added `references/memory-wiring.md` documenting exactly what memory-os injects today, what
+  `--wire-memory` reproduces on OpenCode, and what still remains outside opencode-sync.
+
 ## [1.6.1] - 2026-06-19
 
 ### Fixed
