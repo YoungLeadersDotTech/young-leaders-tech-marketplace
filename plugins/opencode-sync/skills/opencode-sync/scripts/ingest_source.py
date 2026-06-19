@@ -158,13 +158,25 @@ def classify_skill(skill_path):
     return "hide" if (dmi and user_off) else "invocable"
 
 
-def find_mcp_servers(root):
-    """Collect mcpServers from any .mcp.json in the source."""
+def find_mcp_servers(root, scan_dirs=None):
+    """Collect mcpServers from any .mcp.json in the source or selected subdirs."""
     servers = {}
-    for f in list(root.rglob(".mcp.json")) + list(root.glob(".mcp.json")):
+    files = []
+    if scan_dirs:
+        for d in scan_dirs:
+            files.extend(list(Path(d).rglob(".mcp.json")))
+            files.extend(list(Path(d).glob(".mcp.json")))
+    else:
+        files = list(root.rglob(".mcp.json")) + list(root.glob(".mcp.json"))
+    for f in files:
         try:
             data = json.loads(f.read_text())
-            servers.update(data.get("mcpServers", {}))
+            if isinstance(data.get("mcpServers"), dict):
+                servers.update(data["mcpServers"])
+            elif isinstance(data, dict):
+                # Official Claude plugin cache entries often use the simpler
+                # {"name": {command/url...}} shape directly in .mcp.json.
+                servers.update({k: v for k, v in data.items() if isinstance(v, dict)})
         except Exception:
             continue
     return servers
@@ -192,6 +204,27 @@ def discover_source(root, kind):
         "agents": sorted(set(agents)),
         "commands": sorted(set(commands)),
         "mcp": find_mcp_servers(root),
+    }
+
+
+def filter_discovery_to_units(root, kind, disc, allowed_units):
+    if kind != "marketplace":
+        return disc
+    allowed_dirs = []
+    for _name, sk in allowed_units:
+        base = sk.parent if sk.name == "skills" else sk
+        allowed_dirs.append(base.resolve())
+
+    def under_allowed(path):
+        rp = Path(path).resolve()
+        return any(base == rp or base in rp.parents for base in allowed_dirs)
+
+    return {
+        "skills": [p for p in disc["skills"] if under_allowed(p)],
+        "hide": [p for p in disc["hide"] if under_allowed(p)],
+        "agents": [p for p in disc["agents"] if under_allowed(p)],
+        "commands": [p for p in disc["commands"] if under_allowed(p)],
+        "mcp": find_mcp_servers(root, scan_dirs=allowed_dirs),
     }
 
 
@@ -299,6 +332,37 @@ def merge_opencode(existing, cfg):
     return existing
 
 
+def _norm(p):
+    return os.path.normpath(str(p))
+
+
+def prune_source_entries(existing, target_kind, target_path, source_root, all_units, source_skill_names):
+    """Remove stale entries for this source before merging fresh config.
+
+    `merge_opencode()` is additive by design, which is fine for combining marketplaces,
+    but wrong for re-running ingest on the same source with a stricter Claude enablement
+    filter. In that case, paths for previously enabled plugins would linger forever.
+    """
+    skills = existing.get("skills") or {}
+    old_paths = list(skills.get("paths") or [])
+    if old_paths:
+        managed = {_norm(sk) for _name, sk in all_units}
+        kept = []
+        for raw in old_paths:
+            resolved = Path(raw)
+            if not resolved.is_absolute():
+                resolved = (target_path.parent / resolved).resolve()
+            if _norm(resolved) in managed:
+                continue
+            kept.append(raw)
+        skills["paths"] = kept
+
+    perm = ((existing.get("permission") or {}).get("skill") or {})
+    for name in source_skill_names:
+        if name != "*":
+            perm.pop(name, None)
+
+
 def _load_json(path):
     try:
         return json.loads(Path(path).expanduser().read_text())
@@ -337,6 +401,22 @@ def claude_enablement(root):
     return enabled, disabled, (user.get("mcpServers") or {})
 
 
+def filter_units_by_enablement(units, enabled, disabled):
+    if enabled:
+        return [(n, sk) for (n, sk) in units if n in enabled and n not in disabled]
+    if disabled:
+        return [(n, sk) for (n, sk) in units if n not in disabled]
+    return list(units)
+
+
+def default_agent_out_dir(target_keys, explicit_out_dir):
+    if explicit_out_dir:
+        return explicit_out_dir
+    if "global" in target_keys:
+        return str(Path.home() / ".config" / "opencode" / "agent")
+    return ".opencode/agent"
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("source", nargs="?", help="local path or git URL of the marketplace/plugin/repo")
@@ -358,7 +438,8 @@ def main():
                     help="add an `instructions` array so OpenCode auto-loads memory at session start "
                          "(AGENTS.md + ~/.claude/memory/memory.md), replacing the Claude SessionStart hook")
     ap.add_argument("--opencode-json", help="explicit single config file (use with --config-target global or project)")
-    ap.add_argument("--opencode-agent-dir", default=".opencode/agent")
+    ap.add_argument("--opencode-agent-dir",
+                    help="output directory for generated agents (default: ~/.config/opencode/agent when any global target is used, otherwise .opencode/agent)")
     ap.add_argument("--apply", action="store_true", help="write the config and generate agents")
     ap.add_argument("--add-resolution-block", action="store_true",
                     help="add the ${CLAUDE_PLUGIN_ROOT}/plugin:skill resolution block to the rules file "
@@ -387,12 +468,20 @@ def main():
     if args.respect_claude_settings:
         enabled, disabled, user_mcp = claude_enablement(root)
         if enabled or disabled:
-            units = [(n, sk) for (n, sk) in units if n not in disabled]
+            units = filter_units_by_enablement(units, enabled, disabled)
             print(f"respect-claude-settings: {len(disabled)} disabled plugin(s) excluded "
                   f"({', '.join(sorted(disabled)) or 'none'})")
+            if enabled:
+                print(f"respect-claude-settings: {len(enabled)} enabled plugin(s) included "
+                      f"({', '.join(sorted(enabled))})")
+    disc = filter_discovery_to_units(root, kind, disc, units)
     routed = {}
+    target_keys = set()
     for pname, sk in units:
         for tk in route(pname, args):
+            target_keys.add(tk)
+            if not disc["skills"]:
+                continue
             if tk == "project":
                 try:
                     p = os.path.relpath(sk, target_paths["project"].parent)
@@ -403,16 +492,21 @@ def main():
             routed.setdefault(tk, []).append(p)
 
     deny = [] if args.no_deny else sorted({skill_name(s) for s in disc["hide"]})
+    source_skill_names = sorted({skill_name(s) for s in disc["skills"]})
     fragments = {}
-    for tk, paths in routed.items():
-        cfg = {"skills": {"paths": list(dict.fromkeys(paths))}}
+    for tk in sorted(target_keys):
+        cfg = {}
+        paths = list(dict.fromkeys(routed.get(tk, [])))
+        if paths:
+            cfg["skills"] = {"paths": paths}
         if args.wire_memory:
             cfg["instructions"] = ["AGENTS.md", "~/.claude/memory/memory.md"]
         if deny:
             cfg["permission"] = {"skill": {"*": "allow", **{d: "deny" for d in deny}}}
         if disc["mcp"]:
             cfg["mcp"] = to_opencode_mcp(disc["mcp"])
-        fragments[tk] = cfg
+        if cfg:
+            fragments[tk] = cfg
 
     # User-scope MCP (from ~/.claude/settings.json) is a per-user concern, not a
     # per-project one: it belongs in the user's global OpenCode config and must not
@@ -425,6 +519,8 @@ def main():
             gmcp.setdefault(mname, mcfg)
         print(f"respect-claude-settings: {len(user_mcp)} user-scope MCP server(s) -> global only "
               f"({', '.join(sorted(user_mcp))})")
+
+    agent_out_dir = default_agent_out_dir(target_keys or {args.config_target}, args.opencode_agent_dir)
 
     print(f"source: {root}  ({kind})")
     print(f"resolve: {note}")
@@ -463,6 +559,7 @@ def main():
                 existing = json.loads(target.read_text())
             except json.JSONDecodeError:
                 print(f"WARN: {target} is not valid JSON - writing a fresh file", file=sys.stderr)
+        prune_source_entries(existing, tk, target, root, all_units, source_skill_names)
         merge_opencode(existing, cfg)
         try:
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -478,7 +575,7 @@ def main():
     if disc["agents"]:
         agent_dirs = sorted({str(Path(a).parent) for a in disc["agents"]})
         cmd = [sys.executable, str(Path(__file__).resolve().parent / "sync_agents.py"),
-               *agent_dirs, "--out-dir", args.opencode_agent_dir]
+               *agent_dirs, "--out-dir", agent_out_dir]
         print("generating agents: " + " ".join(cmd))
         subprocess.run(cmd)
 
