@@ -2,6 +2,27 @@
 
 All notable changes to the opencode-sync skill.
 
+## [1.6.1] - 2026-06-19
+
+### Added
+- Source selection guidance: local `~/Projects` clones are the preferred ingest source for active
+  plugin development, while `~/.claude/plugins/cache/...` snapshots are the source of truth for
+  exact installed-version parity.
+- Prompt-box autocomplete guidance: skills show under `/skills`, but command-style completion
+  generally needs a command wrapper rather than a skill alone.
+- Local unit tests for `ingest_source.py` helper behaviour.
+
+### Changed
+- `ingest_source.py` now respects enabled plugin lists per marketplace instead of only pruning
+  explicit disables, so newly disabled plugins no longer linger in OpenCode config from old runs.
+- Global sync now writes generated agents to `~/.config/opencode/agent` by default instead of a
+  repo-local `.opencode/agent`, making globally synced agents actually visible outside the source
+  repo.
+- Official Claude cache MCP-only plugins such as `context7` and `serena` are now ingested from the
+  direct `.mcp.json` shape.
+- Marketplace discovery filtering now keeps agents and MCP scoped to the enabled plugin roots,
+  avoiding accidental loss of agent output when a marketplace is partially enabled.
+
 ## [1.6.0] - 2026-06-18
 
 ### Changed

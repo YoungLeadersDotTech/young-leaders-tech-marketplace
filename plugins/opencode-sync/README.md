@@ -32,6 +32,47 @@ You can also use the skill folder on its own: drop `skills/opencode-sync/` into 
 point OpenCode `skills.paths` at it (this marketplace's root `opencode.json` already does), or zip
 it for a Cowork upload.
 
+## Source Strategy
+
+When deciding what path to ingest, use this precedence:
+
+1. **Local development clone under `~/Projects/`** - use this when you are actively editing the plugin or marketplace. OpenCode should mirror the working tree you are changing, not a cached install snapshot.
+2. **Claude plugin cache under `~/.claude/plugins/cache/...`** - use this when you want exact parity with what Claude Code currently has installed. This is especially important for version-pinned installs and MCP-only plugins that do not have a normal marketplace checkout.
+3. **Fresh clone** - use this when you do not already have the source locally. Prefer a normal repo checkout (`~/Projects` or `~/.opencode-sources`) over editing the cache directly.
+
+Practical rule:
+
+- **Installed plugin parity** -> ingest from the Claude cache snapshot.
+- **Local development** -> ingest from the repo clone.
+
+The cache is the right source of truth for "what Claude has installed right now". A repo clone is the right source of truth for "what I am developing locally".
+
+## Visibility Rules
+
+There are two separate visibility surfaces in OpenCode:
+
+- **Skills** come from `skills.paths` in `opencode.json`.
+- **Agents** come from generated files under an OpenCode agent discovery directory.
+
+`opencode-sync` now defaults the generated agent output directory based on the config target:
+
+- `--config-target global` -> `~/.config/opencode/agent`
+- `--config-target project` -> `.opencode/agent`
+- explicit `--opencode-agent-dir` overrides both
+
+If your skills are visible but your agents are not, the first thing to check is **where the sync wrote the generated agent files**.
+
+## Prompt Box Autocomplete
+
+Skills and commands are different in OpenCode:
+
+- Skills appear under `/skills` and can be invoked by name there.
+- Skills do **not** currently get the same prompt-box autocomplete behaviour as commands.
+
+From the Toast Slack discussion on 2026-06-19: if prompt-box autocomplete matters, the current workaround is to expose that workflow as a **command** instead of only a skill. There is upstream OpenCode work in flight, but it is not something a plugin can fully patch around today.
+
+That means command wrappers are a valid future extension for `opencode-sync`, but they are not emitted by default today.
+
 ## Quick start
 
 Scripts live under `skills/opencode-sync/scripts/`:
