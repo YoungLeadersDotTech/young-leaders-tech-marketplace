@@ -1,6 +1,10 @@
 {
   "name": "young-leaders-tech-marketplace",
-  "version": "1.5.1",
+<<<<<<< HEAD
+  "version": "1.5.6",
+=======
+  "version": "1.5.5",
+>>>>>>> e695636 (fix: sync opencode and scrub public docs)
   "description": "Personal Claude Code plugin marketplace",
   "owner": {
     "name": "Young Leaders Tech",
@@ -16,14 +20,14 @@
     {
       "name": "terminal-setup-macos",
       "source": "./plugins/terminal-setup-macos",
-      "version": "1.2.0",
-      "description": "Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown-preview kit (MacDown 3000, grip, entr, OSC 8 paths)"
+      "version": "1.2.2",
+      "description": "Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown preview and clickable-path extras."
     },
     {
       "name": "update-readme",
       "source": "./plugins/update-readme",
-      "version": "1.0.1",
-      "description": "Universal README updater. Scans target, classifies repo type (plugin, marketplace, library, monorepo), asks detail level, generates. Auto-invoke on 'update readme', 'refresh readme'. Skip Toast services, one-line edits, empty repos."
+      "version": "1.0.3",
+      "description": "Universal README updater. Scans target, classifies repo type (plugin, marketplace, library, service repo, monorepo), asks detail level, and generates. Auto-invoke on 'update readme' and 'refresh readme'."
     },
     {
       "name": "standalone-skills",
@@ -32,16 +36,16 @@
       "description": "Self-contained, Cowork-ready skills with no cross-skill or external plugin dependencies. Currently bundles diy-build-companion: plan and run DIY builds with energy-aware work blocks, cross-device Google Drive state, and a child-safety veto gate."
     },
     {
-      "name": "enablement-html-renderer",
-      "source": "./plugins/enablement-html-renderer",
-      "version": "1.2.2",
-      "description": "Packages finished enablement material into one self-contained HTML file where the reader toggles format: bullets, prose, visual diagram, comic, or cheat sheet. Theme-aware diagrams, URL auto-linking, and an AI-ism voice gate."
-    },
-    {
       "name": "opencode-sync",
       "source": "./plugins/opencode-sync",
-      "version": "1.6.1",
+      "version": "1.6.2",
       "description": "Keep one canonical agent ecosystem usable on both Claude Code and OpenCode: generate OpenCode agents/commands/MCP from Claude sources, validate both runtimes' rules, detect drift, and ingest marketplaces or repos for OpenCode."
+    },
+    {
+      "name": "enablement-html-renderer",
+      "source": "./plugins/enablement-html-renderer",
+      "version": "1.2.3",
+      "description": "Packages finished enablement material into one self-contained HTML file where the reader toggles format: bullets, prose, visual diagram, comic, or cheat sheet. Theme-aware diagrams, URL auto-linking, and an AI-ism voice gate."
     }
   ]
 }

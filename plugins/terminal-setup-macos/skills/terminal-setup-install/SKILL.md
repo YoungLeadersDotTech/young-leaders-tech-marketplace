@@ -1,6 +1,6 @@
 ---
 name: terminal-setup-install
-description: Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown-preview kit (MacDown 3000, grip, entr, OSC 8 paths). Auto-invoke when user is setting up a Mac terminal stack from scratch or running the meta-guide install flow.
+description: Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown preview and clickable-path extras.
 allowed-tools: [Bash, Read, Write, Edit, AskUserQuestion]
 version: 1.1.0
 category: Setup
@@ -26,6 +26,10 @@ Do NOT invoke for:
 - Already-installed full stacks where the user just wants to tweak one thing
 
 ## What this skill does
+
+If `AskUserQuestion` is unavailable (for example on OpenCode or Cowork), present the same extras
+choice as a plain-text lettered list and continue from the user's written answer instead of
+stopping.
 
 1. **Preflight.** Detects what's already installed and skips it.
 2. **Core install** in this exact order (sequential to avoid Homebrew portable-Ruby lock conflicts):
@@ -388,4 +392,4 @@ Tell the user:
 ## See also
 
 - The companion blog post (with screenshots): the meta-guide that taught this pattern.
-- The original install PDF and FAQ PDF (April 2026 internal Toast guide; this skill encodes both their happy paths and their bugs).
+- The original install PDF and FAQ PDF (April 2026 guide; this skill encodes both their happy paths and their bugs).

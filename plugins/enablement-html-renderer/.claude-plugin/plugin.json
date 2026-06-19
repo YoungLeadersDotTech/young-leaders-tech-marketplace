@@ -3,7 +3,7 @@
   "description": "Packages finished enablement material (meeting summaries, workshop notes, training guides) into one self-contained HTML file where the reader toggles format: bullets, prose, visual diagram, comic, or cheat sheet. Theme-aware diagrams and an AI-ism voice gate. A handoff target, not a drafting tool.",
   "author": { "name": "Young Leaders Tech", "url": "https://youngleaders.tech" },
   "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "skills": [
     "./skills/enablement-html-renderer"
   ]

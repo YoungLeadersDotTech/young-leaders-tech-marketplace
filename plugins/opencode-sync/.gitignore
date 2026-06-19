@@ -9,6 +9,8 @@
 # regenerate them, don't track them. .opencode/ also holds the local plugin
 # node_modules. Never tracked in this repo's history.
 .opencode/
+AGENTS.md
+opencode.json
 
 # Private docs
 docs/

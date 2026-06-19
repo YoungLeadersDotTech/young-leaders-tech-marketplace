@@ -463,7 +463,8 @@ def main():
     }
 
     # Route each plugin to global / project, building skills.paths per target.
-    units = plugin_units(root, kind)
+    all_units = plugin_units(root, kind)
+    units = list(all_units)
     user_mcp = {}
     if args.respect_claude_settings:
         enabled, disabled, user_mcp = claude_enablement(root)

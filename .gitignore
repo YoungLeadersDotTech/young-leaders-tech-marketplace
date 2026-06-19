@@ -4,6 +4,12 @@
 .claude/settings.local.json
 .serena/
 
+# Local continuation plans / handoffs - may contain private paths and repo names
+builder-plans/
+
+# Packaged skill artefacts - local export output, not source
+plugins/*/skills/*.zip
+
 # Build / runtime artefacts (also scoped per-plugin where they appear)
 .toast-build/
 __pycache__/

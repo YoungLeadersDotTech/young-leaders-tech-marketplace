@@ -2,6 +2,12 @@
 
 All notable changes to the enablement-html-renderer plugin.
 
+## [1.2.3] - 2026-06-19
+
+### Changed
+- Reworded the remaining tracker-specific public docs so the shipped plugin stays generic and does
+  not imply one internal issue tracker.
+
 ## [1.2.2] - 2026-06-18
 
 ### Changed
@@ -24,7 +30,7 @@ All notable changes to the enablement-html-renderer plugin.
 ### Changed
 - First public marketplace release in `young-leaders-tech-marketplace`.
 - Sanitised marketplace metadata and install docs for public distribution.
-- Kept URL auto-linking, but removed the private issue-key auto-linking so the shipped
+- Kept URL auto-linking, but removed the tracker-specific issue-key auto-linking so the shipped
   default stays tracker-agnostic.
 
 ## [1.2.0] - 2026-06-18

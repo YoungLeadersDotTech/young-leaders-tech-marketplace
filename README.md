@@ -5,9 +5,11 @@ A small, opinionated Claude Code plugin marketplace. Works with both Claude Code
 ## What this is
 
 A personal marketplace shipping plugins for authoring Claude Code skills and agents,
-setting up a kitted macOS terminal in one shot, and refreshing READMEs across any kind
-of repo. Each plugin is self-contained with its own version, manifest, and README.
-Add the marketplace once and Claude Code picks up everything in `plugins/`.
+setting up a kitted macOS terminal in one shot, refreshing READMEs, packaging enablement
+into self-contained HTML, syncing Claude Code assets into OpenCode, and shipping
+standalone Cowork-friendly skills. Each plugin is self-contained with its own version,
+manifest, and README. Add the marketplace once and Claude Code picks up everything in
+`plugins/`.
 
 ## Quick install
 
@@ -64,9 +66,12 @@ Verify with `/plugin marketplace list`.
 
 | Plugin | Version | What it does |
 |---|---|---|
-| [skills-toolkit](./plugins/skills-toolkit/README.md) | 2.0.4 | Toolkit for authoring and validating Claude Code skills and agents. Ships `agent-author` (build / edit / package), `agent-validator` (cites `marketplace-guidelines.md` for findings), four shared skill templates, and 13 author and infrastructure templates. |
-| [terminal-setup-macos](./plugins/terminal-setup-macos/README.md) | 1.0.0 | Idempotent macOS terminal installer covering Ghostty, Oh My Zsh, Powerlevel10k, Glow, and MesloLGS Nerd Font, plus an optional markdown-preview kit (MacDown, grip, entr, OSC 8 clickable paths). Encodes the gotchas the original install guides got wrong. |
-| [update-readme](./plugins/update-readme/README.md) | 1.0.0 | Universal README updater. Scans the target, classifies repo type (plugin, marketplace, library, monorepo), asks detail level, then generates. Six-phase workflow with `Task*` tracking and `AskUserQuestion` gates at type confirmation, detail level, and write-or-dry-run. |
+| [skills-toolkit](./plugins/skills-toolkit/README.md) | 2.0.6 | Toolkit for authoring and validating Claude Code skills and agents. Ships `agent-author`, `agent-validator`, reusable templates, validator references, and installable commands for common authoring flows. |
+| [terminal-setup-macos](./plugins/terminal-setup-macos/README.md) | 1.2.2 | Idempotent macOS terminal installer covering Ghostty, Oh My Zsh, Powerlevel10k, Glow, and MesloLGS Nerd Font, plus optional markdown-preview and clickable-path extras. |
+| [update-readme](./plugins/update-readme/README.md) | 1.0.3 | Universal README updater. Scans the target, classifies repo type, asks detail level, and generates a README preview before writing. |
+| [standalone-skills](./plugins/standalone-skills/README.md) | 1.0.0 | Self-contained, Cowork-friendly skills with no cross-plugin dependencies. |
+| [opencode-sync](./plugins/opencode-sync/README.md) | 1.6.1 | Sync and validate Claude Code assets for OpenCode: ingest marketplaces or repos, validate dual-runtime portability, generate agents, and check drift. |
+| [enablement-html-renderer](./plugins/enablement-html-renderer/README.md) | 1.2.3 | Packages finished enablement content into one self-contained HTML handoff with multiple reader-selectable formats. |
 
 ## Local development helper
 
@@ -124,7 +129,7 @@ above instead.
 5. Open a PR. Once merged, run `/reload-plugins` to pick up the changes.
 
 For the full authoring + validation workflow with description quality scoring and PII
-checks, install `skills-toolkit` and use `/skills-toolkit:create-skill`.
+checks, install `skills-toolkit` and use `/create-skill` or the `skill-creator-agent` workflow.
 
 ## Marketplace structure
 
