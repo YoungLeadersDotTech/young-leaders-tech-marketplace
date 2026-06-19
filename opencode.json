@@ -4,7 +4,8 @@
     "paths": [
       "plugins/skills-toolkit/skills",
       "plugins/terminal-setup-macos/skills",
-      "plugins/update-readme/skills"
+      "plugins/update-readme/skills",
+      "plugins/opencode-sync/skills"
     ]
   }
 }

@@ -2,6 +2,12 @@
 
 All notable changes to `skills-toolkit` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.6] - 2026-06-18
+
+### Changed
+- references/marketplace-guidelines.md: section 1 updated from the 4-file rule to the 5-file rule, adding `README.md` as the fifth required file (version header + skills table). Brought section 3, section 8, and the pre-commit checklist into line, and bumped the doc to schema version 1.1. Reconciles the guidelines with the canonical rule (README is part of the version contract; a README that lags the manifest misleads marketplace browsers).
+- README.md: corrected the marketplace-guidelines summary to cite the 5-file rule.
+
 ## [2.0.5] - 2026-05-12
 
 ### Changed
