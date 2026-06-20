@@ -1,12 +1,12 @@
 # Skills Toolkit for Claude Code
 
-**Version**: 2.0.6
+**Version**: 2.0.7
 **Author**: Young Leaders Tech
 **License**: MIT
 
 ## Overview
 
-`skills-toolkit` is the authoring + validation plugin for Claude Code skills and agents in this marketplace. It ships four agents (skill-creator, skill-validator, agent-author, agent-validator), three slash commands, four reusable shared-skill templates, thirteen agent and infrastructure templates, and a marketplace-guidelines reference doc that the validator agents cite when reporting findings.
+`skills-toolkit` is the authoring + validation plugin for Claude Code skills and agents in this marketplace. It ships four agents (skill-creator, skill-validator, agent-author, agent-validator), three slash commands, four reusable shared-skill templates, thirteen agent and infrastructure templates, a deterministic plugin version-sync gate, and a marketplace-guidelines reference doc that the validator agents cite when reporting findings.
 
 ## What's Included
 
@@ -138,6 +138,17 @@ Single ground-truth doc that `agent-validator` and `skill-validator-agent` cite.
 - Migration pattern (global skill -> plugin skill)
 - Claude Code plugin schema reference
 - Severity taxonomy (BLOCKER / WARNING / INFO)
+
+### Script: `scripts/check_plugin_version_sync.py`
+
+The validator surface now includes a deterministic 5-file gate for marketplace plugins. The script checks:
+- `plugins/<name>/VERSION`
+- `plugins/<name>/CHANGELOG.md`
+- `plugins/<name>/.claude-plugin/plugin.json`
+- `.claude-plugin/marketplace.json` plugin entry
+- `plugins/<name>/README.md` version header line
+
+When you pass `--prev-marketplace`, it also asserts the top-level marketplace version advanced in the same change. `agent-validator` uses this script first for plugin-bound artefacts, then falls back to the manual checklist only if the script is unavailable.
 
 ### Examples (`examples/`)
 

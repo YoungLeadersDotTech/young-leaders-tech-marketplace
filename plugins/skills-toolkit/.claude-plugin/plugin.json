@@ -1,12 +1,12 @@
 {
   "name": "skills-toolkit",
-  "description": "Toolkit for authoring and validating Claude Code skills and agents. Adds agent-author for end-to-end build/edit/package, agent-validator citing marketplace-guidelines, plus 13 templates. Auto-invoke on 'create skill', 'validate agent', 'build agent'.",
+  "description": "Toolkit for authoring and validating Claude Code skills and agents. Adds agent-author for build/edit/package, agent-validator with a version-sync gate, plus 13 templates. Auto-invoke on 'create skill', 'validate agent', 'build agent'.",
   "author": {
     "name": "Young Leaders Tech",
     "url": "https://youngleaders.tech"
   },
   "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "commands": [
     "./commands/create-skill.md",
     "./commands/list-skills.md",
