@@ -2,26 +2,31 @@
 
 All notable changes to the opencode-sync skill.
 
-## [1.6.1] - 2026-06-19
-
-### Added
-- Source selection guidance: local `~/Projects` clones are the preferred ingest source for active
-  plugin development, while `~/.claude/plugins/cache/...` snapshots are the source of truth for
-  exact installed-version parity.
-- Prompt-box autocomplete guidance: skills show under `/skills`, but command-style completion
-  generally needs a command wrapper rather than a skill alone.
-- Local unit tests for `ingest_source.py` helper behaviour.
+## [1.6.2] - 2026-06-19
 
 ### Changed
-- `ingest_source.py` now respects enabled plugin lists per marketplace instead of only pruning
-  explicit disables, so newly disabled plugins no longer linger in OpenCode config from old runs.
-- Global sync now writes generated agents to `~/.config/opencode/agent` by default instead of a
-  repo-local `.opencode/agent`, making globally synced agents actually visible outside the source
-  repo.
-- Official Claude cache MCP-only plugins such as `context7` and `serena` are now ingested from the
-  direct `.mcp.json` shape.
-- Marketplace discovery filtering now keeps agents and MCP scoped to the enabled plugin roots,
-  avoiding accidental loss of agent output when a marketplace is partially enabled.
+- `--wire-memory` now includes repo-root `MEMORY.md` ahead of `AGENTS.md` and the global memory
+  index when the source repo tracks a project memory file, bringing OpenCode closer to the
+  memory-os project-memory-first read order without hardcoding user-specific scratch paths.
+- Added `references/memory-wiring.md` documenting exactly what memory-os injects today, what
+  `--wire-memory` reproduces on OpenCode, and what still remains outside opencode-sync.
+
+## [1.6.1] - 2026-06-19
+
+### Fixed
+- Synced the post-1.6.0 ingest fixes from the standalone `opencode-sync` repo:
+  marketplace ingests now respect the enabled plugin allow-list, prune stale `skills.paths`
+  entries on re-run, keep discovered agents and MCP scoped to the enabled plugin roots, and
+  read both `{"mcpServers": {...}}` and direct plugin-cache `.mcp.json` shapes.
+- Generated agents now default to `~/.config/opencode/agent` whenever any global config target
+  is involved, matching the documented global-visibility behaviour.
+
+### Changed
+- Synced the canonical `SKILL.md`, ingest implementation, and regression coverage from the
+  standalone Claude-side repo. Kept the marketplace `README.md` public-safe instead of copying
+  over product-specific narrative verbatim.
+- Added `tests/test_ingest_source.py` to lock the ingest behaviour that drifted after the
+  marketplace migration.
 
 ## [1.6.0] - 2026-06-18
 
@@ -35,7 +40,7 @@ All notable changes to the opencode-sync skill.
   into `.claude/skills/`, point OpenCode `skills.paths` at it, or zip it for a Cowork upload.
 - CI (`.github/workflows/ci.yml`) updated to the new `skills/opencode-sync/scripts/` and
   `skills/opencode-sync/SKILL.md` paths; the drift manifest stays at repo root.
-- Added a root `VERSION` file (1.6.0) and `.toast-build/` to `.gitignore`.
+- Added a root `VERSION` file (1.6.0) and the local build directory to `.gitignore`.
 
 ### Notes
 - No skill logic changed. This is a packaging change (plugin wrapper added), so the skill body,
@@ -119,7 +124,7 @@ All notable changes to the opencode-sync skill.
 ## [1.1.1] - 2026-06-13
 
 ### Changed
-- CC-03 recalibrated to match the toast skill-validator ground truth: `TodoWrite` in
+- CC-03 recalibrated to match the marketplace skill-validator ground truth: `TodoWrite` in
   allowed-tools is FAIL (use Task* variants), generic `Task` is now WARN not FAIL
   (Task / Agent is a valid subagent-dispatch tool). Added `Agent` to known tools.
 

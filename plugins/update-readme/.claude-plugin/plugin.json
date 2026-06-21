@@ -1,12 +1,12 @@
 {
   "name": "update-readme",
-  "description": "Universal README updater. Scans target, classifies repo type (plugin, marketplace, library, monorepo), asks detail level, generates. Auto-invoke on 'update readme', 'refresh readme'. Skip Toast services, one-line edits, empty repos.",
+  "description": "Universal README updater. Scans target, classifies repo type (plugin, marketplace, library, service repo, monorepo), asks detail level, and generates. Auto-invoke on 'update readme' and 'refresh readme'.",
   "author": {
     "name": "Young Leaders Tech",
     "url": "https://youngleaders.tech"
   },
   "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "commands": [
     "./commands/update-readme.md"
   ],

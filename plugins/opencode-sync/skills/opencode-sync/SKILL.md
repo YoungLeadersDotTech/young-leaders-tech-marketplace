@@ -126,7 +126,7 @@ All writes preview-first. Work on a branch, never commit to main, open a PR.
 
 1. **Skills**: single-source; run `validate_dual.py --target opencode <paths>` and fix-forward portability warnings in the canonical file.
 2. **Agents**: `sync_agents.py --config .opencode-sync/config.json` emits translated files with a GENERATED header. Per-file failures (E3, E4, E5) skip and continue.
-3. **Commands** (optional): most ecosystems are skills-only; OpenCode exposes each skill as `/name`, but prompt-box autocomplete generally needs a command wrapper rather than a skill alone.
+3. **Commands** (optional): most ecosystems are skills-only; OpenCode exposes each skill as `/name`.
 4. **MCP config**: emit the `opencode.json` `mcp` block, diff-first (MCP runs code).
 5. **Manifest**: `check_drift.py --update`.
 6. **Claude plugin housekeeping**: apply the 4/5-file version rule before the PR.
@@ -149,15 +149,15 @@ Point the assessor at a file, plugin, repo, or `.claude` tree. It discovers SKIL
 Onboard any Claude Code marketplace, plugin, or plain repo so OpenCode can find and run its skills, agents, and tools. One entry point, three source types, auto-detected. Driven by `scripts/ingest_source.py`; full exposure mechanics in `references/skill-exposure.md`.
 
 1. **Resolve the source** (`python3 scripts/ingest_source.py <path-or-url>`). Local path is used directly. For a URL the script searches `--search-roots` (default `~/Projects`) for an existing clone:
-   - **Found**: reports currency (uncommitted, ahead/behind; add `--fetch`). Confirm it is current before using.
-   - **Not found** (exit 3, `URL_NOT_FOUND_LOCALLY`): ask the user (AskUserQuestion): **(A) I already have it** -> `--local-path <dir>`; **(B) Clone it** -> a second question confirms where (`~/.opencode-sources` recommended, `~/Projects`, or typed) -> `--clone-into <dir>`.
+    - **Found**: reports currency (uncommitted, ahead/behind; add `--fetch`). Confirm it is current before using.
+    - **Not found** (exit 3, `URL_NOT_FOUND_LOCALLY`): ask the user (AskUserQuestion): **(A) I already have it** -> `--local-path <dir>`; **(B) Clone it** -> a second question confirms where (`~/.opencode-sources` recommended, `~/Projects`, or typed) -> `--clone-into <dir>`.
    - **Source choice rule**: for a plugin the user is actively developing, prefer the repo clone under `~/Projects`. For exact parity with what Claude Code has installed, prefer the snapshot under `~/.claude/plugins/cache/...`. The cache is authoritative for installed versioning; the repo clone is authoritative for local edits.
 2. **Choose the enablement strategy** (AskUserQuestion; plain-text lettered fallback on OpenCode). This is the headline choice - it decides which plugins/skills/MCP get exposed:
    - **(A) Respect Claude settings (recommended)** - mirror what Claude Code has enabled on this machine: pass `--respect-claude-settings`. Exposes only the enabled plugins, denies the disabled ones, and emits user-scope MCP to the GLOBAL config. The turnkey path - OpenCode inherits exactly the machine's Claude enablement, so nothing that is on is silently missing and nothing that is off leaks in.
    - **(B) Per-repo routing** - place things yourself. A follow-up AskUserQuestion offers **All global** (`~/.config/opencode/opencode.json`, everywhere), **All project** (`opencode.json` in the checkout, portable relative paths), **Both**, or **Per-plugin**. Pass `--config-target global|project|both`; for per-plugin, list the discovered plugins with a default target and let the user name exceptions as `--global-plugins NAME...` / `--project-plugins NAME...`. Routing is per plugin, so one ingest can populate both config files.
    - **(C) Enable-all override** - expose every skill and skip the reference-only deny-list: pass `--no-deny`. Use when the user wants everything on to prune later.
 
-   These compose: `--respect-claude-settings` decides *what* is exposed, `--config-target` decides *where* the enabled plugins land (default project; user-scope MCP always goes global), and `--no-deny` is the escape hatch when mirroring is too strict. Add `--wire-memory` with any strategy to wire OpenCode's session-start memory read (`instructions: ["AGENTS.md", "~/.claude/memory/memory.md"]`), replacing the Claude SessionStart hook.
+   These compose: `--respect-claude-settings` decides *what* is exposed, `--config-target` decides *where* the enabled plugins land (default project; user-scope MCP always goes global), and `--no-deny` is the escape hatch when mirroring is too strict. Add `--wire-memory` with any strategy to wire OpenCode's session-start memory read. When the repo tracks `MEMORY.md`, the instructions order becomes project memory first, then `AGENTS.md`, then `~/.claude/memory/memory.md`. See `references/memory-wiring.md` for the remaining gap versus memory-os.
 3. **Preview** (dry-run, the default): the script prints the detected type, discovered counts, the deny-list, and the exact config fragment(s) to merge per target. Confirm before writing.
 4. **Apply** (`--apply`): merges `skills.paths` + `permission.skill` deny-list + `mcp` blocks into each target config, then delegates agent generation to `sync_agents.py`. A non-writable target (for example a global config the runtime cannot reach) degrades gracefully - the fragment is printed for manual application. The hide set is skills that are BOTH `disable-model-invocation: true` AND `user-invocable: false`. Generated agents default to `~/.config/opencode/agent` when any global target is in play, otherwise `.opencode/agent`.
 5. **Offer the resolution block.** The preview reports the source's rules-file state. If the source has no `AGENTS.md`/`CLAUDE.md`, or one missing the plugin skill resolution block described in `references/skill-exposure.md`, ask the user whether to add it. On yes, pass `--add-resolution-block` - it appends to `AGENTS.md` (or to `CLAUDE.md` so it is not shadowed), or creates `AGENTS.md` if neither exists.
@@ -188,5 +188,6 @@ Prompt-box autocomplete note: skills show under `/skills`, but if the user wants
 - `references/tool-translation.md` - tool-name map, degradation recipes, capability preamble
 - `references/validator-rules.md` - the dual-runtime rule inventory (SH / CC / OC / TR)
 - `references/skill-exposure.md` - how plugin skills reach OpenCode (skills.paths, permission.skill, AGENTS.md resolution)
+- `references/memory-wiring.md` - what `--wire-memory` reproduces from memory-os, and what it does not
 - `scripts/ingest_source.py` - Mode E: resolve a source, discover, emit OpenCode config
 - `scripts/sync_agents.py`, `scripts/validate_dual.py`, `scripts/check_drift.py` - the executable side of Modes B, C, D

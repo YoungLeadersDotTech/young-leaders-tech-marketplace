@@ -1,12 +1,12 @@
 {
   "name": "terminal-setup-macos",
-  "description": "Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown-preview kit (MacDown 3000, grip, entr, OSC 8 paths)",
+  "description": "Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown preview and clickable-path extras.",
   "author": {
     "name": "Young Leaders Tech",
     "url": "https://youngleaders.tech"
   },
   "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "commands": [
     "./commands/terminal-setup-install.md"
   ],
