@@ -2,6 +2,27 @@
 
 All notable changes to the opencode-sync skill.
 
+## [1.6.3] - 2026-06-25
+
+### Fixed
+- `ingest_source.py --respect-claude-settings` no longer treats Claude's explicit enabled plugin
+  list as a hard allow-list. Non-disabled sibling plugins now remain available, which restores
+  discovery and generation of assets such as `skills-toolkit` agents during marketplace ingests.
+
+### Added
+- Catalogue-style verification inside `ingest_source.py`: the ingest preview now compares expected
+  versus discovered skills, agents, commands, and hooks using the same location rules as
+  `catalogue-tools`.
+- Regression coverage for the plugin-retention bug, catalogue-style verification, and repo-scoped
+  Claude MCP routing.
+
+### Changed
+- Claude MCP routing is now split by scope: user `mcpServers` stay global, while repo
+  `.claude/settings.json` and `.claude/settings.local.json` `mcpServers` route to the project
+  `opencode.json` fragment.
+- Hooks are now an explicit verification-only surface. Ingest reports them, but does not try to
+  materialise them into OpenCode config.
+
 ## [1.6.2] - 2026-06-19
 
 ### Changed

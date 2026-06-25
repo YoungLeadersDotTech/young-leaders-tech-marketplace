@@ -182,6 +182,124 @@ def find_mcp_servers(root, scan_dirs=None):
     return servers
 
 
+def catalogue_style_assets(scan_dirs):
+    """Enumerate assets using the same location rules as catalogue-tools."""
+    assets = {"skills": [], "agents": [], "commands": [], "hooks": []}
+    for base in scan_dirs:
+        base = Path(base)
+        for subdir, bucket in (("agents", "agents"), ("commands", "commands")):
+            d = base / subdir
+            if d.is_dir():
+                for f in sorted(d.glob("*.md")):
+                    if not f.name.startswith(".") and not f.name.endswith(".zip"):
+                        assets[bucket].append(str(f.resolve()))
+
+        skills_dir = base / "skills"
+        if skills_dir.is_dir():
+            for sd in sorted(skills_dir.iterdir()):
+                if not sd.is_dir() or sd.name.startswith("."):
+                    continue
+                sf = sd / "SKILL.md"
+                if sf.exists():
+                    assets["skills"].append(str(sf.resolve()))
+
+        hooks_dir = base / "hooks"
+        if hooks_dir.is_dir():
+            for f in sorted(hooks_dir.iterdir()):
+                if f.is_file() and not f.name.startswith(".") and not f.name.endswith(".zip"):
+                    assets["hooks"].append(str(f.resolve()))
+
+    for key in assets:
+        assets[key] = sorted(set(assets[key]))
+    return assets
+
+
+def verification_scan_dirs(root, kind, allowed_units):
+    if kind != "marketplace":
+        return [root]
+    dirs = []
+    for _name, sk in allowed_units:
+        dirs.append((sk.parent if sk.name == "skills" else sk).resolve())
+    return sorted(set(dirs))
+
+
+def claude_mcp_sources(root):
+    user = _load_json(Path.home() / ".claude" / "settings.json")
+    proj = _load_json(root / ".claude" / "settings.json")
+    local = _load_json(root / ".claude" / "settings.local.json")
+    return {
+        "user": user.get("mcpServers") or {},
+        "project": proj.get("mcpServers") or {},
+        "local": local.get("mcpServers") or {},
+    }
+
+
+def merge_claude_mcp_sources(root):
+    sources = claude_mcp_sources(root)
+    repo_mcp = {}
+    repo_mcp.update(sources["project"])
+    repo_mcp.update(sources["local"])
+    return sources["user"], repo_mcp, sources
+
+
+def verify_capture(root, kind, allowed_units, disc):
+    scan_dirs = verification_scan_dirs(root, kind, allowed_units)
+    expected = catalogue_style_assets(scan_dirs)
+    actual = {
+        "skills": sorted({str(Path(p).resolve()) for p in disc["skills"]}),
+        "agents": sorted({str(Path(p).resolve()) for p in disc["agents"]}),
+        "commands": sorted({str(Path(p).resolve()) for p in disc["commands"]}),
+    }
+    missing = {
+        key: sorted(set(expected[key]) - set(actual[key]))
+        for key in ("skills", "agents", "commands")
+    }
+    return {
+        "scan_dirs": [str(p) for p in scan_dirs],
+        "expected": expected,
+        "missing": missing,
+        "claude_mcp": claude_mcp_sources(root),
+        "plugin_file_mcp": sorted(disc["mcp"].keys()),
+    }
+
+
+def print_verification(verification):
+    expected = verification["expected"]
+    missing = verification["missing"]
+    print(
+        "verification: expected "
+        f"{len(expected['skills'])} skills, {len(expected['agents'])} agents, "
+        f"{len(expected['commands'])} commands, {len(expected['hooks'])} hooks"
+    )
+    for key in ("skills", "agents", "commands"):
+        if missing[key]:
+            print(
+                f"verification: missing {key} after discovery ({len(missing[key])}) - "
+                + ", ".join(Path(p).name for p in missing[key][:5])
+                + (" ..." if len(missing[key]) > 5 else "")
+            )
+    if expected["hooks"]:
+        print(
+            f"verification: hooks present but not managed by ingest ({len(expected['hooks'])}) - "
+            + ", ".join(Path(p).name for p in expected["hooks"][:5])
+            + (" ..." if len(expected["hooks"]) > 5 else "")
+        )
+
+    mcp = verification["claude_mcp"]
+    print(
+        "verification: Claude MCP sources - "
+        f"plugin-file={len(verification['plugin_file_mcp'])}, "
+        f"user={len(mcp['user'])}, project={len(mcp['project'])}, local={len(mcp['local'])}"
+    )
+    if mcp["project"] or mcp["local"]:
+        names = sorted(set(mcp["project"].keys()) | set(mcp["local"].keys()))
+        print(
+            "verification: project/local Claude mcpServers need explicit routing if you want them "
+            "materialised in OpenCode - "
+            + ", ".join(names)
+        )
+
+
 def discover_source(root, kind):
     skills, agents, commands = [], [], []
     if kind == "marketplace":
@@ -381,11 +499,12 @@ def marketplace_name(root):
 
 
 def claude_enablement(root):
-    """Read Claude settings (user + project + local) -> (enabled set, disabled set, user_mcp dict).
+    """Read Claude settings -> (enabled, disabled, user_mcp, repo_mcp).
 
     enabledPlugins keys are 'plugin@marketplace'; only entries for this source's marketplace count.
     user_mcp is the user-scope mcpServers from ~/.claude/settings.json - a per-user concern that
-    belongs in the global OpenCode config, never duplicated per project.
+    belongs in the global OpenCode config. repo_mcp merges project + local mcpServers and belongs
+    in the project OpenCode config.
     """
     mkt = marketplace_name(root)
     user = _load_json(Path.home() / ".claude" / "settings.json")
@@ -398,12 +517,14 @@ def claude_enablement(root):
             if m and m != mkt:
                 continue
             (enabled if on else disabled).add(name)
-    return enabled, disabled, (user.get("mcpServers") or {})
+    user_mcp, repo_mcp, _sources = merge_claude_mcp_sources(root)
+    return enabled, disabled, user_mcp, repo_mcp
 
 
 def filter_units_by_enablement(units, enabled, disabled):
-    if enabled:
-        return [(n, sk) for (n, sk) in units if n in enabled and n not in disabled]
+    # Claude's enabledPlugins reflects what is currently installed or toggled on,
+    # not a complete marketplace allow-list. Only explicit disables should remove
+    # a plugin from an ingest; otherwise sibling skills and agents disappear.
     if disabled:
         return [(n, sk) for (n, sk) in units if n not in disabled]
     return list(units)
@@ -474,16 +595,18 @@ def main():
     all_units = plugin_units(root, kind)
     units = list(all_units)
     user_mcp = {}
+    repo_mcp = {}
     if args.respect_claude_settings:
-        enabled, disabled, user_mcp = claude_enablement(root)
+        enabled, disabled, user_mcp, repo_mcp = claude_enablement(root)
         if enabled or disabled:
             units = filter_units_by_enablement(units, enabled, disabled)
-            print(f"respect-claude-settings: {len(disabled)} disabled plugin(s) excluded "
+            print(f"respect-claude-settings: {len(disabled)} plugin(s) explicitly disabled in Claude settings "
                   f"({', '.join(sorted(disabled)) or 'none'})")
             if enabled:
-                print(f"respect-claude-settings: {len(enabled)} enabled plugin(s) included "
+                print(f"respect-claude-settings: {len(enabled)} plugin(s) explicitly enabled in Claude settings "
                       f"({', '.join(sorted(enabled))})")
     disc = filter_discovery_to_units(root, kind, disc, units)
+    verification = verify_capture(root, kind, units, disc)
     routed = {}
     target_keys = set()
     for pname, sk in units:
@@ -528,6 +651,13 @@ def main():
             gmcp.setdefault(mname, mcfg)
         print(f"respect-claude-settings: {len(user_mcp)} user-scope MCP server(s) -> global only "
               f"({', '.join(sorted(user_mcp))})")
+    if repo_mcp:
+        pfrag = fragments.setdefault("project", {})
+        pmcp = pfrag.setdefault("mcp", {})
+        for mname, mcfg in to_opencode_mcp(repo_mcp).items():
+            pmcp.setdefault(mname, mcfg)
+        print(f"respect-claude-settings: {len(repo_mcp)} repo-scope MCP server(s) -> project only "
+              f"({', '.join(sorted(repo_mcp))})")
 
     agent_out_dir = default_agent_out_dir(target_keys or {args.config_target}, args.opencode_agent_dir)
 
@@ -535,6 +665,7 @@ def main():
     print(f"resolve: {note}")
     print(f"discovered: {len(disc['skills'])} skills ({len(disc['hide'])} reference-only), "
           f"{len(disc['agents'])} agents, {len(disc['commands'])} commands, {len(disc['mcp'])} MCP server(s)")
+    print_verification(verification)
     routing = f"config-target={args.config_target}"
     if args.global_plugins:
         routing += f", global={args.global_plugins}"
