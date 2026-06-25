@@ -1,6 +1,6 @@
 ---
 name: agent-validator
-description: Validates Claude Code subagents against marketplace guidelines. Checks frontmatter, tools, em-dashes, PII, description cap. Cites references/marketplace-guidelines.md sections by number. Auto-invoke on 'validate agent', 'agent quality check'.
+description: Validates Claude Code subagents against marketplace guidelines. Checks frontmatter, tools, em-dashes, PII, description cap, and plugin version-sync. Cites references/marketplace-guidelines.md sections by number. Auto-invoke on 'validate agent'.
 tools: Read, Glob, Grep, Bash, TaskCreate, TaskUpdate, TaskGet, TaskList
 ---
 
@@ -115,9 +115,17 @@ Check `install.sh`:
 - Contains placeholders that have been replaced (no literal `{{AGENT_NAME}}`, `{{VERSION}}`, etc remaining).
 
 Plugin-level checks (only if Phase 1 detected `.claude-plugin/plugin.json`):
-- `plugin.json` `version` matches `VERSION`.
-- `marketplace.json` plugin entry `version` matches `plugin.json` `version` (per section 4).
-- `CHANGELOG.md` exists and has a dated entry for the current version (per section 5).
+- Prefer `scripts/check_plugin_version_sync.py` when it exists in the plugin root.
+  - Run from the plugin root: `python3 scripts/check_plugin_version_sync.py --plugin <plugin-dir> --marketplace <marketplace.json>`
+  - Run from the repo root: `python3 plugins/skills-toolkit/scripts/check_plugin_version_sync.py --plugin plugins/skills-toolkit --marketplace .claude-plugin/marketplace.json`
+  - Exit `0`: PASS, cite section 1 and section 4 as satisfied.
+  - Exit `1`: every reported mismatch is a BLOCKER. Quote the script output in the report.
+  - Exit `2` or missing Python / missing script: note the execution failure and fall back to the manual checks below.
+- Manual fallback checks:
+  - `plugin.json` `version` matches `VERSION`.
+  - `marketplace.json` plugin entry `version` matches `plugin.json` `version` (per section 4).
+  - `CHANGELOG.md` exists and has a dated entry for the current version (per section 5).
+  - `README.md` surfaces the current version in a version header line (per section 1).
 
 Each mismatch is BLOCKER per the cited section.
 
@@ -161,7 +169,7 @@ Phase 3: tools = `Read, Write, Edit, Bash, Glob, Grep, TaskCreate, TaskUpdate, T
 
 Phase 4: zero em dashes; no PII; one templates/ reference (`templates/install-script-template.sh`) - exists.
 
-Phase 5: not a bundle, but plugin context. `plugin.json` version = `2.0.0`, `VERSION` = `2.0.0`, `marketplace.json` plugin entry = `2.0.0`, CHANGELOG has `[2.0.0] - 2026-05-08` entry. PASS.
+Phase 5: not a bundle, but plugin context. `python3 plugins/skills-toolkit/scripts/check_plugin_version_sync.py --plugin plugins/skills-toolkit --marketplace .claude-plugin/marketplace.json` returns exit `0`, confirming `plugin.json`, `VERSION`, the marketplace entry, CHANGELOG heading, and README version header all agree. PASS.
 
 Phase 6: 0 BLOCKERs, 0 WARNINGs, 0 INFOs. Verdict: PASS.
 

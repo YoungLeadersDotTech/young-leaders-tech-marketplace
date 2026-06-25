@@ -8,6 +8,15 @@ All notable changes to `skills-toolkit` are documented here. Format follows [Kee
 - references/marketplace-guidelines.md: section 1 updated from the 4-file rule to the 5-file rule, adding `README.md` as the fifth required file (version header + skills table). Brought section 3, section 8, and the pre-commit checklist into line, and bumped the doc to schema version 1.1. Reconciles the guidelines with the canonical rule (README is part of the version contract; a README that lags the manifest misleads marketplace browsers).
 - README.md: corrected the marketplace-guidelines summary to cite the 5-file rule.
 
+## [2.0.7] - 2026-06-20
+
+### Added
+- scripts/check_plugin_version_sync.py: deterministic gate for the marketplace 5-file rule. Verifies VERSION, CHANGELOG heading, plugin.json, marketplace entry, and README version header all agree, and can assert the top-level marketplace patch bump when given a previous marketplace snapshot.
+
+### Changed
+- agents/agent-validator.md: Phase 5 now prefers the version-sync script for plugin-bound checks, then falls back to the manual checklist only when the script is unavailable or cannot run. This moves a repetitive manifest check out of free-form reasoning and into code.
+- README.md: documented the new plugin version-sync gate and updated the overview so the validator surface reflects the codified check.
+
 ## [2.0.5] - 2026-05-12
 
 ### Changed
