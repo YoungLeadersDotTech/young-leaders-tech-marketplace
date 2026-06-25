@@ -1,6 +1,6 @@
 # opencode-sync
 
-Version: `1.6.3`
+**Version: 1.6.3**
 
 Keep one canonical source of truth for your agent ecosystem usable on **both**
 Claude Code and OpenCode. Skills and `AGENTS.md` are single-source by design

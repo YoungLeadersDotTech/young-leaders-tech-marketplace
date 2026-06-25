@@ -116,7 +116,8 @@ Check `install.sh`:
 
 Plugin-level checks (only if Phase 1 detected `.claude-plugin/plugin.json`):
 - Prefer `scripts/check_plugin_version_sync.py` when it exists in the plugin root.
-  - Run: `python3 scripts/check_plugin_version_sync.py --plugin <plugin-dir> --marketplace <marketplace.json>`
+  - Run from the plugin root: `python3 scripts/check_plugin_version_sync.py --plugin <plugin-dir> --marketplace <marketplace.json>`
+  - Run from the repo root: `python3 plugins/skills-toolkit/scripts/check_plugin_version_sync.py --plugin plugins/skills-toolkit --marketplace .claude-plugin/marketplace.json`
   - Exit `0`: PASS, cite section 1 and section 4 as satisfied.
   - Exit `1`: every reported mismatch is a BLOCKER. Quote the script output in the report.
   - Exit `2` or missing Python / missing script: note the execution failure and fall back to the manual checks below.
@@ -168,7 +169,7 @@ Phase 3: tools = `Read, Write, Edit, Bash, Glob, Grep, TaskCreate, TaskUpdate, T
 
 Phase 4: zero em dashes; no PII; one templates/ reference (`templates/install-script-template.sh`) - exists.
 
-Phase 5: not a bundle, but plugin context. `scripts/check_plugin_version_sync.py` returns exit `0`, confirming `plugin.json`, `VERSION`, the marketplace entry, CHANGELOG heading, and README version header all agree. PASS.
+Phase 5: not a bundle, but plugin context. `python3 plugins/skills-toolkit/scripts/check_plugin_version_sync.py --plugin plugins/skills-toolkit --marketplace .claude-plugin/marketplace.json` returns exit `0`, confirming `plugin.json`, `VERSION`, the marketplace entry, CHANGELOG heading, and README version header all agree. PASS.
 
 Phase 6: 0 BLOCKERs, 0 WARNINGs, 0 INFOs. Verdict: PASS.
 

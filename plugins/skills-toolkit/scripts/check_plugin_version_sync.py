@@ -12,7 +12,7 @@ changes, all five of these must agree in the same commit or PR:
 
 marketplace.json carries two version fields and both move on a plugin change: the per-plugin
 entry (must equal VERSION) and the top-level version (a patch bump on any plugin change).
-When --prev-marketplace is given, this gate also checks that the top-level version advanced.
+When --prev-marketplace is given, this gate also checks that the top-level version advanced by patch only.
 
 Usage:
     check_plugin_version_sync.py --plugin <plugin-dir> --marketplace <marketplace.json>
@@ -154,6 +154,11 @@ def main(argv: list[str]) -> int:
         elif current_top < previous_top:
             problems.append(
                 f"top-level marketplace version went backwards ({previous.get('version')} -> {marketplace.get('version')})"
+            )
+        elif current_top[:2] != previous_top[:2] or current_top[2] != previous_top[2] + 1:
+            problems.append(
+                "top-level marketplace version must be a patch-only bump "
+                f"({previous.get('version')} -> {marketplace.get('version')})"
             )
 
     if problems:
