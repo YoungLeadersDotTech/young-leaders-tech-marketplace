@@ -1,199 +1,154 @@
 # opencode-sync
 
-**Version: 1.6.3**
+**Version**: 1.6.4
+**Author**: Young Leaders Tech
+**License**: MIT
 
-Keep one canonical source of truth for your agent ecosystem usable on **both**
-Claude Code and OpenCode. Skills and `AGENTS.md` are single-source by design
-(OpenCode reads `.claude/skills/` and `AGENTS.md` natively); agents, commands and
-MCP config are generated from the canonical Claude-side files by the bundled scripts.
+## Overview
 
-The canonical copy lives on the open side of the fence, so if Claude Code access is
-capped, everything here still runs.
+`opencode-sync` keeps one canonical agent ecosystem usable across Claude Code and OpenCode.
+Skills and rules stay single-source where possible, while agents, MCP config, and discovery wiring
+ are translated or exposed in the places OpenCode actually reads.
 
-## Repository layout
+The plugin is built around a single skill, `opencode-sync`, which covers setup, sync, validation,
+ drift detection, and marketplace or repo ingest.
 
-This marketplace plugin wraps a single skill. The skill folder is
-self-contained, so it also works on its own (OpenCode, or a Cowork upload):
+## What is included
 
-```
-.claude-plugin/
-  plugin.json            plugin manifest (lists ./skills/opencode-sync)
-skills/opencode-sync/    the skill (this folder is the standalone unit)
-  SKILL.md               the workflow: Setup, Sync, Validate, Drift, Ingest
-  scripts/               sync_agents, validate_dual, check_drift, ingest_source
-  references/            field mapping, tool translation, rule inventory, preamble
-tests/                   focused regression tests for ingest behaviour
-VERSION  CHANGELOG.md  README.md
-```
-
-## What is in here
-
-- `skills/opencode-sync/SKILL.md` - the workflow, with five modes: Setup, Sync, Validate,
-  Drift, Ingest. Runs on Claude Code (Task* phase chains, AskUserQuestion) and degrades
-  gracefully on OpenCode / Cowork.
-- `skills/opencode-sync/scripts/sync_agents.py` - generate OpenCode agent files from
-  canonical Claude Code agents. Config-driven or direct. Translates tool names, maps models,
-  writes a drift manifest, and reports every degradation.
-- `skills/opencode-sync/scripts/validate_dual.py` - dual-runtime validator. Mechanical rules
-  across four families (SH / CC / OC / TR), selectable per target. Non-zero exit on FAIL, so
-  it doubles as a CI gate.
-- `skills/opencode-sync/scripts/check_drift.py` - manifest-based drift detection
-  (`--check` / `--update`).
-- `skills/opencode-sync/scripts/ingest_source.py` - onboard a marketplace, plugin, or repo so
-  OpenCode can find and run its skills, agents, commands, and MCP config (Mode E), with a
-  catalogue-style verification pass that checks expected versus discovered coverage.
-- `skills/opencode-sync/references/` - field mapping, tool translation, the full validator
-  rule inventory, skill-exposure mechanics, and the copy-paste capability-detection preamble.
-
-## Quick start
-
-Scripts live under `skills/opencode-sync/scripts/`. Run them from the repo root:
-
-```bash
-# 1. Validate a single skill or agent for both runtimes
-python3 skills/opencode-sync/scripts/validate_dual.py --target both path/to/SKILL.md
-
-# 1b. Point it at a whole repo or plugin - it discovers every SKILL.md,
-#     agents/*.md and commands/*.md and skips docs/READMEs.
-#     Depth: shallow (one plugin) | standard (repo source) | deep (incl .claude caches)
-python3 skills/opencode-sync/scripts/validate_dual.py --list --depth standard ~/Projects/my-repo   # preview
-python3 skills/opencode-sync/scripts/validate_dual.py --target both --depth standard ~/Projects/my-repo
-
-# 2. Generate OpenCode agents from your canonical Claude agents
-python3 skills/opencode-sync/scripts/sync_agents.py --config .opencode-sync/config.json
-
-# 3. Check for drift (CI-friendly, exits 1 on drift)
-python3 skills/opencode-sync/scripts/check_drift.py --check
-```
-
-`.opencode-sync/config.json` example:
-
-```json
-{
-  "canonical_agent_dirs": [".claude/agents", "plugins/work/agents"],
-  "opencode_agent_dir": ".opencode/agent",
-  "default_agent_mode": "subagent",
-  "model_map": {
-    "sonnet": "anthropic/claude-sonnet-4-5",
-    "opus": "anthropic/claude-opus-4-1",
-    "haiku": "anthropic/claude-haiku-4-5"
-  },
-  "mcp_servers": [],
-  "claude_plugin_roots": ["plugins"],
-  "skip_paths": []
-}
-```
-
-## Validator rule families
-
-| Family | Prefix | Applies to | Automated rules |
-|---|---|---|---|
-| Shared | SH | both runtimes | 6 |
-| Claude Code | CC | Claude packaging | 4 |
-| OpenCode | OC | OpenCode schema | 5 |
-| Translation / drift | TR | portability | 4 |
-
-Claude side runs SH + CC (10), OpenCode side runs SH + OC + TR (15), sharing the 6 SH
-rules. Full inventory with severities in `references/validator-rules.md`.
+- **1 skill** - `skills/opencode-sync/SKILL.md`
+- **4 scripts** - `sync_agents.py`, `validate_dual.py`, `check_drift.py`, `ingest_source.py`
+- **Reference docs** - field mapping, tool translation, validator rules, memory wiring,
+  skill exposure, and capability guidance
+- **Regression tests** - focused ingest tests under `plugins/opencode-sync/tests/`
 
 ## Install
 
-**As a Claude Code plugin (recommended).** In this marketplace, install it with:
+Add the marketplace once:
 
-```bash
-claude plugin marketplace add YoungLeadersDotTech/young-leaders-tech-marketplace
-claude plugin install opencode-sync@young-leaders-tech-marketplace
+```text
+/plugin marketplace add git@github.com:YoungLeadersDotTech/young-leaders-tech-marketplace.git
 ```
 
-**As a standalone skill folder.** `skills/opencode-sync/` is self-contained, so you can also
-use it without the plugin wrapper:
+Install this plugin:
 
-- **Claude Code / OpenCode**: drop `skills/opencode-sync/` into `.claude/skills/` (or
-  `~/.claude/skills/`), or point OpenCode `skills.paths` at it. Both runtimes discover it
-  natively.
-- **Cowork**: zip the folder (root must be `opencode-sync/` with `SKILL.md` inside) and upload
-  it under Customize -> Skills.
+```text
+/plugin install opencode-sync@young-leaders-tech-marketplace
+```
 
-No PyYAML required - the scripts are stdlib Python 3 with a graceful fallback parser.
+Activate it in the current session:
 
-## Source Strategy
+```text
+/reload-plugins
+```
 
-When deciding what path to ingest, use this precedence:
+## Quick start
 
-1. **Local development clone under `~/Projects/`** - use this when you are actively editing the plugin or marketplace. OpenCode should mirror the working tree you are changing, not a cached install snapshot.
-2. **Claude plugin cache under `~/.claude/plugins/cache/...`** - use this when you want exact parity with what Claude Code currently has installed. This is especially important for version-pinned installs and MCP-only plugins that do not have a normal marketplace checkout.
-3. **Fresh clone** - use this when you do not already have the source locally. Prefer a normal repo checkout (`~/Projects` or `~/.opencode-sources`) over editing the cache directly.
+Run the scripts from the marketplace repo root:
 
-Practical rule:
+```bash
+# Validate one skill or agent for both runtimes
+python3 plugins/opencode-sync/skills/opencode-sync/scripts/validate_dual.py --target both path/to/SKILL.md
 
-- **Installed plugin parity** -> ingest from the Claude cache snapshot.
-- **Local development** -> ingest from the repo clone.
+# Preview discovery across a repo or plugin tree
+python3 plugins/opencode-sync/skills/opencode-sync/scripts/validate_dual.py --list --depth standard ~/Projects/my-repo
 
-The cache is the right source of truth for "what Claude has installed right now". A repo clone is the right source of truth for "what I am developing locally".
+# Run full validation
+python3 plugins/opencode-sync/skills/opencode-sync/scripts/validate_dual.py --target both --depth standard ~/Projects/my-repo
 
-## Verification Coverage
+# Generate OpenCode agents from canonical Claude agents
+python3 plugins/opencode-sync/skills/opencode-sync/scripts/sync_agents.py --config .opencode-sync/config.json
 
-`ingest_source.py` now prints a verification summary using the same location rules as the
-`catalogue-tools` scanner:
+# Check drift
+python3 plugins/opencode-sync/skills/opencode-sync/scripts/check_drift.py --check
+```
+
+If you use the skill standalone outside the plugin wrapper, the same scripts live under
+`skills/opencode-sync/scripts/` relative to that standalone skill folder.
+
+## Ingest behaviour
+
+`ingest_source.py` is the main runtime bridge for marketplaces, plugins, and repos.
+
+It now does four important things:
+
+1. keeps non-disabled sibling plugins available when `--respect-claude-settings` is used
+2. exposes plugin skills through `skills.paths`
+3. generates OpenCode agents into the correct discovery directory
+4. prints a verification summary that checks expected versus discovered coverage
+
+## Verification coverage
+
+The ingest preview uses the same location rules as the `catalogue-tools` scanner to compare what a
+ repo appears to contain versus what ingest actually discovered:
 
 - `skills/*/SKILL.md`
 - `agents/*.md`
 - `commands/*.md`
 - `hooks/*`
 
-The ingest flow compares expected assets versus discovered assets after enablement filtering.
-Skills, agents, and commands are expected to match. Hooks are reported, but remain
-verification-only because OpenCode does not have a like-for-like hook surface that this plugin can
-materialise safely.
+Skills, agents, and commands are expected to match after filtering. Hooks are reported, but remain
+ verification-only because this plugin does not materialise a hook surface into OpenCode config.
 
-## MCP Routing
+## MCP routing
 
-`opencode-sync` now treats Claude MCP sources in three buckets:
+`opencode-sync` now separates Claude MCP sources by scope:
 
-- User-scope `~/.claude/settings.json` `mcpServers` route to the global OpenCode config only.
-- Repo `.claude/settings.json` `mcpServers` route to the project `opencode.json` only.
-- Repo `.claude/settings.local.json` `mcpServers` also route to the project `opencode.json` only.
+- user-scope `~/.claude/settings.json` `mcpServers` -> global OpenCode config
+- repo `.claude/settings.json` `mcpServers` -> project `opencode.json`
+- repo `.claude/settings.local.json` `mcpServers` -> project `opencode.json`
+- plugin `.mcp.json` files -> whichever config target the ingest run is writing
 
-This keeps machine-wide auth and personal tools global, while preserving repo-scoped MCP wiring in
-the checkout that actually depends on it.
+That keeps machine-wide auth and personal tools global, while preserving repo-specific MCP wiring
+ in the checkout that actually depends on it.
 
-## Visibility Rules
+## Visibility rules
 
-There are two separate visibility surfaces in OpenCode:
+OpenCode has two separate discovery surfaces:
 
-- **Skills** come from `skills.paths` in `opencode.json`.
-- **Agents** come from generated files under an OpenCode agent discovery directory.
+- **Skills** come from `skills.paths` in `opencode.json`
+- **Agents** come from generated files under an OpenCode agent directory
 
-`opencode-sync` defaults the generated agent output directory based on the config target:
+Default agent output:
 
 - `--config-target global` -> `~/.config/opencode/agent`
 - `--config-target project` -> `.opencode/agent`
-- explicit `--opencode-agent-dir` overrides both
+- `--opencode-agent-dir` overrides both
 
-If your skills are visible but your agents are not, the first thing to check is **where the sync wrote the generated agent files**.
+If skills are visible but agents are missing, check where the sync wrote the generated agent files
+ first.
 
-## Memory Wiring
+## Memory wiring
 
 `--wire-memory` is the OpenCode-side replacement for the read half of memory-os.
 
-- If the source repo tracks `MEMORY.md` at its root, opencode-sync now wires that first.
-- It then wires `AGENTS.md`.
-- It finally wires the global memory index at `~/.claude/memory/memory.md`.
+Read order:
 
-That gets OpenCode closer to memory-os's project-memory-first behaviour, but it does not fully
-replace the Claude hooks. The exact gap is documented in `references/memory-wiring.md`.
+1. repo-root `MEMORY.md` when present
+2. `AGENTS.md`
+3. `~/.claude/memory/memory.md`
 
-## Prompt Box Autocomplete
+This gets OpenCode closer to the project-memory-first behaviour of memory-os, but it does not
+ recreate Claude's hooks in full. The exact boundary is documented in
+ `references/memory-wiring.md`.
 
-Skills and commands are different in OpenCode:
+## Prompt box autocomplete
 
-- Skills appear under `/skills` and can be invoked by name there.
-- Skills do **not** currently get the same prompt-box autocomplete behaviour as commands.
+OpenCode treats skills and commands differently:
 
-If prompt-box autocomplete matters, the current workaround is to expose that workflow as a **command** instead of only a skill. There is upstream OpenCode work in flight, but it is not something a plugin can fully patch around today.
+- skills appear under `/skills`
+- skills do not automatically get the same prompt-box autocomplete behaviour as commands
 
-That means command wrappers are a valid future extension for `opencode-sync`, but they are not emitted by default today.
+That is why command-wrapper generation remains optional future work rather than a default behaviour
+ today.
 
 ## Requirements
 
-Python 3.8+. No third-party dependencies.
+Python 3.8+ with no required third-party dependencies.
+
+## Maintainer
+
+Young Leaders Tech &middot; <https://youngleaders.tech>
+
+## License
+
+MIT

@@ -2,6 +2,13 @@
 
 All notable changes to the opencode-sync skill.
 
+## [1.6.4] - 2026-06-26
+
+### Changed
+- Refreshed `README.md` to match the current plugin workflow more accurately: corrected the
+  marketplace-repo script paths, clarified what is included, and aligned the public docs with the
+  shipped ingest verification, MCP routing, and hook-boundary behaviour.
+
 ## [1.6.3] - 2026-06-25
 
 ### Fixed

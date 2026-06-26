@@ -1,12 +1,12 @@
 {
   "name": "update-readme",
-  "description": "Universal README updater. Scans target, classifies repo type (plugin, marketplace, library, service repo, monorepo), asks detail level, and generates. Auto-invoke on 'update readme' and 'refresh readme'.",
+  "description": "Type-driven README updater. Detects repo family, confirms it with the user, asks for style, audience, and depth, then generates from the matching template workflow. Auto-invoke on 'update readme' and 'refresh readme'.",
   "author": {
     "name": "Young Leaders Tech",
     "url": "https://youngleaders.tech"
   },
   "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "commands": [
     "./commands/update-readme.md"
   ],
