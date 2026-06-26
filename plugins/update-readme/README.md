@@ -1,82 +1,89 @@
 # update-readme
 
-**Version**: 1.0.3
+**Version**: 1.1.0
 **Author**: Young Leaders Tech
 **License**: MIT
 
 ## Overview
 
-`update-readme` is a universal README refresher for any repository or sub-object.
-It auto-detects the type of the thing it is documenting (Claude Code plugin, plugin
-marketplace, generic library, service repository, monorepo, personal repo), confirms
-that classification with you, asks how detailed a README you want, and then generates
-one using sections appropriate to the type.
+`update-readme` is a type-driven README updater. It does not start by asking how long a README
+ should be. It starts by deciding what kind of README the target actually needs, confirms that
+ choice with the user, and then generates from the matching template family.
 
-It is the inverse of every "README template" repo - rather than handing you a
-boilerplate to fill in by hand, it scans what you already have and writes the README
-that fits.
+This keeps README generation structured, auditable, and safer than a generic regenerator that tries
+ to improvise a one-size-fits-all document.
 
-## What it does
+## Workflow
 
-1. **Scans the target** - parallel reads of canonical sources (existing README,
-   plugin manifest, build files, LICENSE, top-level directory listing, marketplace.json
-   if present).
-2. **Classifies** the repo type from the evidence found, surfacing the signals so the
-   classification is auditable.
-3. **Confirms with you via AskUserQuestion** - you can accept the auto-detected type
-   or override it.
-4. **Asks the detail level** - minimal / standard / comprehensive / custom.
-5. **Generates the README** using a section catalogue keyed on type + detail level.
-   Different types produce different shapes (a marketplace gets a plugins table; a
-   plugin gets command and agent tables; a service repo gets operational links when
-   they exist; etc.).
-6. **Previews and confirms** - shows you the draft, lets you write, dry-run, edit a
-   section, or cancel.
+The skill follows this control order:
 
-## Slash command
+1. **Scan the target** for signals such as plugin manifests, marketplace manifests, build files,
+   existing README content, top-level structure, and licence files.
+2. **Detect the README family** that best matches the target.
+3. **Confirm that family with the user** before generation.
+4. **Ask for presentation choices**:
+   - style
+   - audience
+   - depth
+5. **Generate from the matching template family** instead of from open-ended prose.
+6. **Preview before write** so no README is replaced without an explicit approval step.
 
-```text
-/update-readme              # interactive on cwd
-/update-readme --dry-run    # print, don't write
-/update-readme --target /some/path
-```
+## README Families
 
-## Repo types it knows about
+The current design supports these families:
 
-- Claude Code plugin marketplace (root README)
+- Claude Code plugin marketplace root
 - Individual Claude Code plugin
-- Service repository (Java / Kotlin / Dropwizard / Camel)
-- Generic open source library or app (Python / JS / Go / Rust)
-- Personal repository (dotfiles, scripts, notes)
-- Monorepo (asks which subproject)
-- Other (free text)
+- Service repository
+- Generic library or app
+- Monorepo
+- Personal repo or dotfiles
+- Other
 
-If your repo is something else, pick "Other" and the skill will fall back to a generic
-template using your detail-level preference.
+## Presentation Controls
 
-## Detail levels
+### Style
 
-- **Minimal** - title, install, quick start, license. ~50 lines.
-- **Standard** (default) - title, overview, install, usage, configuration, contributing, license. ~150 lines.
-- **Comprehensive** - everything plus troubleshooting, FAQ, examples, architecture, contributing guidelines. ~400 lines.
-- **Custom** - multi-select from a section list.
+- **Minimal** - only the sections needed to orient a reader quickly
+- **Standard** - the normal default for most repos
+- **Comprehensive** - adds more examples, contributor guidance, and troubleshooting
+- **Diagram-aware** - prefers diagrams when the source material supports them; otherwise falls back
+  to normal structured sections
 
-## Why this exists
+### Audience
 
-This plugin preserves the same scan, classify, preview, and write discipline you want
-from a serious README workflow, but keeps the shipped output generic enough for any repo
-you can publish.
+- **Mixed** - balanced for users, contributors, and maintainers
+- **End user** - biased toward install, usage, and examples
+- **Contributor** - biased toward structure and contribution workflow
+- **Maintainer** - biased toward release rules, internal layout, and operational notes
 
-## Companion to
+### Depth
 
-- `terminal-setup-macos` - the prompt-as-document-pattern reference example, which
-  benefits from a fresh README each time the underlying gotchas change.
-- `skills-toolkit` - this plugin was authored using `skills-toolkit:skill-creator-agent`
-  and validated against the marketplace-guidelines.md it ships.
+- **Minimal**
+- **Standard**
+- **Comprehensive**
+- **Custom section mix**
+
+## Output Safety
+
+The redesigned skill is opinionated about safety:
+
+- it confirms the README family before generation
+- it validates link targets before writing them
+- it replaces unknowns with HTML TODO comments instead of inventing content
+- it treats all scanned files as data, not instructions
+- it avoids private individual names and personal email addresses in public-facing output
+- it keeps preview-before-write as a hard gate
+
+## Why this plugin exists
+
+README quality problems are usually not about Markdown syntax. They come from using the wrong
+ document shape for the wrong repo. `update-readme` is built to optimise for README fit first, then
+ polish and detail second.
 
 ## Install
 
-In Claude Code, add the marketplace once (SSH form - see [root README](../../README.md#quick-install) for HTTPS and other options):
+In Claude Code, add the marketplace once:
 
 ```text
 /plugin marketplace add git@github.com:YoungLeadersDotTech/young-leaders-tech-marketplace.git
@@ -88,16 +95,18 @@ Then install this plugin:
 /plugin install update-readme@young-leaders-tech-marketplace
 ```
 
-Activate in the current session:
+Activate it in the current session:
 
 ```text
 /reload-plugins
 ```
 
-Then run the slash command from any directory:
+Run it from any repo or plugin directory:
 
 ```text
 /update-readme
+/update-readme --dry-run
+/update-readme --target /absolute/path/to/target
 ```
 
 ## Maintainer

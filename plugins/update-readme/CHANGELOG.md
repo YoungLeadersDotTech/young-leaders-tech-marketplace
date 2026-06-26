@@ -2,6 +2,18 @@
 
 All notable changes to `update-readme` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-06-26
+
+### Changed
+- Reframed `update-readme` from a detail-level-first README generator into a type-driven workflow
+  that detects the README family first, confirms it with the user, then asks for style,
+  audience, and depth.
+- Added explicit guidance for README families, presentation controls, and audience-aware section
+  bias so the skill produces a better fit for each target repo type.
+- Strengthened privacy and output-safety guidance: public README output must avoid private
+  individual names or personal email addresses, must prefer TODO comments over invention, and must
+  keep preview-before-write as a hard gate.
+
 ## [1.0.3] - 2026-06-19
 
 ### Changed
