@@ -3,9 +3,7 @@
 # Local tool / editor state - never commit
 .claude/settings.local.json
 .serena/
-
-# Local continuation plans / handoffs - may contain private paths and repo names
-builder-plans/
+.opencode-sync/
 
 # Packaged skill artefacts - local export output, not source
 plugins/*/skills/*.zip

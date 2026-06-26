@@ -1,0 +1,36 @@
+{
+  "_schema": "a2a-framework/plan-state v1.0.0",
+  "plan_id": "update-readme-template-redesign",
+  "current_stage": "ship",
+  "stage_status": "completed",
+  "stages": {
+    "create": {
+      "status": "completed",
+      "gate_passed": true,
+      "started_at": "2026-06-26T09:28:12Z",
+      "completed_at": "2026-06-26T09:28:12Z",
+      "file": "/Users/john.conneely/Projects/young-leaders-tech-marketplace/builder-plans/update-readme-template-redesign--2026-06-26/index.md"
+    },
+    "continue": {
+      "status": "completed",
+      "gate_passed": true
+    },
+    "ship": {
+      "status": "completed",
+      "gate_passed": true
+    }
+  },
+  "last_updated": "2026-06-26T11:09:25Z",
+  "layout": {
+    "mode": "single",
+    "plan_folder": "/Users/john.conneely/Projects/young-leaders-tech-marketplace/builder-plans/update-readme-template-redesign--2026-06-26",
+    "index_file": "index.md"
+  },
+  "integrations": {
+    "shell_plan_path": null,
+    "opportunity_path": null,
+    "jira_story_key": null,
+    "parent_handoff_id": null
+  },
+  "resume_prompt": "Merged via PR #28. If revisiting this plan, treat it as a follow-up refinement pass rather than unfinished implementation."
+}

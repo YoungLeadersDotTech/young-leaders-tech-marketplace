@@ -1,0 +1,39 @@
+{
+  "_schema": "a2a-framework/plan-state v1.0.0",
+  "plan_id": "opencode-sync-marketplace-continuation",
+  "current_stage": "continue",
+  "stage_status": "in_progress",
+  "stages": {
+    "create": {
+      "status": "completed",
+      "gate_passed": true,
+      "started_at": "2026-06-19T16:39:22Z",
+      "completed_at": "2026-06-19T16:39:22Z",
+      "file": "/Users/john.conneely/Projects/young-leaders-tech-marketplace/builder-plans/opencode-sync-marketplace-continuation--2026-06-19/index.md"
+    },
+    "continue": {
+      "status": "in_progress",
+      "gate_passed": false,
+      "started_at": "2026-06-19T16:39:22Z",
+      "cycle_count": 2,
+      "open_blockers": []
+    },
+    "ship": {
+      "status": "not_started",
+      "gate_passed": false
+    }
+  },
+  "last_updated": "2026-06-26T11:09:25Z",
+  "layout": {
+    "mode": "single",
+    "plan_folder": "/Users/john.conneely/Projects/young-leaders-tech-marketplace/builder-plans/opencode-sync-marketplace-continuation--2026-06-19",
+    "index_file": "index.md"
+  },
+  "integrations": {
+    "shell_plan_path": null,
+    "opportunity_path": null,
+    "jira_story_key": null,
+    "parent_handoff_id": null
+  },
+  "resume_prompt": null
+}
