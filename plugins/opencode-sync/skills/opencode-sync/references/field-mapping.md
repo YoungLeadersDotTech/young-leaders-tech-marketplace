@@ -127,6 +127,21 @@ OpenCode (`opencode.json`):
 
 Differences that bite: OpenCode needs `type` (`local` or `remote`), takes `command` as a single array (no separate `args`), and requires `enabled`. Remote servers use `{"type": "remote", "url": "...", "enabled": true}`. Tool name prefixes differ per client, so skill bodies should reference MCP tools by intent ("the Slack search tool") wherever a body is shared.
 
+Routing rule used by `ingest_source.py`:
+
+- user-scope Claude `mcpServers` from `~/.claude/settings.json` -> global OpenCode config
+- repo `.claude/settings.json` `mcpServers` -> project `opencode.json`
+- repo `.claude/settings.local.json` `mcpServers` -> project `opencode.json`
+
+This preserves machine-wide auth globally while keeping repo-specific MCP wiring in the checkout
+that depends on it.
+
+## Hooks
+
+Claude hooks and OpenCode runtime config do not line up one-to-one. `opencode-sync` now verifies
+hook presence with the same location rules as `catalogue-tools`, but hooks remain verification-only
+ and are not written into OpenCode config by ingest.
+
 ### Remote MCP OAuth (the undocumented fields that bite)
 
 OpenCode auto-handles OAuth for remote MCP servers via Dynamic Client Registration (RFC 7591). When the auth server does not support DCR (for example Slack's hosted MCP at `mcp.slack.com`), it fails with `Incompatible auth server: does not support dynamic client registration`. To use a pre-registered client instead, the `oauth` object accepts:

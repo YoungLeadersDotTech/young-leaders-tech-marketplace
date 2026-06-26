@@ -1,5 +1,7 @@
 # opencode-sync
 
+**Version: 1.6.3**
+
 Keep one canonical source of truth for your agent ecosystem usable on **both**
 Claude Code and OpenCode. Skills and `AGENTS.md` are single-source by design
 (OpenCode reads `.claude/skills/` and `AGENTS.md` natively); agents, commands and
@@ -38,7 +40,8 @@ VERSION  CHANGELOG.md  README.md
 - `skills/opencode-sync/scripts/check_drift.py` - manifest-based drift detection
   (`--check` / `--update`).
 - `skills/opencode-sync/scripts/ingest_source.py` - onboard a marketplace, plugin, or repo so
-  OpenCode can find and run its skills, agents, and tools (Mode E).
+  OpenCode can find and run its skills, agents, commands, and MCP config (Mode E), with a
+  catalogue-style verification pass that checks expected versus discovered coverage.
 - `skills/opencode-sync/references/` - field mapping, tool translation, the full validator
   rule inventory, skill-exposure mechanics, and the copy-paste capability-detection preamble.
 
@@ -127,6 +130,32 @@ Practical rule:
 - **Local development** -> ingest from the repo clone.
 
 The cache is the right source of truth for "what Claude has installed right now". A repo clone is the right source of truth for "what I am developing locally".
+
+## Verification Coverage
+
+`ingest_source.py` now prints a verification summary using the same location rules as the
+`catalogue-tools` scanner:
+
+- `skills/*/SKILL.md`
+- `agents/*.md`
+- `commands/*.md`
+- `hooks/*`
+
+The ingest flow compares expected assets versus discovered assets after enablement filtering.
+Skills, agents, and commands are expected to match. Hooks are reported, but remain
+verification-only because OpenCode does not have a like-for-like hook surface that this plugin can
+materialise safely.
+
+## MCP Routing
+
+`opencode-sync` now treats Claude MCP sources in three buckets:
+
+- User-scope `~/.claude/settings.json` `mcpServers` route to the global OpenCode config only.
+- Repo `.claude/settings.json` `mcpServers` route to the project `opencode.json` only.
+- Repo `.claude/settings.local.json` `mcpServers` also route to the project `opencode.json` only.
+
+This keeps machine-wide auth and personal tools global, while preserving repo-scoped MCP wiring in
+the checkout that actually depends on it.
 
 ## Visibility Rules
 
