@@ -99,9 +99,11 @@ When OpenCode runs on a non-Anthropic provider (Copilot, Zen, local), the map sh
 | `allowed-tools` | (none) | Drop |
 | `argument-hint` | (none) | Drop; `$ARGUMENTS`, `$1`..`$9` placeholders work identically in the body |
 | `model` | `model` | Apply model map |
-| (none) | `agent`, `subtask` | Optional additions on the OpenCode side |
+| (none) | `agent`, `subtask`, `variant` | Optional additions on the OpenCode side |
 
-Reminder: the ecosystem rule is skills-only. OpenCode exposes every skill as `/name` anyway, so generate commands only for genuine legacy stragglers.
+Generated commands are written to `.opencode/command/` or `~/.config/opencode/command/` by
+`sync_commands.py`. They preserve the command body template verbatim and form the OpenCode-first
+wrapper layer for canonical `commands/*.md` files.
 
 ## MCP config
 

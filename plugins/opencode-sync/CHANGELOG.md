@@ -2,6 +2,20 @@
 
 All notable changes to the opencode-sync skill.
 
+## [1.6.5] - 2026-06-27
+
+### Added
+- `scripts/sync_commands.py` to generate OpenCode command wrappers from canonical Claude-side
+  `commands/*.md` files, preserving command templates and argument placeholders.
+- `ingest_source.py` now generates OpenCode command files during `--apply`, using
+  `~/.config/opencode/command` for global sync targets and `.opencode/command` for project-local
+  sync targets.
+- Regression coverage for the new command-wrapper generation path.
+
+### Changed
+- Refreshed the plugin README and workflow docs to describe the new OpenCode-first command layer,
+  generated command output paths, and the expanded ingest behaviour.
+
 ## [1.6.4] - 2026-06-26
 
 ### Changed
