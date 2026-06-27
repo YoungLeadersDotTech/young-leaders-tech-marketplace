@@ -538,6 +538,14 @@ def default_agent_out_dir(target_keys, explicit_out_dir):
     return ".opencode/agent"
 
 
+def default_command_out_dir(target_keys, explicit_out_dir):
+    if explicit_out_dir:
+        return explicit_out_dir
+    if "global" in target_keys:
+        return str(Path.home() / ".config" / "opencode" / "command")
+    return ".opencode/command"
+
+
 def wire_memory_instructions(root):
     instructions = []
     if (root / "MEMORY.md").exists():
@@ -569,6 +577,8 @@ def main():
     ap.add_argument("--opencode-json", help="explicit single config file (use with --config-target global or project)")
     ap.add_argument("--opencode-agent-dir",
                     help="output directory for generated agents (default: ~/.config/opencode/agent when any global target is used, otherwise .opencode/agent)")
+    ap.add_argument("--opencode-command-dir",
+                    help="output directory for generated commands (default: ~/.config/opencode/command when any global target is used, otherwise .opencode/command)")
     ap.add_argument("--apply", action="store_true", help="write the config and generate agents")
     ap.add_argument("--add-resolution-block", action="store_true",
                     help="add the ${CLAUDE_PLUGIN_ROOT}/plugin:skill resolution block to the rules file "
@@ -660,6 +670,7 @@ def main():
               f"({', '.join(sorted(repo_mcp))})")
 
     agent_out_dir = default_agent_out_dir(target_keys or {args.config_target}, args.opencode_agent_dir)
+    command_out_dir = default_command_out_dir(target_keys or {args.config_target}, args.opencode_command_dir)
 
     print(f"source: {root}  ({kind})")
     print(f"resolve: {note}")
@@ -717,6 +728,13 @@ def main():
         cmd = [sys.executable, str(Path(__file__).resolve().parent / "sync_agents.py"),
                *agent_dirs, "--out-dir", agent_out_dir]
         print("generating agents: " + " ".join(cmd))
+        subprocess.run(cmd)
+
+    if disc["commands"]:
+        command_dirs = sorted({str(Path(c).parent) for c in disc["commands"]})
+        cmd = [sys.executable, str(Path(__file__).resolve().parent / "sync_commands.py"),
+               *command_dirs, "--out-dir", command_out_dir]
+        print("generating commands: " + " ".join(cmd))
         subprocess.run(cmd)
 
     print("\nNext: open OpenCode and run /skills to verify exposure.")

@@ -70,7 +70,7 @@ Verify with `/plugin marketplace list`.
 | [terminal-setup-macos](./plugins/terminal-setup-macos/README.md) | 1.2.2 | Idempotent macOS terminal installer covering Ghostty, Oh My Zsh, Powerlevel10k, Glow, and MesloLGS Nerd Font, plus optional markdown-preview and clickable-path extras. |
 | [update-readme](./plugins/update-readme/README.md) | 1.1.0 | Type-driven README updater. Detects repo family, confirms it with the user, asks for style, audience, and depth, then generates a matched README preview before writing. |
 | [standalone-skills](./plugins/standalone-skills/README.md) | 1.0.0 | Self-contained, Cowork-friendly skills with no cross-plugin dependencies. |
-| [opencode-sync](./plugins/opencode-sync/README.md) | 1.6.4 | Sync and validate Claude Code assets for OpenCode: ingest marketplaces or repos, validate dual-runtime portability, generate agents, verify discovery coverage, and route MCP config by scope. |
+| [opencode-sync](./plugins/opencode-sync/README.md) | 1.6.5 | Sync and validate Claude Code assets for OpenCode: ingest marketplaces or repos, generate agents and command wrappers, verify discovery coverage, and route MCP config by scope. |
 | [enablement-html-renderer](./plugins/enablement-html-renderer/README.md) | 1.2.3 | Packages finished enablement content into one self-contained HTML handoff with multiple reader-selectable formats. |
 
 ## Local development helper
