@@ -1,6 +1,6 @@
 {
   "name": "young-leaders-tech-marketplace",
-  "version": "1.5.9",
+  "version": "1.5.10",
   "description": "Personal Claude Code plugin marketplace",
   "owner": {
     "name": "Young Leaders Tech",
@@ -34,7 +34,7 @@
     {
       "name": "opencode-sync",
       "source": "./plugins/opencode-sync",
-      "version": "1.6.4",
+      "version": "1.6.5",
       "description": "Keep one canonical agent ecosystem usable on both Claude Code and OpenCode: generate OpenCode agents/commands/MCP from Claude sources, validate both runtimes' rules, detect drift, and ingest marketplaces or repos for OpenCode."
     },
     {

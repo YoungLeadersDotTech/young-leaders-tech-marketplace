@@ -1,6 +1,6 @@
 ---
 name: opencode-sync
-description: Generates OpenCode agents, commands, and MCP config from canonical Claude Code sources, validates both runtimes' rule sets, and detects drift. Use when adding OpenCode support, converting agents between runtimes, or checking cross-runtime compliance.
+description: Generates OpenCode agents, command wrappers, and MCP config from canonical Claude Code sources, validates both runtimes' rule sets, and detects drift. Use when adding OpenCode support, converting agents or commands between runtimes, or checking cross-runtime compliance.
 version: 1.6.0
 user-invocable: true
 category: Cross-Runtime Tooling
@@ -126,7 +126,7 @@ All writes preview-first. Work on a branch, never commit to main, open a PR.
 
 1. **Skills**: single-source; run `validate_dual.py --target opencode <paths>` and fix-forward portability warnings in the canonical file.
 2. **Agents**: `sync_agents.py --config .opencode-sync/config.json` emits translated files with a GENERATED header. Per-file failures (E3, E4, E5) skip and continue.
-3. **Commands** (optional): most ecosystems are skills-only; OpenCode exposes each skill as `/name`.
+3. **Commands**: `sync_commands.py` emits OpenCode command wrappers from canonical `commands/*.md` files, preserving template bodies and argument placeholders for OpenCode-first slash workflows.
 4. **MCP config**: emit the `opencode.json` `mcp` block, diff-first (MCP runs code).
 5. **Manifest**: `check_drift.py --update`.
 6. **Claude plugin housekeeping**: apply the 4/5-file version rule before the PR.
@@ -159,7 +159,7 @@ Onboard any Claude Code marketplace, plugin, or plain repo so OpenCode can find 
 
    These compose: `--respect-claude-settings` decides *what* is exposed, `--config-target` decides *where* the enabled plugins land (default project; user-scope MCP always goes global), and `--no-deny` is the escape hatch when mirroring is too strict. Add `--wire-memory` with any strategy to wire OpenCode's session-start memory read. When the repo tracks `MEMORY.md`, the instructions order becomes project memory first, then `AGENTS.md`, then `~/.claude/memory/memory.md`. See `references/memory-wiring.md` for the remaining gap versus memory-os.
 3. **Preview** (dry-run, the default): the script prints the detected type, discovered counts, the deny-list, and the exact config fragment(s) to merge per target. Confirm before writing.
-4. **Apply** (`--apply`): merges `skills.paths` + `permission.skill` deny-list + `mcp` blocks into each target config, then delegates agent generation to `sync_agents.py`. A non-writable target (for example a global config the runtime cannot reach) degrades gracefully - the fragment is printed for manual application. The hide set is skills that are BOTH `disable-model-invocation: true` AND `user-invocable: false`. Generated agents default to `~/.config/opencode/agent` when any global target is in play, otherwise `.opencode/agent`. Hooks are verification-only and are never written into OpenCode config.
+4. **Apply** (`--apply`): merges `skills.paths` + `permission.skill` deny-list + `mcp` blocks into each target config, then delegates agent generation to `sync_agents.py` and command generation to `sync_commands.py`. A non-writable target (for example a global config the runtime cannot reach) degrades gracefully - the fragment is printed for manual application. The hide set is skills that are BOTH `disable-model-invocation: true` AND `user-invocable: false`. Generated agents default to `~/.config/opencode/agent` when any global target is in play, otherwise `.opencode/agent`. Generated commands default to `~/.config/opencode/command` when any global target is in play, otherwise `.opencode/command`. Hooks are verification-only and are never written into OpenCode config.
 5. **Offer the resolution block.** The preview reports the source's rules-file state. If the source has no `AGENTS.md`/`CLAUDE.md`, or one missing the plugin skill resolution block described in `references/skill-exposure.md`, ask the user whether to add it. On yes, pass `--add-resolution-block` - it appends to `AGENTS.md` (or to `CLAUDE.md` so it is not shadowed), or creates `AGENTS.md` if neither exists.
 6. **Verify**: open OpenCode and run `/skills` - the invocable skills appear, the denied reference-only ones do not. Then check agent visibility where the sync wrote them: `~/.config/opencode/agent/` for global sync, `.opencode/agent/` for project-local sync. The ingest preview also prints a catalogue-style verification summary for expected skills, agents, commands, hooks, and Claude MCP sources.
 
@@ -190,4 +190,4 @@ Prompt-box autocomplete note: skills show under `/skills`, but if the user wants
 - `references/skill-exposure.md` - how plugin skills reach OpenCode (skills.paths, permission.skill, AGENTS.md resolution)
 - `references/memory-wiring.md` - what `--wire-memory` reproduces from memory-os, and what it does not
 - `scripts/ingest_source.py` - Mode E: resolve a source, discover, emit OpenCode config
-- `scripts/sync_agents.py`, `scripts/validate_dual.py`, `scripts/check_drift.py` - the executable side of Modes B, C, D
+- `scripts/sync_agents.py`, `scripts/sync_commands.py`, `scripts/validate_dual.py`, `scripts/check_drift.py` - the executable side of Modes B, C, D

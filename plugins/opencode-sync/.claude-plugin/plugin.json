@@ -6,7 +6,7 @@
     "url": "https://youngleaders.tech"
   },
   "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "skills": [
     "./skills/opencode-sync"
   ]

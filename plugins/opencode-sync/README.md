@@ -1,6 +1,6 @@
 # opencode-sync
 
-**Version**: 1.6.4
+**Version**: 1.6.5
 **Author**: Young Leaders Tech
 **License**: MIT
 
@@ -16,7 +16,7 @@ The plugin is built around a single skill, `opencode-sync`, which covers setup, 
 ## What is included
 
 - **1 skill** - `skills/opencode-sync/SKILL.md`
-- **4 scripts** - `sync_agents.py`, `validate_dual.py`, `check_drift.py`, `ingest_source.py`
+- **5 scripts** - `sync_agents.py`, `sync_commands.py`, `validate_dual.py`, `check_drift.py`, `ingest_source.py`
 - **Reference docs** - field mapping, tool translation, validator rules, memory wiring,
   skill exposure, and capability guidance
 - **Regression tests** - focused ingest tests under `plugins/opencode-sync/tests/`
@@ -58,6 +58,9 @@ python3 plugins/opencode-sync/skills/opencode-sync/scripts/validate_dual.py --ta
 # Generate OpenCode agents from canonical Claude agents
 python3 plugins/opencode-sync/skills/opencode-sync/scripts/sync_agents.py --config .opencode-sync/config.json
 
+# Generate OpenCode command wrappers from canonical Claude commands
+python3 plugins/opencode-sync/skills/opencode-sync/scripts/sync_commands.py plugins/skills-toolkit/commands
+
 # Check drift
 python3 plugins/opencode-sync/skills/opencode-sync/scripts/check_drift.py --check
 ```
@@ -69,12 +72,28 @@ If you use the skill standalone outside the plugin wrapper, the same scripts liv
 
 `ingest_source.py` is the main runtime bridge for marketplaces, plugins, and repos.
 
-It now does four important things:
+It now does five important things:
 
 1. keeps non-disabled sibling plugins available when `--respect-claude-settings` is used
 2. exposes plugin skills through `skills.paths`
 3. generates OpenCode agents into the correct discovery directory
-4. prints a verification summary that checks expected versus discovered coverage
+4. generates OpenCode command wrappers from canonical `commands/*.md` files
+5. prints a verification summary that checks expected versus discovered coverage
+
+## Command wrappers
+
+`opencode-sync` now generates an OpenCode-first command layer from canonical `commands/*.md` files.
+
+These generated command wrappers:
+
+- preserve the command body template, including `$ARGUMENTS`, `$1`, `$2`, and similar placeholders
+- drop Claude-only frontmatter such as `argument-hint`
+- write to `~/.config/opencode/command` for global sync targets
+- write to `.opencode/command` for project-local sync targets
+- share the same drift manifest model as generated agents
+
+This gives OpenCode a first-class command surface for explicit `/name` workflows without forcing the
+canonical source to become OpenCode-only.
 
 ## Verification coverage
 
@@ -103,10 +122,11 @@ That keeps machine-wide auth and personal tools global, while preserving repo-sp
 
 ## Visibility rules
 
-OpenCode has two separate discovery surfaces:
+OpenCode has three separate discovery surfaces:
 
 - **Skills** come from `skills.paths` in `opencode.json`
 - **Agents** come from generated files under an OpenCode agent directory
+- **Commands** come from generated files under an OpenCode command directory
 
 Default agent output:
 
@@ -114,8 +134,14 @@ Default agent output:
 - `--config-target project` -> `.opencode/agent`
 - `--opencode-agent-dir` overrides both
 
-If skills are visible but agents are missing, check where the sync wrote the generated agent files
- first.
+Default command output:
+
+- `--config-target global` -> `~/.config/opencode/command`
+- `--config-target project` -> `.opencode/command`
+- `--opencode-command-dir` overrides both
+
+If skills are visible but agents or commands are missing, check where the sync wrote the generated
+agent and command files first.
 
 ## Memory wiring
 
@@ -138,8 +164,8 @@ OpenCode treats skills and commands differently:
 - skills appear under `/skills`
 - skills do not automatically get the same prompt-box autocomplete behaviour as commands
 
-That is why command-wrapper generation remains optional future work rather than a default behaviour
- today.
+That is why `opencode-sync` now ships a command-wrapper layer for canonical `commands/*.md` files,
+while still keeping skills single-source.
 
 ## Requirements
 
