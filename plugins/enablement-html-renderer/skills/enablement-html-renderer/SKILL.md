@@ -1,12 +1,14 @@
 ---
 name: enablement-html-renderer
-description: Packages finished enablement material (meeting summaries, workshop notes, training guides) into one self-contained HTML file where the reader toggles format: bullets, prose, visual diagram, or comic. Invoke to distribute knowledge. Skip for drafting.
+description: Packages finished enablement material into a multi-format HTML handoff. Always writes one offline .html file and can also emit a generic Apps Script web app bundle. Use for distribution, not drafting.
+allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion]
+version: 1.0.0
 ---
 
 # enablement-html-renderer
 
-A handoff target, not a starting point. Other skills (meeting, content-pipeline,
-diy-build-companion) produce the substance; this skill packages it into a single
+A handoff target, not a starting point. Other drafting workflows produce the
+substance; this skill packages it into a single
 HTML file a person opens anywhere and reads in the format that suits how *they*
 absorb information.
 
@@ -25,11 +27,12 @@ attach to a meeting summary.
 - Distributing a "gotcha" guide, a Claude Code help guide, or a how-to across a team.
 - Repackaging any already-written knowledge so recipients pick their own format.
 - Another skill calls this on finish to produce the shareable artifact.
+- You want a hosted share path as well as the offline file, using a generic Apps Script web app.
 
 ## Skip when
 
 - The content does not exist yet. This skill renders; it does not draft. Run the
-  drafting skill first (meeting, content-pipeline, learning-content-enabler), then hand here.
+  drafting workflow first, then hand here.
 - A plain document is genuinely all that is wanted (a single-format `.docx`/`.md`).
 - The deliverable is interactive software, not a read-to-absorb artifact.
 
@@ -83,13 +86,13 @@ ampersand shows literally instead of breaking the page or injecting markup. Link
 URLs are sanitised to http/https/mailto only. Put code and angle brackets in the
 escaped fields freely; reserve `prose`/`visualSvg` for markup you intend.
 
-**Auto-linking (URLs only in the public build).** At render time the page turns any `http(s)` URL
+**Auto-linking (URLs only in the shared build).** At render time the page turns any `http(s)` URL
 into a real link. This runs across every plain-text field (headings, bullets, comic text,
 callouts, captions, agenda, tasks) and inside `prose` HTML - in prose it only touches text nodes,
 never re-escaping and never re-linking content already inside an `<a>`. Net effect: never paste a
 dead URL; write the full URL in any field and it resolves itself. Link-panel `labels` are left
 un-linkified to avoid nested anchors (the row already links to its `url`), and code in `commands`
-is never linkified. Issue-key auto-linking is intentionally not the default in the public build,
+is never linkified. Issue-key auto-linking is intentionally not the default in the shared build,
 because a shared plugin should not assume one tracker.
 
 **Theming `visualSvg` (so diagrams survive dark mode).** Do not hardcode near-black
@@ -104,13 +107,12 @@ renderer runs a `normalizeSvg` pass that remaps the legacy palette
 
 ---
 
-## How it works (the phase model)
+## How it works
 
-Every run follows the toolkit's gated phase model. Do not start a phase until the
-prior gate passes.
+Use the following working order and self-check each step before you move on.
 
 1. **Intake** - read the content bundle (or the upstream skill's working doc) in
-   full. Gate: you can state the title, kind, and core idea in one line each.
+   full. You should be able to restate the title, kind, and core idea in one line each.
 2. **Shape** - for each section, derive all four prose representations from the
    same `body`:
    - **Bullets** - 3 to 6 scannable points, business tone, no filler.
@@ -122,34 +124,44 @@ prior gate passes.
      to carry a setup-tension-payoff arc (give each panel a `mood` of
      calm/stressed/alarmed/relieved and an optional `prop` of coffee/warning/check).
      Speech bubbles, numbered tabs, comic linework; no external image dependency.
-   The fifth format, **Cheat sheet**, is assembled automatically from the section
-   headings, the highest-severity callouts, and the `commands` arrays into one
-   copy-all reference card, mirroring how your real guides end with a copyable
-   quick-reference block. Gate: every section has all four prose forms, they agree
-   on the facts, and any callouts/commands are attached.
+    The fifth format, **Cheat sheet**, is assembled automatically from the section
+    headings, the highest-severity callouts, and the `commands` arrays into one
+    copy-all reference card, mirroring how your real guides end with a copyable
+    quick-reference block. Every section should have all four prose forms, or an
+    explicit visible fallback note for any format that genuinely does not fit, they
+    should agree on the facts, and any callouts/commands should be attached.
 
-   **Voice gate (AI-isms).** Enablement docs are often built from a published blog,
-   so the prose must stay in that voice, not drift into generic AI phrasing. Before
-   rendering, scrub the `body`/`bullets`/`prose` of AI-isms and corporate filler:
+    **Voice gate (AI-isms).** Enablement docs are often built from a published blog,
+    so the displayed prose must stay in that voice, not drift into generic AI
+    phrasing. Treat `body` as source input, not something to rewrite in place.
+    Before rendering, scrub the derived `bullets`/`prose` of AI-isms and corporate filler:
    no "in today's rapidly evolving", "it's worth noting that", "let's dive in", "at
    the end of the day", "delve", "revolutionary", "game-changing", "seamless",
    "leverage", marketing fluff, false expertise, or excessive hedging. This mirrors
     the AI-ism removal pass in a content-cleanup workflow. Run
-   `scripts/check_ai_isms.py` on the rendered file as part of Validate.
-3. **Render** - emit one self-contained HTML file from the template. Gate: file
-   opens standalone (no network needed), selector switches formats, prints cleanly.
+     `scripts/check_ai_isms.py`
+     on the rendered file as part of Validate.
+3. **Render** - emit one self-contained HTML file from the template, and optionally
+   a generic Apps Script web app bundle from the same rendered source. The
+   offline file should open standalone (no network needed), the selector should switch
+   formats, it should print cleanly, and the hosted bundle should be structurally
+   ready to deploy.
 4. **Validate** - run the hard gates (below) and self-check the file.
-5. **Complete** - record the score in the ledger and present the file.
+5. **Complete** - present the offline file, the hosted bundle if requested, and any
+   live `/exec` URL only when you actually deployed it.
 
 ---
 
 ## The selector (what the recipient sees)
 
-A single sticky control at the top: **Bullets / Prose / Visual / Comic**. Picking
-one re-renders every section in that format in place. Defaults to Bullets. The
-choice is reflected in the URL hash (for example `recap.html#prose`), so a sender
-can share a link that opens straight into a chosen format, and the choice survives
-a reload. No localStorage or sessionStorage, which break in sandboxed viewers. A
+A single sticky control at the top: **Bullets / Prose / Visual / Comic / Cheat
+sheet**. Picking one re-renders every section in that format in place. Defaults to
+Bullets. The
+offline file reflects the choice in the URL hash (for example `recap.html#prose`).
+The hosted Apps Script path should honour top-level `#prose` and `?fmt=prose`
+links by using the Apps Script browser APIs (`google.script.url` and
+`google.script.history`) rather than trusting the iframe's own `window.location`.
+No localStorage or sessionStorage, which break in sandboxed viewers. A
 "Print / Save as PDF" button prints whatever format is showing. A small "Show all
 formats" option stacks them for people who want to compare.
 
@@ -161,11 +173,63 @@ visual format is not the only carrier of meaning.
 
 ## Producing the file
 
-Read `templates/renderer-template.html` and inject the shaped content as a JS data
-object. The template already contains the selector logic, the four render
+All `templates/...` and `scripts/...` paths below are relative to **this skill
+directory**. In a downloaded standalone zip, that means the folder containing
+`SKILL.md`. In a plugin checkout, resolve them from
+`plugins/enablement-html-renderer/skills/enablement-html-renderer/`.
+
+Read `templates/renderer-template.html`
+and inject the shaped content as a JS data object. The template already contains the selector logic, the four render
 functions, print styling, and the panels for agenda/tasks/links. Keep everything
-inline (CSS in `<style>`, JS in `<script>`); the output must be a single file.
-Write the result to `/mnt/user-data/outputs/<slug>.html` and present it.
+inline (CSS in `<style>`, JS in `<script>`); the offline output must remain a
+single file.
+
+In Cowork-style sandboxes, write the offline fallback to
+`/mnt/user-data/outputs/<slug>.html`. Outside that environment, write to the
+caller's requested output directory or another explicit local path and report the
+exact location.
+
+When the caller wants the hosted path too, also write a bundle directory at
+`/mnt/user-data/outputs/<slug>-gas/` in Cowork-style sandboxes, or the matching
+local output directory elsewhere, containing:
+
+- `Index.html` - the same rendered HTML artifact, adapted for HtmlService hosting.
+- `Code.gs` - copied from `templates/gas/Code.gs`.
+- `appsscript.json` - copied from `templates/gas/appsscript.json`. Default access is `ANYONE` for public sharing; override to `DOMAIN` if deploying within a Google Workspace.
+- `gas-deploy.sh` - copied from `scripts/gas-deploy.sh` so the bundle can be
+  deployed in place.
+
+**Access level gate (required before writing appsscript.json).** When the caller requests a hosted bundle, always ask which audience should access the deployed web app before writing `appsscript.json`:
+
+```
+AskUserQuestion:
+  header: "Who should be able to open the hosted web app?"
+  options:
+    A) Anyone with the link (ANYONE) - recommended for public sharing
+       description: "Any Google account (or no account) can open the /exec URL. Works outside any domain."
+    B) My Google Workspace domain (DOMAIN) - for internal team use only
+       description: "Anyone in your Google Workspace organisation can open the /exec URL."
+```
+
+If the user skips or dismisses without answering, stop and surface an error:
+`"webapp.access must be set before generating the bundle. Please choose ANYONE or DOMAIN."`
+Never silently default - the choice must be explicit.
+
+Write the chosen value into `appsscript.json` before copying it into the bundle.
+If `GAS_WEBAPP_ACCESS` is already set in the environment, use that value and skip the question (non-interactive context).
+
+**Note for Google Workspace users**: if your domain administrator has disabled ANYONE access, clasp deploy will print "ANYONE access has been disabled" even if the deployment succeeded. Check `clasp deployments` for the actual result - the deployment ID and URL will be present if it succeeded.
+
+Do not add Toast, AWS, region, CMA, agent, secret, or external-request logic. The
+bundle is only the static-hosting layer around the same renderer.
+
+**Claude Code deploy path.** If `clasp` is available and authenticated, you may run
+the bundled deploy helper or the equivalent explicit `clasp` commands for real.
+Return a live `/exec` URL only after the deploy actually succeeded.
+
+**Cowork sandbox path.** Always write the bundle, plus print the exact `clasp`
+commands the user should run later. Never imply a live deployment exists when you
+did not perform one.
 
 If a format genuinely cannot be derived for a section (for example, a legal
 disclaimer has no sensible comic), render that section in its best format and add a
@@ -189,20 +253,32 @@ twice). Two mitigations, neither a full substitute for a real open:
   and utilities on a separate row.
 
 Whenever the control strip or the diagram theming changes, treat a real on-device
-open (phone width, dark mode toggled) as the validating signal before raising the
-score. The diagram-contrast gate protects against colour regressions between those opens;
-it does not replace them.
+open (phone width, dark mode toggled) as the validating signal before raising
+confidence. The diagram-contrast gate protects against colour regressions between
+those opens; it does not replace them.
+
+For the hosted Apps Script path, do one real deploy before shipping the feature and
+open the `/exec` URL. Specifically confirm whether the format selector still works
+through direct links and whether the Print button behaves usefully inside
+HtmlService. In the validated path, direct links work when the hosted page reads the
+outer `/exec` URL through the Apps Script browser APIs, and the Print button still
+calls `window.print()` from inside the iframe. If a tenant policy blocks broader
+access levels like `ANYONE` or `ANYONE_ANONYMOUS`, keep the default `DOMAIN` flow or
+fall back to `MYSELF` and say so plainly.
 
 ---
 
 ## Hard gates (run in Validate, all must pass)
 
+Run these from the skill directory, or resolve the same relative paths from the
+skill root explicitly.
+
 ```bash
-python3 scripts/measure_frontmatter_weight.py SKILL.md     # description <= 250 chars
-bash   scripts/check_em_dash.sh SKILL.md                   # no em dashes
-python3 scripts/pii_scan.py SKILL.md                       # PII zero-tolerance; use [NAME] etc.
-python3 scripts/check_ai_isms.py <rendered-output.html>    # voice gate: no AI-isms/corporate filler
-python3 scripts/rasterize_diagrams.py <rendered-output.html>  # diagrams legible in light AND dark
+python3 scripts/measure_frontmatter_weight.py SKILL.md
+bash   scripts/check_em_dash.sh SKILL.md
+python3 scripts/pii_scan.py SKILL.md
+python3 scripts/check_ai_isms.py <rendered-output.html>
+python3 scripts/rasterize_diagrams.py <rendered-output.html>
 ```
 
 The scripts are vendored into this plugin's own `scripts/` folder, so the skill
@@ -219,15 +295,9 @@ not a hook that fires on an event). Tasks carrying real attendee names must use
 placeholders in any committed example; real names only in the generated output the
 user keeps.
 
-## Scoring
+## Final honesty check
 
-Record in the ledger after Validate:
-
-```bash
-python3 scripts/quality_ledger.py record --artifact SKILL.md --score <N> \
-    --components "desc=..,body=..,safety=.." --findings "..."
-```
-
-Fix the lowest axis first on any rerun. Improving real behaviour (a missing format,
-a print bug, a degraded-content fallback) is what should move the score, not
-description padding.
+Do not claim the hosted path is live unless you actually ran the deploy and opened
+the resulting `/exec` URL. If `clasp` is unavailable, unauthenticated, or blocked,
+say so plainly and leave the user with the offline file plus the exact bundle path
+and commands.
