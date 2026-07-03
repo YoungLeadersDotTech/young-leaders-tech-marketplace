@@ -2,6 +2,19 @@
 
 All notable changes to the enablement-html-renderer plugin.
 
+## [1.3.0] - 2026-07-03
+
+### Added
+- GAS template assets: `templates/gas/Code.gs`, `templates/gas/appsscript.json`, `scripts/gas-deploy.sh`
+- AskUserQuestion access-level gate before generating the Apps Script bundle (required, explicit error if skipped)
+
+### Changed
+- Default `webapp.access` changed from `DOMAIN` to `ANYONE` for public/cross-domain sharing
+- AskUserQuestion option order: ANYONE first (recommended), DOMAIN second
+- Added note about Google Workspace domain policy blocking ANYONE - clasp error message is misleading; check `clasp deployments` for actual result
+
+Port-back from `toast-ai-os-standalone-skills` v1.1.0. Standalone-skills retains `DOMAIN` default for internal Toast use.
+
 ## [1.2.3] - 2026-06-19
 
 ### Changed
