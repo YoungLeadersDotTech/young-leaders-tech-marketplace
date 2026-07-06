@@ -2,42 +2,11 @@
 
 All notable changes to the enablement-html-renderer plugin.
 
-## [1.5.1] - 2026-07-18
+## [1.3.1] - 2026-07-06
 
 ### Changed
-- **More generous vertical spacing throughout the rendered file.** The default rhythm was tight,
-  so sections, headings, callouts, command blocks, cards, figures and the footer now sit with more
-  breathing room. Specifics: body line-height 1.65 to 1.7; page padding and header padding opened
-  up; per-section padding 24px to 40px; selector bar padding increased; callout and command-block
-  margins 0.5em to 0.85em; meta/cheat-sheet card padding 16px to 22px/24px and grid gap 20px to
-  24px; comic panel gap 14px to 18px; more space above the footer. Purely presentational: the
-  content bundle contract, every format, and all hard gates (AI-ism, diagram contrast) are
-  unchanged, so existing bundles render identically apart from the looser spacing.
-
-## [1.5.0] - 2026-07-13
-
-### Added
-- **Images, any number, placed anywhere.** No cap and no fixed slot. Three placements, mix freely:
-  attach to a section (`section.images: [...]`), interleave with bullets (a `bullets` entry may be
-  `"text"`, `{img}`, or `{text, img}`, so an image can sit before/after/between any bullets), or
-  inline in `prose` (drop an `<img>` anywhere in the paragraph flow, down to one per sentence).
-  `src` accepts an `http(s)` URL (already-online, kept as-is) or a `data:image/*;base64` URI (local
-  files, inlined so the file stays offline). Sanitised to those two schemes; `alt`/`caption` escaped.
-- `scripts/img_to_datauri.py` - converts local images into a ready-to-paste `images` JSON array
-  of base64 data URIs. Dependency-free.
-
-### Why
-- A genuine screenshot of the actual screen beats any amount of prose or a drawn diagram, and
-  many callers already have images to hand (a published blog, a workshop deck, a UI capture).
-  The renderer previously had no way to carry them, so that quality was lost at packaging time.
-
-## [1.4.0] - 2026-07-08
-
-### Added
-- Manual light/dark toggle button in the toolbar. Theme previously only followed the OS via
-  `prefers-color-scheme`. The toggle sets `data-theme` on `<html>` (wins over the OS preference
-  in either direction) and persists the choice in `localStorage`, applied before first paint via
-  a head script so there is no flash back to the OS default.
+- Add sharing note: warn users that managed corporate devices may block GAS exec URLs from personal accounts; recommend offline .html as fallback.
+- Improve access-level gate description to surface managed-device risk.
 
 ## [1.3.0] - 2026-07-03
 
