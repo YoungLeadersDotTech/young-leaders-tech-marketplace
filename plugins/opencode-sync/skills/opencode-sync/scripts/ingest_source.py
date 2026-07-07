@@ -554,30 +554,6 @@ def wire_memory_instructions(root):
     return instructions
 
 
-def filter_units_by_enablement(units, enabled, disabled):
-    if enabled:
-        return [(n, sk) for (n, sk) in units if n in enabled and n not in disabled]
-    if disabled:
-        return [(n, sk) for (n, sk) in units if n not in disabled]
-    return list(units)
-
-
-def default_agent_out_dir(target_keys, explicit_out_dir):
-    if explicit_out_dir:
-        return explicit_out_dir
-    if "global" in target_keys:
-        return str(Path.home() / ".config" / "opencode" / "agent")
-    return ".opencode/agent"
-
-
-def wire_memory_instructions(root):
-    instructions = []
-    if (root / "MEMORY.md").exists():
-        instructions.append("MEMORY.md")
-    instructions.extend(["AGENTS.md", "~/.claude/memory/memory.md"])
-    return instructions
-
-
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("source", nargs="?", help="local path or git URL of the marketplace/plugin/repo")
