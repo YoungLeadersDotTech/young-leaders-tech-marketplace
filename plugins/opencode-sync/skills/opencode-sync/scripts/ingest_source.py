@@ -672,6 +672,8 @@ def main():
     agent_out_dir = default_agent_out_dir(target_keys or {args.config_target}, args.opencode_agent_dir)
     command_out_dir = default_command_out_dir(target_keys or {args.config_target}, args.opencode_command_dir)
 
+    agent_out_dir = default_agent_out_dir(target_keys or {args.config_target}, args.opencode_agent_dir)
+
     print(f"source: {root}  ({kind})")
     print(f"resolve: {note}")
     print(f"discovered: {len(disc['skills'])} skills ({len(disc['hide'])} reference-only), "

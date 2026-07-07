@@ -35,4 +35,4 @@ All notable changes to `update-readme` are documented here. Format follows [Keep
 ## [1.0.0] - 2026-05-10
 
 ### Added
-- Initial plugin: universal README updater that classifies repo type (plugin, marketplace, library, monorepo, service repo, personal), asks detail level, and generates a README using a section catalogue keyed on type plus detail level. `/update-readme` slash command and the `update-readme` skill.
+- Initial plugin: universal README updater that classifies repo type (plugin, marketplace, library, monorepo, service repo, personal), asks detail level, and generates a README using sections appropriate to the type. `/update-readme` slash command and the `update-readme` skill.

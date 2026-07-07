@@ -44,6 +44,7 @@ All notable changes to the opencode-sync skill.
 - Hooks are now an explicit verification-only surface. Ingest reports them, but does not try to
   materialise them into OpenCode config.
 
+
 ## [1.6.2] - 2026-06-19
 
 ### Changed

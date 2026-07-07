@@ -41,7 +41,16 @@ Activate it in the current session:
 /reload-plugins
 ```
 
-## Quick start
+**As a standalone skill folder.** `skills/opencode-sync/` is self-contained, so you can also
+use it without the plugin wrapper:
+
+- **Claude Code / OpenCode**: drop `skills/opencode-sync/` into `.claude/skills/` (or
+  `~/.claude/skills/`), or point OpenCode `skills.paths` at it. Both runtimes discover it
+  natively.
+- **Cowork**: zip the folder (root must be `opencode-sync/` with `SKILL.md` inside) and upload
+  it under Customize -> Skills.
+
+No PyYAML required - the scripts are stdlib Python 3 with a graceful fallback parser.
 
 Run the scripts from the marketplace repo root:
 
@@ -67,6 +76,21 @@ python3 plugins/opencode-sync/skills/opencode-sync/scripts/check_drift.py --chec
 
 If you use the skill standalone outside the plugin wrapper, the same scripts live under
 `skills/opencode-sync/scripts/` relative to that standalone skill folder.
+
+## Source Strategy
+
+When deciding what path to ingest, use this precedence:
+
+1. **Local development clone under `~/Projects/`** - use this when you are actively editing the plugin or marketplace. OpenCode should mirror the working tree you are changing, not a cached install snapshot.
+2. **Claude plugin cache under `~/.claude/plugins/cache/...`** - use this when you want exact parity with what Claude Code currently has installed. This is especially important for version-pinned installs and MCP-only plugins that do not have a normal marketplace checkout.
+3. **Fresh clone** - use this when you do not already have the source locally. Prefer a normal repo checkout (`~/Projects` or `~/.opencode-sources`) over editing the cache directly.
+
+Practical rule:
+
+- **Installed plugin parity** -> ingest from the Claude cache snapshot.
+- **Local development** -> ingest from the repo clone.
+
+The cache is the right source of truth for "what Claude has installed right now". A repo clone is the right source of truth for "what I am developing locally".
 
 ## Ingest behaviour
 
