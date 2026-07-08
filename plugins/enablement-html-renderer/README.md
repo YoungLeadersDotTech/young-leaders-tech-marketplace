@@ -1,6 +1,6 @@
 # enablement-html-renderer
 
-**Version 1.3.0**
+**Version 1.4.0**
 
 Packages finished enablement material into one self-contained HTML file where the reader chooses
 the format. A handoff target, not a starting point: other skills (meeting, content-pipeline,
@@ -24,6 +24,10 @@ diy-build-companion) produce the substance, this packages it.
   both light and dark mode rather than rendering dark-on-dark. A dependency-free contrast gate
   (`scripts/rasterize_diagrams.py`) checks every diagram in both themes and fails on a hardcoded
   colour that would not flip, so it runs anywhere with no install.
+- **Manual light/dark toggle.** Theme follows the OS by default via `prefers-color-scheme`, and
+  a **Dark**/**Light** button in the toolbar lets a reader override it either way. The choice is
+  saved in `localStorage` and re-applied before first paint on the next visit, so there is no
+  flash back to the OS default.
 - **AI-ism voice gate.** `scripts/check_ai_isms.py` (sourced from the content-pipeline Phase 4
   avoid-patterns) keeps the prose in the source blog's voice rather than drifting into generic AI
   phrasing. It is wired into the SKILL Shape phase and hard gates.
