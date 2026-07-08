@@ -1,6 +1,6 @@
 # opencode-sync
 
-**Version**: 1.6.5
+**Version**: 1.7.0
 **Author**: Young Leaders Tech
 **License**: MIT
 
