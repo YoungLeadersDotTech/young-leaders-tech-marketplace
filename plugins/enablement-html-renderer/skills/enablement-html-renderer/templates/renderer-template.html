@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>__TITLE__</title>
+<script>
+// Applied before first paint so a saved manual choice doesn't flash the OS-default
+// theme first. The click handler that writes this key lives in the main script below.
+try{
+  var __t = localStorage.getItem("enablement-renderer-theme");
+  if(__t === "dark" || __t === "light") document.documentElement.setAttribute("data-theme", __t);
+}catch(e){}
+</script>
 <style>
   :root{
     --bg:#fafaf8; --ink:#1a1a1a; --muted:#5a5a52; --line:#e2e0d8;
@@ -12,6 +20,10 @@
   @media (prefers-color-scheme: dark){
     :root{--bg:#16161a;--ink:#ececec;--muted:#a0a0a0;--line:#2c2c33;--panel:#1e1e24;--accent:#7fb3a3;--accent2:#e0915f;}
   }
+  /* Manual toggle (below) sets data-theme on <html>, which wins over the OS preference
+     in either direction. */
+  :root[data-theme="light"]{--bg:#fafaf8;--ink:#1a1a1a;--muted:#5a5a52;--line:#e2e0d8;--accent:#2f5d50;--accent2:#c4622d;--panel:#fff;}
+  :root[data-theme="dark"]{--bg:#16161a;--ink:#ececec;--muted:#a0a0a0;--line:#2c2c33;--panel:#1e1e24;--accent:#7fb3a3;--accent2:#e0915f;}
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);
     font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
@@ -58,6 +70,8 @@
   .panel{border:2.5px solid var(--ink);border-radius:6px;background:#fffdf7;
     padding:0;position:relative;overflow:hidden;box-shadow:3px 3px 0 var(--ink);min-height:170px;display:flex;flex-direction:column}
   @media (prefers-color-scheme: dark){.panel{background:#222028}}
+  :root[data-theme="dark"] .panel{background:#222028}
+  :root[data-theme="light"] .panel{background:#fffdf7}
   .panel .num{position:absolute;top:0;left:0;background:var(--ink);color:#fffdf7;
     font-weight:800;font-size:12px;padding:2px 9px;border-radius:0 0 6px 0;z-index:2;font-family:ui-monospace,monospace}
   .panel .art{flex:1;display:flex;align-items:flex-end;justify-content:center;padding:8px 8px 0;min-height:96px}
@@ -118,6 +132,7 @@
     <div class="row1">
       <span class="lbl">Read it as:</span>
       <div class="utils">
+        <button class="util" id="themeBtn" type="button" aria-pressed="false">Dark</button>
         <button class="util" id="allBtn" aria-pressed="false">Show all</button>
         <button class="util" id="printBtn">Print / PDF</button>
       </div>
@@ -378,6 +393,29 @@ document.getElementById("allBtn").addEventListener("click",function(){
   render();
 });
 document.getElementById("printBtn").addEventListener("click",()=>window.print());
+
+// Manual light/dark toggle. Theme otherwise follows the OS via prefers-color-scheme;
+// this lets a reader override it in either direction and remembers the choice
+// (per browser/profile - the head script above applies it before first paint).
+const THEME_KEY = "enablement-renderer-theme";
+function systemPrefersDark(){ return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches); }
+function currentTheme(){ return document.documentElement.getAttribute("data-theme") || ""; }
+function effectiveDark(){ const t=currentTheme(); return t==="dark" || (t!=="light" && systemPrefersDark()); }
+function syncThemeBtn(){
+  const btn = document.getElementById("themeBtn"); if(!btn) return;
+  const dark = effectiveDark();
+  btn.textContent = dark ? "Light" : "Dark";
+  btn.setAttribute("aria-pressed", currentTheme() ? "true" : "false");
+  btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+}
+document.getElementById("themeBtn").addEventListener("click",()=>{
+  const next = effectiveDark() ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  try{ localStorage.setItem(THEME_KEY, next); }catch(e){}
+  syncThemeBtn();
+});
+syncThemeBtn();
+
 // Deep-link: share file.html#prose to open straight into a chosen format.
 window.addEventListener("hashchange",()=> setFormat(location.hash.slice(1), false));
 

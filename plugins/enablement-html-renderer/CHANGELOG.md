@@ -2,6 +2,14 @@
 
 All notable changes to the enablement-html-renderer plugin.
 
+## [1.4.0] - 2026-07-08
+
+### Added
+- Manual light/dark toggle button in the toolbar. Theme previously only followed the OS via
+  `prefers-color-scheme`. The toggle sets `data-theme` on `<html>` (wins over the OS preference
+  in either direction) and persists the choice in `localStorage`, applied before first paint via
+  a head script so there is no flash back to the OS default.
+
 ## [1.3.0] - 2026-07-03
 
 ### Added
