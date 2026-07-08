@@ -2,6 +2,25 @@
 
 All notable changes to the opencode-sync skill.
 
+## [1.7.0] - 2026-07-08
+
+### Added
+- Improved OpenCode memory wiring: `--wire-memory` now prefers a repo-root `MEMORY.md` when
+  present, then `AGENTS.md`, then the global memory index, so project memory loads first on OpenCode.
+
+### Fixed
+- Removed a duplicate `filter_units_by_enablement` definition in `ingest_source.py` introduced
+  during a conflict resolution, which had caused non-disabled sibling plugins to be filtered out.
+
+### Changed
+- Refreshed the plugin README to document the memory-wiring behaviour and scrubbed internal
+  references from the public docs.
+
+### Note
+- Retroactive version bump: the above shipped in marketplace PR #31 without a version bump. This
+  entry brings VERSION, plugin.json, the marketplace entry, and the top-level version back in sync
+  under the 5-file rule.
+
 ## [1.6.5] - 2026-06-27
 
 ### Added
