@@ -14,3 +14,7 @@ plugins/*/skills/*.zip
 .toast-build/
 __pycache__/
 *.pyc
+
+# Generated OpenCode sync output - regenerable from canonical sources, not source
+.opencode/
+.opencode-sync/
