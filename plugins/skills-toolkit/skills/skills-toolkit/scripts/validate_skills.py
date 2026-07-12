@@ -180,6 +180,31 @@ def check_task_set(a: Artifact) -> list[Finding]:
     return []
 
 
+VAGUE_ASK_RE = re.compile(r"\bask (?:the )?user\b", re.IGNORECASE)
+CONTEXT_WINDOW = 3  # lines before/after to look for a real AskUserQuestion reference
+
+
+def check_vague_ask_user(a: Artifact) -> list[Finding]:
+    """Flag 'ask the user' / 'ask user' prose with no nearby AskUserQuestion
+    reference - an instruction to the model with no fixed option set, no
+    validation surface, and none of the real tool's built-in behaviors
+    (option cap, free-text fallback, preview comparison). See
+    references/askuserquestion-protocol.md for the structured shape to use
+    instead."""
+    lines = a.body.splitlines()
+    findings = []
+    for i, line in enumerate(lines):
+        if not VAGUE_ASK_RE.search(line):
+            continue
+        window = lines[max(0, i - CONTEXT_WINDOW):i + CONTEXT_WINDOW + 1]
+        if any("AskUserQuestion" in w for w in window):
+            continue
+        findings.append(Finding("Q8-VAGUE-ASK-USER", "WARN", str(a.path),
+                                 f"line {i + 1}: 'ask the user' with no nearby AskUserQuestion reference - "
+                                 f"use the structured block from references/askuserquestion-protocol.md"))
+    return findings
+
+
 def check_command_wrapper(a: Artifact, all_skill_paths: set[str]) -> list[Finding]:
     if a.kind != "command":
         return []
@@ -203,6 +228,7 @@ def run_checks(artifacts: list[Artifact]) -> list[Finding]:
         findings += check_em_dash(a)
         findings += check_xml_tag_in_frontmatter(a)
         findings += check_task_set(a)
+        findings += check_vague_ask_user(a)
         findings += check_command_wrapper(a, all_skill_paths)
     return findings
 

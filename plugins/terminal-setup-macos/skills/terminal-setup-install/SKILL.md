@@ -134,7 +134,7 @@ shell-integration = zsh
 
 **Critical:** `shell-integration` must be a shell name (`zsh`, `bash`, `fish`), NOT `true`. The latter triggers a Configuration Errors dialog when Ghostty starts.
 
-Ask the user before this step if they want a different `working-directory` (default `~/Projects`).
+Before this step, use `AskUserQuestion` (header "Working dir"; recommended option "Use ~/Projects (default)"; other option "Something else" - the tool's free-text fallback covers a custom path) to confirm the `working-directory` value rather than assuming the default.
 
 ### Step 7 - Install Oh My Zsh + Powerlevel10k + plugins
 

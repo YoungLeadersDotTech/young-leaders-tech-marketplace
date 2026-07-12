@@ -46,7 +46,25 @@ TaskCreate "Write file, confirm with user" -> blocked_by Fix findings, re-run if
 
 ## Creating a new skill
 
-1. Ask the user: skill name (kebab-case), one-line purpose, WHEN to trigger, WHEN NOT to trigger, which tools it needs.
+1. Gather the skill's shape via `AskUserQuestion` rather than open prose - at minimum, name (kebab-case), one-line purpose, and the tool set. Example block (adapt options to context):
+   ```json
+   {
+     "questions": [
+       {
+         "question": "What tools does this skill need?",
+         "header": "Tool set",
+         "multiSelect": true,
+         "options": [
+           {"label": "Read/Write/Edit", "description": "Reads and writes files directly"},
+           {"label": "Bash", "description": "Runs shell commands or scripts"},
+           {"label": "AskUserQuestion", "description": "Needs to ask the user structured questions mid-run"},
+           {"label": "Task* set", "description": "Tracks multi-step work with TaskCreate/TaskUpdate/TaskGet/TaskList"}
+         ]
+       }
+     ]
+   }
+   ```
+   For open-ended fields (skill name, one-line purpose, WHEN/WHEN NOT to trigger) that don't reduce to a short option list, ask directly in prose - `AskUserQuestion` free-text entry covers this. See `references/askuserquestion-protocol.md` for the full shape and when prose-only is fine.
 2. Draft frontmatter:
    ```yaml
    ---
@@ -91,6 +109,7 @@ Checks implemented (see `scripts/validate_skills.py` for the source of truth - t
 | Q5-XML-TAG | FAIL | Tag-shaped markup left in YAML frontmatter |
 | Q6-TASK-SET | FAIL | A partial Task* set (e.g. `TaskCreate` without `TaskGet`/`TaskList`) |
 | Q7-COMMAND-WRAPPER | WARN | A `commands/*.md` file that just wraps an agent or duplicates a sibling skill |
+| Q8-VAGUE-ASK-USER | WARN | "ask the user" / "ask user" prose with no nearby `AskUserQuestion` reference - see `references/askuserquestion-protocol.md` |
 
 ## Completion signal
 

@@ -1,12 +1,12 @@
 # Skills Toolkit for Claude Code
 
-**Version**: 3.0.0
+**Version**: 3.1.0
 **Author**: Young Leaders Tech
 **License**: MIT
 
 ## Overview
 
-`skills-toolkit` is the authoring + validation plugin for Claude Code skills and agents in this marketplace. As of 3.0.0 it ships a script-backed `skills-toolkit` skill (`skills/skills-toolkit/SKILL.md` + `scripts/validate_skills.py`) that creates and validates skills/agents via a real deterministic check, not a self-scored rubric - replacing the old `create-skill`, `list-skills`, and `validate-skill` command wrappers. It also still ships four agents (skill-creator, skill-validator, agent-author, agent-validator, kept for now), four reusable shared-skill templates, thirteen agent and infrastructure templates, a deterministic plugin version-sync gate, and a marketplace-guidelines reference doc.
+`skills-toolkit` is the authoring + validation plugin for Claude Code skills and agents in this marketplace. As of 3.0.0 it ships a script-backed `skills-toolkit` skill (`skills/skills-toolkit/SKILL.md` + `scripts/validate_skills.py`) that creates and validates skills/agents via a real deterministic check, not a self-scored rubric - replacing the old `create-skill`, `list-skills`, and `validate-skill` command wrappers. It also still ships four agents (skill-creator, skill-validator, agent-author, agent-validator, kept for now), four reusable shared-skill templates, thirteen agent and infrastructure templates, a deterministic plugin version-sync gate, and a marketplace-guidelines reference doc. 3.1.0 adds a `Q8-VAGUE-ASK-USER` check and the canonical `references/askuserquestion-protocol.md` block, and fixes a manifest drift left over from 3.0.0 (`plugin.json` still listed the deleted commands and omitted the new skill).
 
 ## What's Included
 

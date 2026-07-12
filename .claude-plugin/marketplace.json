@@ -1,6 +1,6 @@
 {
   "name": "young-leaders-tech-marketplace",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Personal Claude Code plugin marketplace",
   "owner": {
     "name": "Young Leaders Tech",
@@ -10,8 +10,8 @@
     {
       "name": "skills-toolkit",
       "source": "./plugins/skills-toolkit",
-      "version": "3.0.0",
-      "description": "Toolkit for authoring and validating Claude Code skills and agents via a real script-backed check (description cap, PII, em-dash, Task* completeness), not a self-scored rubric. Auto-invoke on 'create skill', 'validate skill', 'validate agent'."
+      "version": "3.1.0",
+      "description": "Toolkit for authoring and validating Claude Code skills and agents via a real script-backed check (description cap, PII, em-dash, Task* completeness, vague ask-user prose), not a self-scored rubric. Auto-invoke on 'create skill', 'validate skill', 'validate agent'."
     },
     {
       "name": "terminal-setup-macos",

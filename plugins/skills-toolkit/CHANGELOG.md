@@ -2,6 +2,16 @@
 
 All notable changes to `skills-toolkit` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2026-07-12
+
+### Added
+- `Q8-VAGUE-ASK-USER` check (WARN): flags "ask the user" / "ask user" prose with no nearby `AskUserQuestion` reference, so skills/agents stop instructing the model to ask in unstructured free text.
+- `references/askuserquestion-protocol.md`: the canonical `AskUserQuestion` shape for this marketplace - the governing when/how/after-answer rule, the JSON block shape, the preview-before-write pattern, and a cross-runtime capability note for `opencode-sync`.
+- Fixed the 6 real Q8 findings the new check surfaced on its first run: `skills-toolkit/skills/skills-toolkit/SKILL.md`, `skills-toolkit/agents/agent-author.md` (4 error-handling table rows), `opencode-sync/skills/opencode-sync/SKILL.md`, `terminal-setup-macos/skills/terminal-setup-install/SKILL.md`.
+
+### Fixed
+- `.claude-plugin/plugin.json` still listed the 3 command files deleted in 3.0.0 and never listed the new `skills-toolkit` skill - manifest drift left over from that release. Corrected here.
+
 ## [3.0.0] - 2026-07-12
 
 ### Added
