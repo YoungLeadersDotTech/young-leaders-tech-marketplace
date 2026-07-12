@@ -6,7 +6,7 @@
     "url": "https://youngleaders.tech"
   },
   "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
-  "version": "2.0.7",
+  "version": "3.0.0",
   "commands": [
     "./commands/create-skill.md",
     "./commands/list-skills.md",

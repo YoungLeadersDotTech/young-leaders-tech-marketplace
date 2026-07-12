@@ -2,6 +2,17 @@
 
 All notable changes to `skills-toolkit` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-07-12
+
+### Added
+- New `skills/skills-toolkit/SKILL.md`: a script-backed skill for creating and validating SKILL.md/agent files, replacing `create-skill.md`, `list-skills.md`, and `validate-skill.md` command wrappers. Runs `scripts/validate_skills.py` (a real deterministic script - description-cap, PII, em-dash, frontmatter tag-shape, Task* completeness, command-wrapper detection) rather than asking a model to self-score against a prose rubric. Independently authored for this repo.
+
+### Removed
+- `commands/create-skill.md`, `commands/list-skills.md`, `commands/validate-skill.md` - superseded by direct invocation of the new `skills-toolkit` skill.
+
+### Changed
+- Major version bump: this is a breaking change to the plugin's command surface (3 commands removed). `agents/skill-creator-agent.md`, `agents/skill-validator-agent.md`, `agents/agent-author.md`, `agents/agent-validator.md` are kept in place for now (not yet superseded) - only their command-wrapper entry points are retired.
+
 ## [2.0.6] - 2026-06-18
 
 ### Changed

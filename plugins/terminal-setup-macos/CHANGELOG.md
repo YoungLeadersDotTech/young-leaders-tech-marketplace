@@ -2,6 +2,11 @@
 
 All notable changes to `terminal-setup-macos` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-07-12
+
+### Removed
+- `commands/terminal-setup-install.md` - a redundant wrapper around `skills/terminal-setup-install/SKILL.md`, which already works via direct skill invocation. Flagged by the marketplace's `Q7-COMMAND-WRAPPER` check.
+
 ## [1.2.2] - 2026-06-19
 
 ### Changed

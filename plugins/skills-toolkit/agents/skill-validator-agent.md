@@ -258,7 +258,7 @@ description: Provides stakeholder information for projects.
 **Common PII to Flag**:
 - Emails: `john@example.com`
 - Phones: `555-123-4567`, `(555) 123-4567`
-- SSN: `123-45-6789`
+- SSN: `NNN-NN-NNNN`-shaped string
 - Names in possessive: `John's project` (flag for review - could be project name)
 
 **Safe Alternatives**:

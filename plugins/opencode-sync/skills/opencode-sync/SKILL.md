@@ -1,6 +1,6 @@
 ---
 name: opencode-sync
-description: Generates OpenCode agents, command wrappers, and MCP config from canonical Claude Code sources, validates both runtimes' rule sets, and detects drift. Use when adding OpenCode support, converting agents or commands between runtimes, or checking cross-runtime compliance.
+description: Generates OpenCode agents and MCP config from canonical Claude Code sources, validates both runtimes' rule sets, and detects drift. Use when adding OpenCode support or checking cross-runtime compliance.
 version: 1.6.0
 user-invocable: true
 category: Cross-Runtime Tooling

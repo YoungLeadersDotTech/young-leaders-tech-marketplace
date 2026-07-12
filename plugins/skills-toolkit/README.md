@@ -1,12 +1,12 @@
 # Skills Toolkit for Claude Code
 
-**Version**: 2.0.7
+**Version**: 3.0.0
 **Author**: Young Leaders Tech
 **License**: MIT
 
 ## Overview
 
-`skills-toolkit` is the authoring + validation plugin for Claude Code skills and agents in this marketplace. It ships four agents (skill-creator, skill-validator, agent-author, agent-validator), three slash commands, four reusable shared-skill templates, thirteen agent and infrastructure templates, a deterministic plugin version-sync gate, and a marketplace-guidelines reference doc that the validator agents cite when reporting findings.
+`skills-toolkit` is the authoring + validation plugin for Claude Code skills and agents in this marketplace. As of 3.0.0 it ships a script-backed `skills-toolkit` skill (`skills/skills-toolkit/SKILL.md` + `scripts/validate_skills.py`) that creates and validates skills/agents via a real deterministic check, not a self-scored rubric - replacing the old `create-skill`, `list-skills`, and `validate-skill` command wrappers. It also still ships four agents (skill-creator, skill-validator, agent-author, agent-validator, kept for now), four reusable shared-skill templates, thirteen agent and infrastructure templates, a deterministic plugin version-sync gate, and a marketplace-guidelines reference doc.
 
 ## What's Included
 
