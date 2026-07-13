@@ -1,6 +1,6 @@
 # enablement-html-renderer
 
-**Version 1.4.0**
+**Version 1.5.0**
 
 Packages finished enablement material into one self-contained HTML file where the reader chooses
 the format. A handoff target, not a starting point: other skills (meeting, content-pipeline,
@@ -16,6 +16,10 @@ diy-build-companion) produce the substance, this packages it.
 
 ## Notable behaviour
 
+- **Section images.** A section can carry an `images` array (`src` + `alt` + `caption`). Images
+  render once per section, above the format body, so a real screenshot complements every tab, not
+  just one. `src` takes an `http(s)` URL (already online) or a `data:image/*;base64` URI (local file,
+  inlined so the file stays offline via `scripts/img_to_datauri.py`). Sanitised to those two schemes.
 - **Auto-linked URLs.** At render time, `http(s)` URLs become real links across every field and
   inside prose. Write a full URL anywhere and it resolves itself; no pre-built anchors, no dead
   links. The public build stays tracker-agnostic, so issue keys remain plain text.

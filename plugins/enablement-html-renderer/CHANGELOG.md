@@ -2,6 +2,22 @@
 
 All notable changes to the enablement-html-renderer plugin.
 
+## [1.5.0] - 2026-07-13
+
+### Added
+- **Section images.** A section can now carry an `images` array of `{ src, alt, caption }`. Images
+  render once per section, above the format body, so a real screenshot complements every tab
+  (bullets/prose/visual/comic), not just one. `src` accepts an `http(s)` URL (already-online
+  content, kept as-is) or a `data:image/*;base64` URI (local files, inlined so the file stays
+  offline). Sanitised at render time to those two schemes only; `alt`/`caption` are escaped.
+- `scripts/img_to_datauri.py` - converts local images into a ready-to-paste `images` JSON array
+  of base64 data URIs. Dependency-free.
+
+### Why
+- A genuine screenshot of the actual screen beats any amount of prose or a drawn diagram, and
+  many callers already have images to hand (a published blog, a workshop deck, a UI capture).
+  The renderer previously had no way to carry them, so that quality was lost at packaging time.
+
 ## [1.4.0] - 2026-07-08
 
 ### Added

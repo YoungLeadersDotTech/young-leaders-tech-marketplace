@@ -63,6 +63,13 @@ try{
     background:var(--panel);color:var(--ink)}
   .visual svg text{fill:currentColor}
   .visual figcaption{color:var(--muted);font-size:.92rem;margin-top:.5em}
+  /* section images: real screenshots or supplied art, shown with the section on every format tab.
+     Images are format-agnostic supporting media - they complement whichever text form is showing. */
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:.3em 0 1em}
+  .figs figure{margin:0;border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
+  .figs img{display:block;width:100%;height:auto}
+  .figs figcaption{color:var(--muted);font-size:.9rem;padding:8px 12px}
+  @media print{.figs figure{break-inside:avoid}}
   /* comic: real comic-strip feel, not captioned boxes. Hand-drawn SVG character,
      speech bubbles, panel-number tabs, varied panel rhythm. */
   .comic{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
@@ -187,6 +194,10 @@ function el(tag, cls, html){ const e=document.createElement(tag); if(cls)e.class
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 // safeUrl(): only allow http(s) and mailto; block javascript:/data: in shared files.
 function safeUrl(u){ try{ const p=new URL(u, location.href); return ["http:","https:","mailto:"].includes(p.protocol) ? u : "#"; }catch(e){ return "#"; } }
+// safeImgUrl(): images are either inline data: URIs (base64-embedded for the offline file) or
+// http(s) (when the content already lives online). Allow only those two; block everything else
+// (no javascript:, no file:, no data: of a non-image type). Returns "" when the src is not safe.
+function safeImgUrl(u){ u=String(u==null?"":u).trim(); try{ if(/^data:image\/[a-z0-9.+-]+;base64,/i.test(u)) return u; const p=new URL(u, location.href); return ["http:","https:"].includes(p.protocol) ? u : ""; }catch(e){ return ""; } }
 // prose and visualSvg are authored by the skill itself (trusted source of truth), so they
 // pass through as HTML by design. Every other field above goes through esc().
 
@@ -309,10 +320,24 @@ function secMetaHTML(sec){
   if(sec.videoUrl) bits.push("<a class='badge video' href='"+esc(safeUrl(sec.videoUrl))+"' rel='noopener noreferrer'>Watch this part</a>");
   return bits.length ? "<div class='secmeta'>"+bits.join("")+"</div>" : "";
 }
+// sectionImagesHTML(): real screenshots / supplied art for a section. Rendered ONCE per section,
+// above the format-specific body, so the images complement every tab (bullets/prose/visual/comic),
+// not just one. src is sanitised to data:image or http(s); alt/caption are escaped plain text.
+function sectionImagesHTML(sec){
+  const imgs = (sec.images||[]).filter(im => im && safeImgUrl(im.src));
+  if(!imgs.length) return "";
+  return "<div class='figs'>" + imgs.map(im =>
+    "<figure><img loading='lazy' src='"+esc(safeImgUrl(im.src))+"' alt='"+esc(im.alt||"")+"'>"
+    + (im.caption ? "<figcaption>"+linkifyPlain(im.caption)+"</figcaption>" : "")
+    + "</figure>"
+  ).join("") + "</div>";
+}
 function renderSection(sec){
   const wrap = el("section","block");
   wrap.appendChild(el("h2",null,linkifyPlain(sec.heading)));
   if(secMetaHTML(sec)) wrap.insertAdjacentHTML("beforeend", secMetaHTML(sec));
+  // Section images render once, above the format body, visible on every tab.
+  if(sectionImagesHTML(sec)) wrap.insertAdjacentHTML("beforeend", sectionImagesHTML(sec));
   const make = {
     bullets: () => el("div","fmt bullets","<ul class='bul'>"+(sec.bullets||[]).map(b=>"<li>"+linkifyPlain(b)+"</li>").join("")+"</ul>"),
     prose:   () => el("div","fmt prose", sec.prose?linkifyProse(sec.prose):"<p><em>No prose form for this section.</em></p>"),

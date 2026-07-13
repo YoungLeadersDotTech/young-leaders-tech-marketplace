@@ -58,7 +58,10 @@ only transforms and packages what it receives. Minimum fields:
       "callouts": [
         { "level": "critical | warn | tip | never", "text": "the one thing not to get wrong" }
       ],
-      "commands": ["colima stop", "colima start"]
+      "commands": ["colima stop", "colima start"],
+      "images": [
+        { "src": "data:image/png;base64,iVBORw0KGgo...", "alt": "the login screen", "caption": "Where the SSO button lives" }
+      ]
     }
   ],
   "agenda": ["optional list of items covered"],
@@ -76,6 +79,26 @@ renders consistently across every format, and `commands` are copy-paste-ready co
 lines. `agenda`, `tasks`, and `links` are optional and render as their own panels.
 Recordings (Loom, Zoom) belong in `links` or per-section `videoUrl` so the file
 complements video rather than replacing it.
+
+**Images (real screenshots or supplied art).** A section can carry an `images` array of
+`{ src, alt, caption }`. Images are format-agnostic supporting media: they render ONCE per
+section, above the format body, so they complement whichever tab the reader is on (bullets,
+prose, visual, comic) rather than living in a single format. This is the big lever on content
+quality - a real screenshot of the actual screen next to the prose that explains it beats any
+amount of text, and many callers already have those images to hand (a published blog with
+inline shots, a workshop deck, a product UI capture). Two ways to supply `src`:
+
+- **Already online** - put the `http(s)` URL straight in `src`. The renderer keeps it as-is.
+  Right when the image is hosted and the file does not need to be fully offline.
+- **Local file** - the offline HTML must be one self-contained file, so a local image has to be
+  inlined as a `data:image/...;base64,...` URI. Run `scripts/img_to_datauri.py --json shot.png`
+  to convert one or more local images into a ready-to-paste `images` array. `src` is sanitised at
+  render time to `data:image/*` or `http(s)` only; `alt` and `caption` are escaped plain text.
+
+Keep the embedded weight sane: base64 inflates by ~34%, so a handful of screenshots is fine but do
+not inline a whole multi-MB gallery into one file. During the Shape phase, look for images the
+caller already has before writing a `visualSvg` from scratch - a genuine screenshot usually beats a
+drawn diagram, and the two can coexist (screenshot for the real thing, SVG for the abstract flow).
 
 **Trusted vs escaped fields.** Two fields are authored by this skill and pass
 through as HTML: `prose` (you write the paragraph markup) and each section's
