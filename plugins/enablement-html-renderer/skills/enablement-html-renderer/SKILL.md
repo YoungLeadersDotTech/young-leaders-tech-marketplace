@@ -58,7 +58,10 @@ only transforms and packages what it receives. Minimum fields:
       "callouts": [
         { "level": "critical | warn | tip | never", "text": "the one thing not to get wrong" }
       ],
-      "commands": ["colima stop", "colima start"]
+      "commands": ["colima stop", "colima start"],
+      "images": [
+        { "src": "data:image/png;base64,iVBORw0KGgo...", "alt": "the login screen", "caption": "Where the SSO button lives" }
+      ]
     }
   ],
   "agenda": ["optional list of items covered"],
@@ -76,6 +79,33 @@ renders consistently across every format, and `commands` are copy-paste-ready co
 lines. `agenda`, `tasks`, and `links` are optional and render as their own panels.
 Recordings (Loom, Zoom) belong in `links` or per-section `videoUrl` so the file
 complements video rather than replacing it.
+
+**Images (real screenshots or supplied art).** Images are the big lever on content quality - a
+real screenshot of the actual screen next to the words that explain it beats any amount of text,
+and many callers already have images to hand (a published blog with inline shots, a workshop deck,
+a product UI capture). There is **no cap on how many** and **no fixed slot**: put as many images as
+the content needs, wherever they belong. You decide placement from what you are asked to illustrate.
+Each image is `{ src, alt, caption }`. Three ways to place them, mix freely:
+
+- **Attach to a section** - `section.images: [ {src,alt,caption}, ... ]`. A convenience for "here
+  are the shots for this section". Renders together near the top of the section. Any number.
+- **Interleave with bullets** - a `bullets` entry can be a string (text) or an object: `{text}` is a
+  text bullet, `{img}` (or `{image}`) is a standalone image, `{text, img}` is a bullet followed by
+  its image. Order is preserved, so an image can sit before, after or between any bullets - e.g. one
+  screenshot per point.
+- **Inline in prose** - `prose` is authored HTML, so drop an `<img src="...">` (or a `<figure>` with
+  a `<figcaption>`) anywhere in the paragraph flow, including between two sentences. If the prose is
+  five or six sentences, that can be one image per sentence. The renderer styles `.prose img`.
+
+`src` takes an `http(s)` URL (already-online content, kept as-is) or a `data:image/*;base64` URI
+(local files, inlined so the file stays one offline artifact). Run `scripts/img_to_datauri.py --json
+shot.png ...` to convert local images into paste-ready entries. `src` is sanitised at render time to
+`data:image/*` or `http(s)` only; `alt`/`caption` are escaped plain text (in bullets/section images).
+
+Keep embedded weight sane: base64 inflates by ~34%, so many multi-MB images in one file adds up -
+size them for the web first if you are inlining a lot. During Shape, look for images the caller
+already has before drawing a `visualSvg` from scratch; a genuine screenshot usually beats a diagram,
+and the two can coexist (screenshot for the real thing, SVG for the abstract flow).
 
 **Trusted vs escaped fields.** Two fields are authored by this skill and pass
 through as HTML: `prose` (you write the paragraph markup) and each section's

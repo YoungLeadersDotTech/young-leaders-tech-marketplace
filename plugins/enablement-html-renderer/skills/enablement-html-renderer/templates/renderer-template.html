@@ -63,6 +63,21 @@ try{
     background:var(--panel);color:var(--ink)}
   .visual svg text{fill:currentColor}
   .visual figcaption{color:var(--muted);font-size:.92rem;margin-top:.5em}
+  /* section images: real screenshots or supplied art, shown with the section on every format tab.
+     Images are format-agnostic supporting media - they complement whichever text form is showing. */
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:.3em 0 1em}
+  .figs figure{margin:0;border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
+  .figs img{display:block;width:100%;height:auto}
+  .figs figcaption{color:var(--muted);font-size:.9rem;padding:8px 12px}
+  @media print{.figs figure{break-inside:avoid}}
+  /* inline images: author-embedded in prose, or interleaved between bullets. No fixed placement. */
+  .prose img{max-width:100%;height:auto;display:block;margin:.6em 0;border:1px solid var(--line);border-radius:10px}
+  .prose figure{margin:.8em 0}
+  .prose figcaption{color:var(--muted);font-size:.9rem;margin-top:.4em}
+  li.li-img{list-style:none;margin:.4em 0 .7em}
+  li.li-img figure{margin:0;max-width:560px}
+  li.li-img img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:10px}
+  li.li-img figcaption{color:var(--muted);font-size:.9rem;margin-top:.3em}
   /* comic: real comic-strip feel, not captioned boxes. Hand-drawn SVG character,
      speech bubbles, panel-number tabs, varied panel rhythm. */
   .comic{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
@@ -187,6 +202,10 @@ function el(tag, cls, html){ const e=document.createElement(tag); if(cls)e.class
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 // safeUrl(): only allow http(s) and mailto; block javascript:/data: in shared files.
 function safeUrl(u){ try{ const p=new URL(u, location.href); return ["http:","https:","mailto:"].includes(p.protocol) ? u : "#"; }catch(e){ return "#"; } }
+// safeImgUrl(): images are either inline data: URIs (base64-embedded for the offline file) or
+// http(s) (when the content already lives online). Allow only those two; block everything else
+// (no javascript:, no file:, no data: of a non-image type). Returns "" when the src is not safe.
+function safeImgUrl(u){ u=String(u==null?"":u).trim(); try{ if(/^data:image\/[a-z0-9.+-]+;base64,/i.test(u)) return u; const p=new URL(u, location.href); return ["http:","https:"].includes(p.protocol) ? u : ""; }catch(e){ return ""; } }
 // prose and visualSvg are authored by the skill itself (trusted source of truth), so they
 // pass through as HTML by design. Every other field above goes through esc().
 
@@ -309,12 +328,42 @@ function secMetaHTML(sec){
   if(sec.videoUrl) bits.push("<a class='badge video' href='"+esc(safeUrl(sec.videoUrl))+"' rel='noopener noreferrer'>Watch this part</a>");
   return bits.length ? "<div class='secmeta'>"+bits.join("")+"</div>" : "";
 }
+// Images: no fixed count and no fixed slot. figureHTML renders one image; the same primitive is
+// reused wherever an image belongs - attached to a section, interleaved between bullets, or inline
+// in prose. src is sanitised to data:image or http(s); alt/caption are escaped plain text.
+function figureHTML(im){
+  const u = im && safeImgUrl(im.src); if(!u) return "";
+  return "<figure><img loading='lazy' src='"+esc(u)+"' alt='"+esc(im.alt||"")+"'>"
+    + (im.caption ? "<figcaption>"+linkifyPlain(im.caption)+"</figcaption>" : "")
+    + "</figure>";
+}
+// Section-level images: an optional convenience for "attach these shots to this section", any
+// number of them. For precise placement (before/after a given bullet, or between two sentences)
+// put images inline in `bullets` or `prose` instead - there is no rule that images live at the top.
+function sectionImagesHTML(sec){
+  const imgs = (sec.images||[]).map(figureHTML).filter(Boolean);
+  return imgs.length ? "<div class='figs'>" + imgs.join("") + "</div>" : "";
+}
+// A bullet entry is either a string (text) or an object: {text} renders text, {img|image} renders
+// a standalone image, {text, img} renders text then its image. Interleaving entries lets images sit
+// before, after or between any bullets, in the order you list them - as many as you want.
+function bulletVal(b){ return (b && typeof b === "object") ? b : {text:b}; }
+function bulletText(b){ const o=bulletVal(b); return o.text!=null ? String(o.text) : ""; }
+function bulletHTML(b){
+  const o = bulletVal(b), img = o.img || o.image;
+  const t = (o.text!=null && o.text!=="") ? "<li>"+linkifyPlain(o.text)+"</li>" : "";
+  const f = (img && safeImgUrl(img.src)) ? "<li class='li-img'>"+figureHTML(img)+"</li>" : "";
+  return t + f;
+}
 function renderSection(sec){
   const wrap = el("section","block");
   wrap.appendChild(el("h2",null,linkifyPlain(sec.heading)));
   if(secMetaHTML(sec)) wrap.insertAdjacentHTML("beforeend", secMetaHTML(sec));
+  // Section-level images (optional) render here by default - the "attach shots to the section"
+  // convenience. Inline images inside bullets/prose place themselves, wherever you put them.
+  if(sectionImagesHTML(sec)) wrap.insertAdjacentHTML("beforeend", sectionImagesHTML(sec));
   const make = {
-    bullets: () => el("div","fmt bullets","<ul class='bul'>"+(sec.bullets||[]).map(b=>"<li>"+linkifyPlain(b)+"</li>").join("")+"</ul>"),
+    bullets: () => el("div","fmt bullets","<ul class='bul'>"+(sec.bullets||[]).map(bulletHTML).join("")+"</ul>"),
     prose:   () => el("div","fmt prose", sec.prose?linkifyProse(sec.prose):"<p><em>No prose form for this section.</em></p>"),
     visual:  () => el("div","fmt visual","<figure>"+(sec.visualSvg?normalizeSvg(sec.visualSvg):"<p><em>No diagram for this section.</em></p>")+(sec.visualCaption?"<figcaption>"+linkifyPlain(sec.visualCaption)+"</figcaption>":"")+"</figure>"),
     comic:   () => el("div","fmt comic",(sec.comic||[]).map((p,i)=>comicPanel(p,i)).join("")||"<p><em>No comic for this section.</em></p>")
@@ -339,7 +388,7 @@ function renderCheatSheet(){
     lines.push("## "+(s.heading||""));
     (s.callouts||[]).filter(co=>co.level==="critical"||co.level==="never").forEach(co=>lines.push("! "+(CALLOUT_LABEL[co.level]||"")+": "+co.text));
     (s.commands||[]).forEach(cmd=>lines.push("  $ "+cmd));
-    (s.bullets||[]).slice(0,3).forEach(b=>lines.push("- "+b));
+    (s.bullets||[]).map(bulletText).filter(Boolean).slice(0,3).forEach(t=>lines.push("- "+t));
   });
   const plain = lines.join("\n");
   const card = el("div","fmt cheatsheet");
@@ -347,7 +396,7 @@ function renderCheatSheet(){
   (DATA.sections||[]).forEach(s=>{
     html += "<h3>"+linkifyPlain(s.heading||"")+"</h3>";
     html += calloutsHTML({callouts:(s.callouts||[]).filter(co=>co.level==="critical"||co.level==="never")});
-    html += "<ul class='bul'>"+(s.bullets||[]).slice(0,3).map(b=>"<li>"+linkifyPlain(b)+"</li>").join("")+"</ul>";
+    html += "<ul class='bul'>"+(s.bullets||[]).map(bulletText).filter(Boolean).slice(0,3).map(t=>"<li>"+linkifyPlain(t)+"</li>").join("")+"</ul>";
     html += commandsHTML(s);
   });
   html += "</div>";

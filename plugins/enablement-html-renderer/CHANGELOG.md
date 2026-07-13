@@ -2,6 +2,23 @@
 
 All notable changes to the enablement-html-renderer plugin.
 
+## [1.5.0] - 2026-07-13
+
+### Added
+- **Images, any number, placed anywhere.** No cap and no fixed slot. Three placements, mix freely:
+  attach to a section (`section.images: [...]`), interleave with bullets (a `bullets` entry may be
+  `"text"`, `{img}`, or `{text, img}`, so an image can sit before/after/between any bullets), or
+  inline in `prose` (drop an `<img>` anywhere in the paragraph flow, down to one per sentence).
+  `src` accepts an `http(s)` URL (already-online, kept as-is) or a `data:image/*;base64` URI (local
+  files, inlined so the file stays offline). Sanitised to those two schemes; `alt`/`caption` escaped.
+- `scripts/img_to_datauri.py` - converts local images into a ready-to-paste `images` JSON array
+  of base64 data URIs. Dependency-free.
+
+### Why
+- A genuine screenshot of the actual screen beats any amount of prose or a drawn diagram, and
+  many callers already have images to hand (a published blog, a workshop deck, a UI capture).
+  The renderer previously had no way to carry them, so that quality was lost at packaging time.
+
 ## [1.4.0] - 2026-07-08
 
 ### Added
