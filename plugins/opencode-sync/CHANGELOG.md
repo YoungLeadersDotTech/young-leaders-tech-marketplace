@@ -2,6 +2,11 @@
 
 All notable changes to the opencode-sync skill.
 
+## [1.7.1] - 2026-07-12
+
+### Fixed
+- `skills/opencode-sync/SKILL.md`: trimmed `description` from 270 to under the 250-char cap. Flagged by the marketplace's `Q1-DESC-CAP` check.
+
 ## [1.7.0] - 2026-07-08
 
 ### Added

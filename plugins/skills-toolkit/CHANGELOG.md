@@ -2,6 +2,27 @@
 
 All notable changes to `skills-toolkit` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2026-07-12
+
+### Added
+- `Q8-VAGUE-ASK-USER` check (WARN): flags "ask the user" / "ask user" prose with no nearby `AskUserQuestion` reference, so skills/agents stop instructing the model to ask in unstructured free text.
+- `references/askuserquestion-protocol.md`: the canonical `AskUserQuestion` shape for this marketplace - the governing when/how/after-answer rule, the JSON block shape, the preview-before-write pattern, and a cross-runtime capability note for `opencode-sync`.
+- Fixed the 6 real Q8 findings the new check surfaced on its first run: `skills-toolkit/skills/skills-toolkit/SKILL.md`, `skills-toolkit/agents/agent-author.md` (4 error-handling table rows), `opencode-sync/skills/opencode-sync/SKILL.md`, `terminal-setup-macos/skills/terminal-setup-install/SKILL.md`.
+
+### Fixed
+- `.claude-plugin/plugin.json` still listed the 3 command files deleted in 3.0.0 and never listed the new `skills-toolkit` skill - manifest drift left over from that release. Corrected here.
+
+## [3.0.0] - 2026-07-12
+
+### Added
+- New `skills/skills-toolkit/SKILL.md`: a script-backed skill for creating and validating SKILL.md/agent files, replacing `create-skill.md`, `list-skills.md`, and `validate-skill.md` command wrappers. Runs `scripts/validate_skills.py` (a real deterministic script - description-cap, PII, em-dash, frontmatter tag-shape, Task* completeness, command-wrapper detection) rather than asking a model to self-score against a prose rubric. Independently authored for this repo.
+
+### Removed
+- `commands/create-skill.md`, `commands/list-skills.md`, `commands/validate-skill.md` - superseded by direct invocation of the new `skills-toolkit` skill.
+
+### Changed
+- Major version bump: this is a breaking change to the plugin's command surface (3 commands removed). `agents/skill-creator-agent.md`, `agents/skill-validator-agent.md`, `agents/agent-author.md`, `agents/agent-validator.md` are kept in place for now (not yet superseded) - only their command-wrapper entry points are retired.
+
 ## [2.0.6] - 2026-06-18
 
 ### Changed

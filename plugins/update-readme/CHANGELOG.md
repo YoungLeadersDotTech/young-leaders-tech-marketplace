@@ -2,6 +2,14 @@
 
 All notable changes to `update-readme` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-07-12
+
+### Fixed
+- `skills/update-readme/SKILL.md`: `allowed-tools` was missing `TaskGet`/`TaskList` from the canonical Task* set. Flagged by the marketplace's `Q6-TASK-SET` check.
+
+### Removed
+- `commands/update-readme.md` - a redundant wrapper around `skills/update-readme/SKILL.md`, which already works via direct skill invocation. Flagged by the marketplace's `Q7-COMMAND-WRAPPER` check.
+
 ## [1.1.0] - 2026-06-26
 
 ### Changed

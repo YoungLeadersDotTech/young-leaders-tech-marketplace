@@ -201,11 +201,11 @@ Write nothing else after this summary. Do not auto-trigger downstream agents - t
 |---|---|---|
 | Description over 250 chars | any | Trim to <=250; never truncate mid-word; rewrite if needed |
 | Em dash detected | any | Replace with ` - ` (space-hyphen-space) |
-| Missing template | package | Search `templates/` and parent directories; report path tried; ask user to provide or remove the reference |
-| Tool list mismatch | any | Confirm body intent with user; either add tool or remove body reference |
-| Bundle exists already | package | Ask user: overwrite, version-bump output dir, or abort |
-| YAML parse error | edit | Stop; report exact line; ask user before any further modification |
-| File not found | edit, package | Stop; ask user for absolute path |
+| Missing template | package | Search `templates/` and parent directories; report path tried; `AskUserQuestion` (header "Template"): recommended option "Provide a path" (paste the correct template location), other option "Remove the reference" (drop the missing template from the bundle) |
+| Tool list mismatch | any | `AskUserQuestion` (header "Tool mismatch"): recommended option "Add the tool" (the body uses a tool not yet in frontmatter), other option "Remove body reference" (the body mentions a capability this agent doesn't actually need) |
+| Bundle exists already | package | `AskUserQuestion` (header "Bundle exists"): recommended option "Version-bump output dir" (keep the old bundle, write a new versioned one), other options "Overwrite" and "Abort" |
+| YAML parse error | edit | Stop; report exact line; `AskUserQuestion` (header "Parse error"): recommended option "Show me the line" (pause for manual fix before any further edit), other option "Attempt auto-fix" (only for trivial quoting/indent errors) |
+| File not found | edit, package | Stop; `AskUserQuestion` free-text prompt for the correct absolute path (no fixed option set applies here - see `references/askuserquestion-protocol.md`) |
 
 ## Worked Example 1: Create Mode
 

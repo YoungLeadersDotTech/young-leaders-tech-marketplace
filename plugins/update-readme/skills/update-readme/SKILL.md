@@ -10,6 +10,8 @@ allowed-tools:
   - AskUserQuestion
   - TaskCreate
   - TaskUpdate
+  - TaskGet
+  - TaskList
 disable-model-invocation: false
 version: 1.0.0
 category: Documentation
