@@ -16,10 +16,12 @@ diy-build-companion) produce the substance, this packages it.
 
 ## Notable behaviour
 
-- **Section images.** A section can carry an `images` array (`src` + `alt` + `caption`). Images
-  render once per section, above the format body, so a real screenshot complements every tab, not
-  just one. `src` takes an `http(s)` URL (already online) or a `data:image/*;base64` URI (local file,
-  inlined so the file stays offline via `scripts/img_to_datauri.py`). Sanitised to those two schemes.
+- **Images, any number, placed anywhere.** No cap, no fixed slot. Attach shots to a section
+  (`section.images`), interleave them with bullets (a bullet may be `"text"`, `{img}`, or
+  `{text, img}`, so images sit before/after/between points), or drop an `<img>` inline in `prose`
+  (down to one per sentence). `src` takes an `http(s)` URL (already online, kept as-is) or a
+  `data:image/*;base64` URI (local file, inlined via `scripts/img_to_datauri.py` so the file stays
+  offline). Sanitised to those two schemes.
 - **Auto-linked URLs.** At render time, `http(s)` URLs become real links across every field and
   inside prose. Write a full URL anywhere and it resolves itself; no pre-built anchors, no dead
   links. The public build stays tracker-agnostic, so issue keys remain plain text.

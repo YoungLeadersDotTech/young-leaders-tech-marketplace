@@ -80,25 +80,32 @@ lines. `agenda`, `tasks`, and `links` are optional and render as their own panel
 Recordings (Loom, Zoom) belong in `links` or per-section `videoUrl` so the file
 complements video rather than replacing it.
 
-**Images (real screenshots or supplied art).** A section can carry an `images` array of
-`{ src, alt, caption }`. Images are format-agnostic supporting media: they render ONCE per
-section, above the format body, so they complement whichever tab the reader is on (bullets,
-prose, visual, comic) rather than living in a single format. This is the big lever on content
-quality - a real screenshot of the actual screen next to the prose that explains it beats any
-amount of text, and many callers already have those images to hand (a published blog with
-inline shots, a workshop deck, a product UI capture). Two ways to supply `src`:
+**Images (real screenshots or supplied art).** Images are the big lever on content quality - a
+real screenshot of the actual screen next to the words that explain it beats any amount of text,
+and many callers already have images to hand (a published blog with inline shots, a workshop deck,
+a product UI capture). There is **no cap on how many** and **no fixed slot**: put as many images as
+the content needs, wherever they belong. You decide placement from what you are asked to illustrate.
+Each image is `{ src, alt, caption }`. Three ways to place them, mix freely:
 
-- **Already online** - put the `http(s)` URL straight in `src`. The renderer keeps it as-is.
-  Right when the image is hosted and the file does not need to be fully offline.
-- **Local file** - the offline HTML must be one self-contained file, so a local image has to be
-  inlined as a `data:image/...;base64,...` URI. Run `scripts/img_to_datauri.py --json shot.png`
-  to convert one or more local images into a ready-to-paste `images` array. `src` is sanitised at
-  render time to `data:image/*` or `http(s)` only; `alt` and `caption` are escaped plain text.
+- **Attach to a section** - `section.images: [ {src,alt,caption}, ... ]`. A convenience for "here
+  are the shots for this section". Renders together near the top of the section. Any number.
+- **Interleave with bullets** - a `bullets` entry can be a string (text) or an object: `{text}` is a
+  text bullet, `{img}` (or `{image}`) is a standalone image, `{text, img}` is a bullet followed by
+  its image. Order is preserved, so an image can sit before, after or between any bullets - e.g. one
+  screenshot per point.
+- **Inline in prose** - `prose` is authored HTML, so drop an `<img src="...">` (or a `<figure>` with
+  a `<figcaption>`) anywhere in the paragraph flow, including between two sentences. If the prose is
+  five or six sentences, that can be one image per sentence. The renderer styles `.prose img`.
 
-Keep the embedded weight sane: base64 inflates by ~34%, so a handful of screenshots is fine but do
-not inline a whole multi-MB gallery into one file. During the Shape phase, look for images the
-caller already has before writing a `visualSvg` from scratch - a genuine screenshot usually beats a
-drawn diagram, and the two can coexist (screenshot for the real thing, SVG for the abstract flow).
+`src` takes an `http(s)` URL (already-online content, kept as-is) or a `data:image/*;base64` URI
+(local files, inlined so the file stays one offline artifact). Run `scripts/img_to_datauri.py --json
+shot.png ...` to convert local images into paste-ready entries. `src` is sanitised at render time to
+`data:image/*` or `http(s)` only; `alt`/`caption` are escaped plain text (in bullets/section images).
+
+Keep embedded weight sane: base64 inflates by ~34%, so many multi-MB images in one file adds up -
+size them for the web first if you are inlining a lot. During Shape, look for images the caller
+already has before drawing a `visualSvg` from scratch; a genuine screenshot usually beats a diagram,
+and the two can coexist (screenshot for the real thing, SVG for the abstract flow).
 
 **Trusted vs escaped fields.** Two fields are authored by this skill and pass
 through as HTML: `prose` (you write the paragraph markup) and each section's
