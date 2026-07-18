@@ -1,6 +1,6 @@
 # enablement-html-renderer
 
-**Version 1.5.0**
+**Version 1.5.1**
 
 Packages finished enablement material into one self-contained HTML file where the reader chooses
 the format. A handoff target, not a starting point: other skills (meeting, content-pipeline,
