@@ -2,6 +2,18 @@
 
 All notable changes to the enablement-html-renderer plugin.
 
+## [1.5.1] - 2026-07-18
+
+### Changed
+- **More generous vertical spacing throughout the rendered file.** The default rhythm was tight,
+  so sections, headings, callouts, command blocks, cards, figures and the footer now sit with more
+  breathing room. Specifics: body line-height 1.65 to 1.7; page padding and header padding opened
+  up; per-section padding 24px to 40px; selector bar padding increased; callout and command-block
+  margins 0.5em to 0.85em; meta/cheat-sheet card padding 16px to 22px/24px and grid gap 20px to
+  24px; comic panel gap 14px to 18px; more space above the footer. Purely presentational: the
+  content bundle contract, every format, and all hard gates (AI-ism, diagram contrast) are
+  unchanged, so existing bundles render identically apart from the looser spacing.
+
 ## [1.5.0] - 2026-07-13
 
 ### Added
