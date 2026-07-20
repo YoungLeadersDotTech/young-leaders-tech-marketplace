@@ -9,6 +9,7 @@ tags: [template, stakeholder-discovery, skill-creation]
 last-updated: 2025-10-19
 ---
 
+Justification: pure template scaffold - emits verbatim template content with no LLM reasoning pass.
 # Stakeholder Discovery Template
 
 ## Purpose

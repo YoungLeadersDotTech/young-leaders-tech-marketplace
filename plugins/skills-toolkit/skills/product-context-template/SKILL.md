@@ -9,6 +9,7 @@ tags: [template, product-context, vision, strategy]
 last-updated: 2025-10-20
 ---
 
+Justification: pure template scaffold - emits verbatim template content with no LLM reasoning pass.
 # Product Context Template
 
 ## Purpose
