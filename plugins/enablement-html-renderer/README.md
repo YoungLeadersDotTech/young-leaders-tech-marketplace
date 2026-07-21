@@ -1,6 +1,6 @@
 # enablement-html-renderer
 
-**Version 1.5.1**
+**Version 1.3.1**
 
 Packages finished enablement material into one self-contained HTML file where the reader chooses
 the format. A handoff target, not a starting point: other skills (meeting, content-pipeline,
@@ -16,12 +16,6 @@ diy-build-companion) produce the substance, this packages it.
 
 ## Notable behaviour
 
-- **Images, any number, placed anywhere.** No cap, no fixed slot. Attach shots to a section
-  (`section.images`), interleave them with bullets (a bullet may be `"text"`, `{img}`, or
-  `{text, img}`, so images sit before/after/between points), or drop an `<img>` inline in `prose`
-  (down to one per sentence). `src` takes an `http(s)` URL (already online, kept as-is) or a
-  `data:image/*;base64` URI (local file, inlined via `scripts/img_to_datauri.py` so the file stays
-  offline). Sanitised to those two schemes.
 - **Auto-linked URLs.** At render time, `http(s)` URLs become real links across every field and
   inside prose. Write a full URL anywhere and it resolves itself; no pre-built anchors, no dead
   links. The public build stays tracker-agnostic, so issue keys remain plain text.
@@ -30,10 +24,6 @@ diy-build-companion) produce the substance, this packages it.
   both light and dark mode rather than rendering dark-on-dark. A dependency-free contrast gate
   (`scripts/rasterize_diagrams.py`) checks every diagram in both themes and fails on a hardcoded
   colour that would not flip, so it runs anywhere with no install.
-- **Manual light/dark toggle.** Theme follows the OS by default via `prefers-color-scheme`, and
-  a **Dark**/**Light** button in the toolbar lets a reader override it either way. The choice is
-  saved in `localStorage` and re-applied before first paint on the next visit, so there is no
-  flash back to the OS default.
 - **AI-ism voice gate.** `scripts/check_ai_isms.py` (sourced from the content-pipeline Phase 4
   avoid-patterns) keeps the prose in the source blog's voice rather than drifting into generic AI
   phrasing. It is wired into the SKILL Shape phase and hard gates.

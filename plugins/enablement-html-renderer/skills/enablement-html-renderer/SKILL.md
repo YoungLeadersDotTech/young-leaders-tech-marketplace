@@ -235,20 +235,22 @@ local output directory elsewhere, containing:
 AskUserQuestion:
   header: "Who should be able to open the hosted web app?"
   options:
-    A) Anyone with the link (ANYONE) - recommended for public sharing
-       description: "Any Google account (or no account) can open the /exec URL. Works outside any domain."
-    B) My Google Workspace domain (DOMAIN) - for internal team use only
-       description: "Anyone in your Google Workspace organisation can open the /exec URL."
+    A) Anyone with the link (ANYONE) - for personal or fully public sharing
+       description: "Any Google account can open the URL. Note: managed corporate devices may block exec URLs from personal accounts even with ANYONE access."
+    B) My Google Workspace domain (DOMAIN) - for mixed or managed-device audiences
+       description: "Anyone in your Google Workspace can open the URL. Also works from managed/corporate devices."
 ```
 
 If the user skips or dismisses without answering, stop and surface an error:
 `"webapp.access must be set before generating the bundle. Please choose ANYONE or DOMAIN."`
 Never silently default - the choice must be explicit.
 
+**Important - managed device constraint**: Google Workspace MDM policies can block `script.google.com` exec URLs deployed from personal (non-Workspace) accounts, even when `access: ANYONE` is set. If any viewer may be on a managed corporate device, deploy from a Google Workspace account with `DOMAIN` access instead.
+
 Write the chosen value into `appsscript.json` before copying it into the bundle.
 If `GAS_WEBAPP_ACCESS` is already set in the environment, use that value and skip the question (non-interactive context).
 
-**Note for Google Workspace users**: if your domain administrator has disabled ANYONE access, clasp deploy will print "ANYONE access has been disabled" even if the deployment succeeded. Check `clasp deployments` for the actual result - the deployment ID and URL will be present if it succeeded.
+**Note for Google Workspace deployers**: clasp may print "ANYONE access has been disabled" even when deployment succeeds - this is a CLI quirk. Check `clasp deployments` for the actual result.
 
 Do not add Toast, AWS, region, CMA, agent, secret, or external-request logic. The
 bundle is only the static-hosting layer around the same renderer.
@@ -260,6 +262,16 @@ Return a live `/exec` URL only after the deploy actually succeeded.
 **Cowork sandbox path.** Always write the bundle, plus print the exact `clasp`
 commands the user should run later. Never imply a live deployment exists when you
 did not perform one.
+
+**Sharing note (include every time you present an exec URL to the user):**
+
+> **Before sharing this link**, note that some recipients may see an error page
+> ("unable to open file" or similar) if their organisation's IT policy blocks
+> Google Apps Script web apps. This is a Google Workspace MDM restriction, not a
+> problem with the link itself. If a recipient can't open it:
+> - Ask them to try on a personal (non-work) device or browser profile
+> - Or redeploy with `DOMAIN` access from a shared Google Workspace account they have access to
+> - The offline `.html` file always works as a fallback - attach it directly
 
 If a format genuinely cannot be derived for a section (for example, a legal
 disclaimer has no sensible comic), render that section in its best format and add a

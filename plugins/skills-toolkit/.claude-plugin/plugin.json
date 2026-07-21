@@ -1,12 +1,17 @@
 {
   "name": "skills-toolkit",
-  "description": "Toolkit for authoring and validating Claude Code skills and agents. Script-backed skills-toolkit skill runs a real deterministic validator (validate_skills.py), plus agent-author/agent-validator and 13 templates. Auto-invoke on 'create skill', 'validate agent', 'build agent'.",
+  "description": "Toolkit for authoring and validating Claude Code skills and agents. Adds agent-author for build/edit/package, agent-validator with a version-sync gate, plus 13 templates. Auto-invoke on 'create skill', 'validate agent', 'build agent'.",
   "author": {
     "name": "Young Leaders Tech",
     "url": "https://youngleaders.tech"
   },
   "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
-  "version": "3.1.0",
+  "version": "2.0.8",
+  "commands": [
+    "./commands/create-skill.md",
+    "./commands/list-skills.md",
+    "./commands/validate-skill.md"
+  ],
   "agents": [
     "./agents/agent-author.md",
     "./agents/agent-validator.md",
@@ -14,7 +19,6 @@
     "./agents/skill-validator-agent.md"
   ],
   "skills": [
-    "./skills/skills-toolkit",
     "./skills/ground-truth-template",
     "./skills/initiative-overview-template",
     "./skills/product-context-template",

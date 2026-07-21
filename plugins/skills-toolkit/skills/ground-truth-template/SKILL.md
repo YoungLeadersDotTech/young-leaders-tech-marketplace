@@ -9,6 +9,7 @@ tags: [template, ground-truth, validation, reference-data]
 last-updated: 2025-10-20
 ---
 
+Justification: pure template scaffold - emits verbatim template content with no LLM reasoning pass.
 # Ground Truth Documentation Template
 
 ## Purpose
