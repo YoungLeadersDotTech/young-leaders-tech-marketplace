@@ -1,5 +1,7 @@
 # standalone-skills
 
+**Version**: 1.0.1
+
 Self-contained skills for Claude Code and Cowork. Each skill in this plugin is a contained
 entity: its logic and reference files live inside its own folder, with no dependency on other
 skills or plugins. That keeps them portable and Cowork-friendly.
