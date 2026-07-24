@@ -75,6 +75,31 @@ tall for the child once board thickness is added), so the schema leads with a bl
 Keep the READ FIRST band empty when there is nothing in it, but never drop it: it is where a
 height correction or a pending safety gate goes so it cannot be scrolled past.
 
+## First: triage the request (before running any mode)
+
+Do this at the top of every turn, before the mode body runs. It is the classify-first step that
+keeps scope, safety, and persistence decisions out of the individual modes and made once, up
+front:
+
+1. **Read live state from Drive.** Pull the current project state (per the one rule above) before
+   acting. Never work from cached or assumed state.
+2. **Classify the mode.** Map the request to exactly one of the five modes below:
+   - new project / "start a build ..."                -> Mode 1 (Start a build)
+   - "where was I" / "resume" / "pick up ..."         -> Mode 2 (Resume a build)
+   - "how's it going" / "progress" / "am I due a break" -> Mode 3 (Check progress)
+   - stopping / fatigue / "just one more thing"       -> Mode 4 (Save state before a break)
+   - about to cut/assemble, a design changed, or an
+     explicit safety-check request                    -> Mode 5 (Child-safety veto gate)
+   If the request is genuinely ambiguous, ask once, then proceed.
+3. **Set the safety-critical flag now.** If the build is for or used by a child, or is elevated or
+   load-bearing, mark it safety-critical up front so Mode 5 is known to be required before any cut
+   or assembly - not discovered late.
+4. **Confirm write capability once.** Check whether a Drive write/update tool is present this
+   session and record it, so every persistence step uses the right path (direct write vs. honest
+   hand-back per the write rule above) without re-deciding mid-mode.
+
+Then run the selected mode below.
+
 ## Modes
 
 This skill has five modes. Infer the mode from the request; if genuinely unclear, ask once.
