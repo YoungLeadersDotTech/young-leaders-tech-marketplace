@@ -2,6 +2,14 @@
 
 All notable changes to `terminal-setup-macos` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-07-26
+
+### Fixed
+- `plugin.json` still declared a `commands` array pointing at `commands/terminal-setup-install.md`,
+  which 1.3.0 removed - the manifest and the actual file layout diverged, causing "Path not found"
+  on plugin load. Removed the stale `commands` entry; the plugin is skill-only via
+  `skills/terminal-setup-install`.
+
 ## [1.3.0] - 2026-07-12
 
 ### Removed
