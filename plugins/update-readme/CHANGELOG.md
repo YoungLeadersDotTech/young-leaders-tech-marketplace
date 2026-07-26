@@ -2,6 +2,13 @@
 
 All notable changes to `update-readme` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-07-26
+
+### Fixed
+- `plugin.json` still declared a `commands` array pointing at `commands/update-readme.md`, which
+  1.2.0 removed - the manifest and the actual file layout diverged, causing "Path not found" on
+  plugin load. Removed the stale `commands` entry; the plugin is skill-only via `skills/update-readme`.
+
 ## [1.2.0] - 2026-07-12
 
 ### Fixed
