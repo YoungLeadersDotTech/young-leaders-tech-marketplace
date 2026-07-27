@@ -263,6 +263,14 @@ Return a live `/exec` URL only after the deploy actually succeeded.
 commands the user should run later. Never imply a live deployment exists when you
 did not perform one.
 
+**DOMAIN deployments use a different URL format.** When a web app is deployed with
+`DOMAIN` access from a Google Workspace account, the working URL includes the tenant
+path segment and looks like:
+`https://script.google.com/a/macros/<workspace-domain>/s/<deployment-id>/exec`
+The plain `/macros/s/.../exec` form redirects Workspace users to a login wall.
+Always use the `/a/macros/<domain>/` form when sharing DOMAIN-access apps.
+The deployment ID is the same; only the URL prefix changes.
+
 **Sharing note (include every time you present an exec URL to the user):**
 
 > **Before sharing this link**, note that some recipients may see an error page
