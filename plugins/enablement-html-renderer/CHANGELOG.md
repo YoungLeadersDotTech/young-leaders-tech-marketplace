@@ -2,6 +2,11 @@
 
 All notable changes to the enablement-html-renderer plugin.
 
+## [1.3.2] - 2026-07-27
+
+### Fixed
+- Document DOMAIN URL tenant-path requirement: DOMAIN-access GAS web apps require `/a/macros/<workspace-domain>/s/.../exec`; plain `/macros/s/...` form redirects Workspace users to a login wall.
+
 ## [1.3.1] - 2026-07-06
 
 ### Changed
