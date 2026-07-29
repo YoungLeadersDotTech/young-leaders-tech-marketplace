@@ -7,6 +7,10 @@
     "brandColor": "#990101",
     "nav": [
       {
+        "label": "Tools",
+        "url": "https://tools.youngleaders.tech/"
+      },
+      {
         "label": "Blog",
         "url": "https://www.youngleaders.tech/"
       }
