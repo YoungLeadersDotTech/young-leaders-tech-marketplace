@@ -2,6 +2,19 @@
 
 All notable changes to the enablement-html-renderer plugin.
 
+## [1.6.0] - 2026-07-29
+
+### Added
+- Opt-out branded **site bar**: when `DATA.siteBar` is present the renderer draws a top bar
+  (logo linking home, optional centred wordmark, nav links, and a Subscribe button) above the
+  content. Absent `siteBar` renders no bar, so third-party content is never force-branded. The
+  skill asks the operator each render whether to include it (default: include). Brand colour is
+  configurable via `siteBar.brandColor` (defaults to `#990101`).
+- `references/site-bar-youngleaders.json` - the Young Leaders in Tech header preset the skill
+  injects when the operator opts in.
+- Permanent footer attribution "Created using enablement-html-renderer from youngleaders.tech"
+  on every render (not configurable).
+
 ## [1.5.4] - 2026-07-29
 
 ### Added

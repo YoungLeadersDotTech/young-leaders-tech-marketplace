@@ -66,9 +66,32 @@ only transforms and packages what it receives. Minimum fields:
   ],
   "agenda": ["optional list of items covered"],
   "tasks": [{ "who": "[NAME]", "what": "action", "due": "date or blank" }],
-  "links": [{ "label": "Loom walkthrough", "url": "..." }]
+  "links": [{ "label": "Loom walkthrough", "url": "..." }],
+  "siteBar": {
+    "name": "Young Leaders in Tech",
+    "homeUrl": "https://www.youngleaders.tech/",
+    "logo": "data:image/png;base64,... (or an https URL)",
+    "brandColor": "#990101",
+    "nav": [{ "label": "Blog", "url": "https://www.youngleaders.tech/" }],
+    "subscribe": { "label": "Subscribe", "url": "https://..." }
+  }
 }
 ```
+
+### Branded site bar (opt-out) and attribution
+
+`siteBar` is **optional**. When present, the renderer draws a top bar - logo linking home, an
+optional centred wordmark, `nav` links, and a Subscribe button - above the content. When it is
+**absent, no bar renders**, so third-party content is never force-branded. `brandColor` styles the
+button and active nav (defaults to `#990101`); the logo and URLs pass through the same image/URL
+sanitisers as every other field.
+
+Behaviour when this skill runs: **ask the operator each render whether to include the branded bar**
+(AskUserQuestion, default *include* - it is opt-out). On include, inject the operator's preset -
+for John that is `references/site-bar-youngleaders.json` - into `siteBar`. On decline, omit it.
+
+Separately, every render carries a permanent footer credit - "Created using enablement-html-renderer
+from youngleaders.tech" - which is **always present and not configurable**.
 
 `sections[].body` is the **source of truth**. The four prose formats are all
 *derived* from it during the Shape phase, so they never contradict each other.
