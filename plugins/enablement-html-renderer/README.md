@@ -1,6 +1,6 @@
 # enablement-html-renderer
 
-**Version 1.3.2**
+**Version 1.5.4**
 
 Packages finished enablement material into one self-contained HTML file where the reader chooses
 the format. A handoff target, not a starting point: other skills (meeting, content-pipeline,
@@ -19,11 +19,23 @@ diy-build-companion) produce the substance, this packages it.
 - **Auto-linked URLs.** At render time, `http(s)` URLs become real links across every field and
   inside prose. Write a full URL anywhere and it resolves itself; no pre-built anchors, no dead
   links. The public build stays tracker-agnostic, so issue keys remain plain text.
-- **Theme-aware diagrams.** A `normalizeSvg` pass remaps the legacy hardcoded palette to
-  `currentColor` and the accent vars at render time, so Visual-format diagrams stay legible in
-  both light and dark mode rather than rendering dark-on-dark. A dependency-free contrast gate
-  (`scripts/rasterize_diagrams.py`) checks every diagram in both themes and fails on a hardcoded
-  colour that would not flip, so it runs anywhere with no install.
+- **Theme-aware diagrams, with a manual override.** A `normalizeSvg` pass remaps the legacy
+  hardcoded palette to `currentColor` and the accent vars at render time, so Visual-format
+  diagrams stay legible in both light and dark mode rather than rendering dark-on-dark. Theme
+  otherwise follows the OS via `prefers-color-scheme`, but a Dark/Light toggle button in the
+  toolbar lets a reader override it in either direction; the choice persists in `localStorage`
+  and applies before first paint (no flash back to the OS default). A dependency-free contrast
+  gate (`scripts/rasterize_diagrams.py`) checks every diagram in both themes and fails on a
+  hardcoded colour that would not flip, so it runs anywhere with no install.
+- **Images, any number, placed anywhere.** No cap and no fixed slot: attach to a section, interleave
+  between bullets, or drop inline in prose. `src` accepts an `http(s)` URL or a
+  `data:image/*;base64` URI (local files inlined so the file stays offline); `scripts/img_to_datauri.py`
+  converts local images into a ready-to-paste array.
+- **Structure contract for drift detection.** `templates/renderer-structure-contract.json` names
+  the template's structural features (format selector, images, theme toggle, auto-linking, accent
+  palette) with a detection rule each, so other tooling can check whether an already-rendered
+  artifact is behind the current template. Self-consistency proven by
+  `scripts/tests/test_structure_contract.py`.
 - **AI-ism voice gate.** `scripts/check_ai_isms.py` (sourced from the content-pipeline Phase 4
   avoid-patterns) keeps the prose in the source blog's voice rather than drifting into generic AI
   phrasing. It is wired into the SKILL Shape phase and hard gates.

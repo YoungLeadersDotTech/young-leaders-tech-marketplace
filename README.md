@@ -71,7 +71,7 @@ Verify with `/plugin marketplace list`.
 | [update-readme](./plugins/update-readme/README.md) | 1.1.0 | Type-driven README updater. Detects repo family, confirms it with the user, asks for style, audience, and depth, then generates a matched README preview before writing. |
 | [standalone-skills](./plugins/standalone-skills/README.md) | 1.0.0 | Self-contained, Cowork-friendly skills with no cross-plugin dependencies. |
 | [opencode-sync](./plugins/opencode-sync/README.md) | 1.6.5 | Sync and validate Claude Code assets for OpenCode: ingest marketplaces or repos, generate agents and command wrappers, verify discovery coverage, and route MCP config by scope. |
-| [enablement-html-renderer](./plugins/enablement-html-renderer/README.md) | 1.3.0 | Packages finished enablement content into one self-contained HTML handoff with multiple reader-selectable formats. |
+| [enablement-html-renderer](./plugins/enablement-html-renderer/README.md) | 1.5.4 | Packages finished enablement content into one self-contained HTML handoff with multiple reader-selectable formats. |
 
 ## Local development helper
 

@@ -1,0 +1,114 @@
+{
+  "_schema": "enablement-html-renderer/structure-contract v1.0.0",
+  "_purpose": "Versioned 'expected structure' manifest for a rendered enablement-html-renderer artifact. Each entry names one structural feature the CURRENT canonical template (renderer-template.html) provides, plus a detection rule a checker can run against an already-rendered .html file to see whether that feature is present. Feeds KTLO B-01's drift checker (T-B01-02, a separate task in ai-os-personal-ktlo--2026-07-28) - never edited by that checker, only read by it. Update this file whenever renderer-template.html gains, changes, or removes a structural feature; it versions alongside the template, not the other way round.",
+  "source_of_truth": "plugins/enablement-html-renderer/skills/enablement-html-renderer/templates/renderer-template.html",
+  "defined_at": {
+    "repo": "young-leaders-tech-marketplace",
+    "base_commit": "ebbc0f5a1a620582bd815a1a672918c70fa924ee",
+    "date": "2026-07-29",
+    "plugin_version_field": "1.5.4",
+    "known_version_field_drift": "FIXED in the same change that added this contract (plugin bumped 1.3.2 -> 1.5.4; see CHANGELOG.md [1.5.4]). While grounding this manifest's `introduced_in` fields, discovered that VERSION had been regressed from 1.5.1 down to 1.3.1 in PR #41 (2026-07-21, commit 217a708) - a merge from a branch that had diverged before the 1.4.0/1.5.0/1.5.1 work landed, which silently deleted those three releases' CHANGELOG entries too - then continued forward from the wrong number to 1.3.2 in PR #45 (2026-07-27, commit ebbc0f5). Restored the three lost CHANGELOG entries verbatim and renumbered the two mislabeled ones (1.3.1 -> 1.5.2, 1.3.2 -> 1.5.3) so the record is chronologically honest again. Each feature's `introduced_in` below still cites PR number and commit SHA rather than the semver at time of authorship, since that remains the more precise anchor regardless of version-field health going forward."
+  },
+  "features": [
+    {
+      "id": "format-selector-v1",
+      "label": "Reader format selector: Bullets / Prose / Visual / Comic / Cheat sheet pill buttons",
+      "introduced_in": {
+        "pr": "#21",
+        "commit": "25cd11d",
+        "note": "Present at the initial young-leaders-tech-marketplace import (split from skills-toolkit); predates this repo's history for the file."
+      },
+      "detection": {
+        "type": "regex_all",
+        "target": "rendered_html",
+        "patterns": [
+          "data-fmt=[\"']bullets[\"']",
+          "data-fmt=[\"']prose[\"']",
+          "data-fmt=[\"']visual[\"']",
+          "data-fmt=[\"']comic[\"']",
+          "data-fmt=[\"']cheatsheet[\"']"
+        ]
+      }
+    },
+    {
+      "id": "images-v1",
+      "label": "Interleaved image rendering: figureHTML / sectionImagesHTML / bulletHTML render helpers + safeImgUrl sanitiser (data: URI or http/https only)",
+      "introduced_in": {
+        "pr": "#37",
+        "commit": "2de8422",
+        "note": "'section images (v1.5.0)' - VERSION read 1.5.0 at this commit, before the later regression."
+      },
+      "detection": {
+        "type": "regex_all",
+        "target": "rendered_html",
+        "patterns": [
+          "function\\s+figureHTML\\s*\\(",
+          "function\\s+sectionImagesHTML\\s*\\(",
+          "function\\s+bulletHTML\\s*\\(",
+          "function\\s+safeImgUrl\\s*\\("
+        ]
+      }
+    },
+    {
+      "id": "dark-mode-toggle-v1",
+      "label": "Theme-aware diagrams (normalizeSvg remaps legacy hardcoded hex to currentColor/var(--accent)/var(--accent2)) PLUS a manual light/dark toggle button - theme must not depend on prefers-color-scheme alone (the B-25 fix in ai-os-jc-toast KTLO)",
+      "introduced_in": {
+        "pr": "#34 (toggle); normalizeSvg itself predates the marketplace split (pre-#21)",
+        "commit": "2be6cac",
+        "note": "'v1.4.0 - manual light/dark toggle' (VERSION read 1.4.0 at this commit). normalizeSvg's legacy-hex remap already existed at the #21 import."
+      },
+      "detection": {
+        "type": "composite",
+        "target": "rendered_html",
+        "must_match_all": [
+          "function\\s+normalizeSvg\\s*\\(",
+          "1a1a1a",
+          "2f5d50",
+          "c4622d",
+          "currentColor",
+          "getElementById\\([\"']themeBtn[\"']\\)",
+          "data-theme"
+        ]
+      }
+    },
+    {
+      "id": "auto-linking-v1",
+      "label": "Auto-linking of bare http(s) URLs at render time across plain-text fields (linkifyPlain) and inside trusted prose HTML, text nodes only (linkifyProse)",
+      "introduced_in": {
+        "pr": "pre-marketplace-split (CHANGELOG 1.2.0); ported into this repo at the #21 import",
+        "commit": "25cd11d",
+        "note": "CHANGELOG.md documents 1.2.0 as the origin (skills-toolkit era); 1.2.1 is this repo's first commit for the file."
+      },
+      "detection": {
+        "type": "regex_all",
+        "target": "rendered_html",
+        "patterns": [
+          "function\\s+linkifyPlain\\s*\\(",
+          "function\\s+linkifyProse\\s*\\("
+        ]
+      }
+    },
+    {
+      "id": "accent-palette-v1",
+      "label": "Theme-variable accent palette: --accent / --accent2 custom properties defined for both light and dark, with SVG text/stroke inheriting ink via currentColor (so diagrams flip with theme)",
+      "introduced_in": {
+        "pr": "pre-marketplace-split; present at the #21 import",
+        "commit": "25cd11d",
+        "note": "Baseline palette scheme from the original skills-toolkit implementation, carried over unchanged."
+      },
+      "detection": {
+        "type": "composite",
+        "target": "rendered_html",
+        "must_match_all": [
+          "--accent:#2f5d50",
+          "--accent2:#c4622d",
+          "data-theme=[\"']dark[\"'][^{]*\\{[^}]*--accent:#7fb3a3",
+          "fill:currentColor"
+        ]
+      }
+    }
+  ],
+  "not_covered_by_this_contract": [
+    "Comic character linework (#1a1a1a on the fixed cream comic panel) is intentionally NOT flagged by accent-palette-v1 or any other check here - it is a deliberate fixed-appearance design choice (CHANGELOG 1.1.0), not a dark-mode legibility bug. A future 'no unexplained hardcoded hex' check would need an explicit allowlist for the FACE/EYES/BROW/ACCENT maps and the .cmds/.callout.warn chrome to avoid false positives; out of scope for v1."
+  ]
+}
