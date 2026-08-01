@@ -2,10 +2,33 @@
 
 All notable changes to `skills-toolkit` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.8] - 2026-07-20
+## [3.1.1] - 2026-08-01
 
 ### Fixed
-- Remove `disable-model-invocation: true` from workflow skills / add justification to reference skills (KTLO B-36 follow-up).
+- Restored `VERSION` (2.0.8 -> 3.1.1), this changelog's `[3.0.0]`/`[3.1.0]` entries, `README.md`, and `.claude-plugin/plugin.json`'s `skills-toolkit` skill registration. All four were silently reverted to their pre-3.0.0 state by PR #41 (merged 2026-07-21), which merged a branch forked 8 days stale off master with no rebase - the stale branch's tree won those paths with zero merge conflict, unregistering the still-present `skills/skills-toolkit/` script-backed validator skill from `plugin.json` and deleting the 3.0.0/3.1.0 changelog entries below. Logged as smell `STALE_BRANCH_MERGE_REGRESSION_001` in `toast-plugin-validator`'s observation ledger.
+- Folds in the one real content change PR #41 actually intended and correctly applied: `disable-model-invocation: true` justification lines added to `ground-truth-template`, `product-context-template`, and `stakeholder-templates` (KTLO B-36 follow-up) - these three files were unaffected by the regression above and needed no changes.
+
+## [3.1.0] - 2026-07-12
+
+### Added
+- `Q8-VAGUE-ASK-USER` check (WARN): flags "ask the user" / "ask user" prose with no nearby `AskUserQuestion` reference, so skills/agents stop instructing the model to ask in unstructured free text.
+- `references/askuserquestion-protocol.md`: the canonical `AskUserQuestion` shape for this marketplace - the governing when/how/after-answer rule, the JSON block shape, the preview-before-write pattern, and a cross-runtime capability note for `opencode-sync`.
+- Fixed the 6 real Q8 findings the new check surfaced on its first run: `skills-toolkit/skills/skills-toolkit/SKILL.md`, `skills-toolkit/agents/agent-author.md` (4 error-handling table rows), `opencode-sync/skills/opencode-sync/SKILL.md`, `terminal-setup-macos/skills/terminal-setup-install/SKILL.md`.
+
+### Fixed
+- `.claude-plugin/plugin.json` still listed the 3 command files deleted in 3.0.0 and never listed the new `skills-toolkit` skill - manifest drift left over from that release. Corrected here.
+
+## [3.0.0] - 2026-07-12
+
+### Added
+- New `skills/skills-toolkit/SKILL.md`: a script-backed skill for creating and validating SKILL.md/agent files, replacing `create-skill.md`, `list-skills.md`, and `validate-skill.md` command wrappers. Runs `scripts/validate_skills.py` (a real deterministic script - description-cap, PII, em-dash, frontmatter tag-shape, Task* completeness, command-wrapper detection) rather than asking a model to self-score against a prose rubric. Independently authored for this repo.
+
+### Removed
+- `commands/create-skill.md`, `commands/list-skills.md`, `commands/validate-skill.md` - superseded by direct invocation of the new `skills-toolkit` skill.
+
+### Changed
+- Major version bump: this is a breaking change to the plugin's command surface (3 commands removed). `agents/skill-creator-agent.md`, `agents/skill-validator-agent.md`, `agents/agent-author.md`, `agents/agent-validator.md` are kept in place for now (not yet superseded) - only their command-wrapper entry points are retired.
+
 ## [2.0.6] - 2026-06-18
 
 ### Changed
