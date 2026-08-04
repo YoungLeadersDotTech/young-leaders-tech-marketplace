@@ -8,8 +8,9 @@ diy-build-companion) produce the substance, this packages it.
 
 ## Skill
 
-- **enablement-html-renderer** - one `.html` file with a built-in format selector: bullets, prose,
-  visual diagram, comic, or a copy-all cheat sheet. Severity callouts (critical/warn/tip/never),
+- **enablement-html-renderer** - one `.html` file with a built-in format selector: prose, bullets,
+  visual diagram, comic, or a copy-all cheat sheet. Opens in Prose by default. Severity callouts
+  (critical/warn/tip/never),
   copy-paste command blocks, per-section time badges, and video deep-links persist across every
   format. The choice is reflected in the URL hash so a sender can link straight into a format.
   No server, no build step, offline, single file.

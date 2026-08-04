@@ -18,6 +18,11 @@ All notable changes to the enablement-html-renderer plugin.
   dark-mode rule that the `:root` reset alone would not reach).
 - Added `print-light-forced-v1` to `templates/renderer-structure-contract.json` (6th feature) so
   the drift checker in `ai-os-personal` catches a future regression of this specific fix.
+- **Prose is now the default reading format, ahead of Bullets.** The format-pill row reads
+  Prose, Bullets, Visual, Comic, Cheat sheet (previously Bullets first); a fresh open with no
+  `#format` hash now lands on Prose; and the "Show all" / print-all stacked view renders Prose
+  before Bullets for each section. Existing `#bullets` and `#prose` deep links are unaffected -
+  the format ids themselves did not change, only their default and display order.
 
 ## [1.6.0] - 2026-07-29
 
