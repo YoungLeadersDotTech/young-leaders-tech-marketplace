@@ -106,9 +106,29 @@
           "fill:currentColor"
         ]
       }
+    },
+    {
+      "id": "print-light-forced-v1",
+      "label": "Print output is always light mode, regardless of the reader's manual dark-mode toggle or OS preference - :root's theme variables are reset with !important inside @media print, and the comic panel background is forced back to cream, so diagrams and callouts never render dark-on-white on paper or in a PDF export",
+      "introduced_in": {
+        "pr": "fix/print-light-mode-forced",
+        "commit": "n/a (pending merge at contract authoring time)",
+        "note": "Fixes a real bug: :root[data-theme=\"dark\"] has higher CSS specificity than the plain :root the pre-existing @media print block edited, so a reader who had manually toggled dark mode got dark-on-white diagrams and callout boxes when printing or exporting to PDF. The OS-only prefers-color-scheme path had the same gap. !important on the print :root block is required, not just later source order, because it must beat the higher-specificity :root[data-theme] rules regardless of which theme state the reader is in when they print. This is the SOT copy of the fix; ai-os-personal ported it separately since the two templates have diverged in spacing/Jira-linking since v1.5.1."
+      },
+      "detection": {
+        "type": "composite",
+        "target": "rendered_html",
+        "must_match_all": [
+          "@media print",
+          "--ink:#1a1a1a !important",
+          "--panel:#fff !important",
+          "background:#fffdf7 !important"
+        ]
+      }
     }
   ],
   "not_covered_by_this_contract": [
-    "Comic character linework (#1a1a1a on the fixed cream comic panel) is intentionally NOT flagged by accent-palette-v1 or any other check here - it is a deliberate fixed-appearance design choice (CHANGELOG 1.1.0), not a dark-mode legibility bug. A future 'no unexplained hardcoded hex' check would need an explicit allowlist for the FACE/EYES/BROW/ACCENT maps and the .cmds/.callout.warn chrome to avoid false positives; out of scope for v1."
+    "Comic character linework (#1a1a1a on the fixed cream comic panel) is intentionally NOT flagged by accent-palette-v1 or any other check here - it is a deliberate fixed-appearance design choice (CHANGELOG 1.1.0), not a dark-mode legibility bug. A future 'no unexplained hardcoded hex' check would need an explicit allowlist for the FACE/EYES/BROW/ACCENT maps and the .cmds/.callout.warn chrome to avoid false positives; out of scope for v1.",
+    "print-light-forced-v1 checks the source markup for the fix's presence, not that a real browser actually resolves the cascade correctly. The renderer-template.html README/CHANGELOG for this fix name the manual print-and-verify step as the real acceptance test; this regex check is a regression net for the source, not a substitute for opening a printed PDF."
   ]
 }

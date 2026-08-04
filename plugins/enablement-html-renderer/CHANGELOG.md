@@ -2,6 +2,23 @@
 
 All notable changes to the enablement-html-renderer plugin.
 
+## [1.6.1] - 2026-08-04
+
+### Fixed
+- **Print/PDF always renders light mode now, regardless of the reader's manual dark-mode toggle
+  or OS preference.** `:root[data-theme="dark"]` (the manual toggle added at 1.4.0) has higher CSS
+  specificity than the plain `:root` the existing `@media print` block edited, so a reader who had
+  switched to dark mode got dark-on-white diagrams, callout boxes, and comic-panel borders when
+  they printed or exported to PDF - the lines were still there, just the same colour as the paper.
+  Fixed with two `@media print` additions: the seven theme custom properties (`--bg`, `--ink`,
+  `--muted`, `--line`, `--accent`, `--accent2`, `--panel`) are reset to their light values with
+  `!important` (required, not just later source order, since it has to beat the higher-specificity
+  `:root[data-theme]` rules regardless of which theme the reader is in when they print), and the
+  comic panel background is forced back to cream the same way (it is set by a hardcoded, non-variable
+  dark-mode rule that the `:root` reset alone would not reach).
+- Added `print-light-forced-v1` to `templates/renderer-structure-contract.json` (6th feature) so
+  the drift checker in `ai-os-personal` catches a future regression of this specific fix.
+
 ## [1.6.0] - 2026-07-29
 
 ### Added
