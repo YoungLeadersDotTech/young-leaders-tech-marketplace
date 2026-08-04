@@ -1,6 +1,6 @@
 # enablement-html-renderer
 
-**Version 1.6.0**
+**Version 1.6.1**
 
 Packages finished enablement material into one self-contained HTML file where the reader chooses
 the format. A handoff target, not a starting point: other skills (meeting, content-pipeline,
@@ -8,8 +8,9 @@ diy-build-companion) produce the substance, this packages it.
 
 ## Skill
 
-- **enablement-html-renderer** - one `.html` file with a built-in format selector: bullets, prose,
-  visual diagram, comic, or a copy-all cheat sheet. Severity callouts (critical/warn/tip/never),
+- **enablement-html-renderer** - one `.html` file with a built-in format selector: prose, bullets,
+  visual diagram, comic, or a copy-all cheat sheet. Opens in Prose by default. Severity callouts
+  (critical/warn/tip/never),
   copy-paste command blocks, per-section time badges, and video deep-links persist across every
   format. The choice is reflected in the URL hash so a sender can link straight into a format.
   No server, no build step, offline, single file.
@@ -26,15 +27,17 @@ diy-build-companion) produce the substance, this packages it.
   toolbar lets a reader override it in either direction; the choice persists in `localStorage`
   and applies before first paint (no flash back to the OS default). A dependency-free contrast
   gate (`scripts/rasterize_diagrams.py`) checks every diagram in both themes and fails on a
-  hardcoded colour that would not flip, so it runs anywhere with no install.
+  hardcoded colour that would not flip, so it runs anywhere with no install. Print/PDF always
+  renders in light mode regardless of the toggle or the OS preference, so diagrams and callouts
+  never come out dark-on-white on paper.
 - **Images, any number, placed anywhere.** No cap and no fixed slot: attach to a section, interleave
   between bullets, or drop inline in prose. `src` accepts an `http(s)` URL or a
   `data:image/*;base64` URI (local files inlined so the file stays offline); `scripts/img_to_datauri.py`
   converts local images into a ready-to-paste array.
 - **Structure contract for drift detection.** `templates/renderer-structure-contract.json` names
   the template's structural features (format selector, images, theme toggle, auto-linking, accent
-  palette) with a detection rule each, so other tooling can check whether an already-rendered
-  artifact is behind the current template. Self-consistency proven by
+  palette, print-always-light) with a detection rule each, so other tooling can check whether an
+  already-rendered artifact is behind the current template. Self-consistency proven by
   `scripts/tests/test_structure_contract.py`.
 - **AI-ism voice gate.** `scripts/check_ai_isms.py` (sourced from the content-pipeline Phase 4
   avoid-patterns) keeps the prose in the source blog's voice rather than drifting into generic AI

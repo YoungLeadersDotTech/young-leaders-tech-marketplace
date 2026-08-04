@@ -96,7 +96,7 @@ try{
     padding:7px 11px;font-size:.92rem;line-height:1.35;position:relative;color:#1a1a1a}
   .panel .bubble:before{content:"";position:absolute;top:-9px;left:22px;border:5px solid transparent;border-bottom-color:var(--ink)}
   .panel .bubble:after{content:"";position:absolute;top:-6px;left:23px;border:4px solid transparent;border-bottom-color:#fffdf7}
-  @media print{.panel{box-shadow:none}}
+  @media print{.panel{background:#fffdf7 !important;box-shadow:none}}
   .meta{display:grid;gap:24px;grid-template-columns:1fr;margin-top:28px}
   .card{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:22px 24px}
   .card h3{margin:0 0 .7em;font-size:1.05rem}
@@ -126,6 +126,11 @@ try{
   .cheatsheet h3{margin:.1em 0 .55em}
   .cheatsheet .copyall{font:inherit;font-size:13px;background:var(--accent);color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;margin-bottom:10px}
   @media print{
+    :root{
+      --bg:#fafaf8 !important; --ink:#1a1a1a !important; --muted:#5a5a52 !important;
+      --line:#e2e0d8 !important; --accent:#2f5d50 !important; --accent2:#c4622d !important;
+      --panel:#fff !important;
+    }
     .selbar{display:none}
     .cmds .copy,.cheatsheet .copyall{display:none}
     .stackprint section.block .fmt{display:block !important;margin-bottom:10px}
@@ -174,8 +179,8 @@ try{
       </div>
     </div>
     <div class="fmts" role="group" aria-label="Format">
-      <button data-fmt="bullets" aria-pressed="true">Bullets</button>
-      <button data-fmt="prose" aria-pressed="false">Prose</button>
+      <button data-fmt="prose" aria-pressed="true">Prose</button>
+      <button data-fmt="bullets" aria-pressed="false">Bullets</button>
       <button data-fmt="visual" aria-pressed="false">Visual</button>
       <button data-fmt="comic" aria-pressed="false">Comic</button>
       <button data-fmt="cheatsheet" aria-pressed="false">Cheat sheet</button>
@@ -214,8 +219,8 @@ const DATA = /*__DATA_START__*/ {
   links: []
 } /*__DATA_END__*/;
 
-let fmt = "bullets", showAll = false;
-const FORMATS = ["bullets","prose","visual","comic","cheatsheet"];
+let fmt = "prose", showAll = false;
+const FORMATS = ["prose","bullets","visual","comic","cheatsheet"];
 
 function el(tag, cls, html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
 // esc(): plain-text fields (headings, bullets, comic text, tasks, link labels) are
@@ -389,7 +394,7 @@ function renderSection(sec){
     visual:  () => el("div","fmt visual","<figure>"+(sec.visualSvg?normalizeSvg(sec.visualSvg):"<p><em>No diagram for this section.</em></p>")+(sec.visualCaption?"<figcaption>"+linkifyPlain(sec.visualCaption)+"</figcaption>":"")+"</figure>"),
     comic:   () => el("div","fmt comic",(sec.comic||[]).map((p,i)=>comicPanel(p,i)).join("")||"<p><em>No comic for this section.</em></p>")
   };
-  const fmts = showAll ? ["bullets","prose","visual","comic"] : [fmt];
+  const fmts = showAll ? ["prose","bullets","visual","comic"] : [fmt];
   fmts.forEach(f=>{
     wrap.appendChild(make[f]());
     // callouts and commands ride along with every prose format so severity and
@@ -447,7 +452,7 @@ document.addEventListener("click", e=>{
 });
 
 function setFormat(next, push){
-  fmt = FORMATS.includes(next) ? next : "bullets"; showAll = false;
+  fmt = FORMATS.includes(next) ? next : "prose"; showAll = false;
   document.getElementById("allBtn").setAttribute("aria-pressed","false");
   document.querySelectorAll(".selbar button[data-fmt]").forEach(x=>x.setAttribute("aria-pressed", x.dataset.fmt===fmt?"true":"false"));
   if(push && location.hash.slice(1)!==fmt){ history.replaceState(null,"","#"+fmt); }
@@ -514,7 +519,7 @@ renderSiteBar();
 document.getElementById("foot").innerHTML =
   "Pick the format that fits how you learn. Same content, your way." +
   '<span class="credit">Created using <a href="https://www.youngleaders.tech/" rel="noopener noreferrer">enablement-html-renderer</a> from <a href="https://www.youngleaders.tech/" rel="noopener noreferrer">youngleaders.tech</a></span>';
-setFormat(location.hash.slice(1) || "bullets", false);
+setFormat(location.hash.slice(1) || "prose", false);
 </script>
 </body>
 </html>
