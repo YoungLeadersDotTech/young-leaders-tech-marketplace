@@ -179,8 +179,8 @@ try{
       </div>
     </div>
     <div class="fmts" role="group" aria-label="Format">
-      <button data-fmt="bullets" aria-pressed="true">Bullets</button>
-      <button data-fmt="prose" aria-pressed="false">Prose</button>
+      <button data-fmt="prose" aria-pressed="true">Prose</button>
+      <button data-fmt="bullets" aria-pressed="false">Bullets</button>
       <button data-fmt="visual" aria-pressed="false">Visual</button>
       <button data-fmt="comic" aria-pressed="false">Comic</button>
       <button data-fmt="cheatsheet" aria-pressed="false">Cheat sheet</button>
@@ -219,8 +219,8 @@ const DATA = /*__DATA_START__*/ {
   links: []
 } /*__DATA_END__*/;
 
-let fmt = "bullets", showAll = false;
-const FORMATS = ["bullets","prose","visual","comic","cheatsheet"];
+let fmt = "prose", showAll = false;
+const FORMATS = ["prose","bullets","visual","comic","cheatsheet"];
 
 function el(tag, cls, html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
 // esc(): plain-text fields (headings, bullets, comic text, tasks, link labels) are
@@ -394,7 +394,7 @@ function renderSection(sec){
     visual:  () => el("div","fmt visual","<figure>"+(sec.visualSvg?normalizeSvg(sec.visualSvg):"<p><em>No diagram for this section.</em></p>")+(sec.visualCaption?"<figcaption>"+linkifyPlain(sec.visualCaption)+"</figcaption>":"")+"</figure>"),
     comic:   () => el("div","fmt comic",(sec.comic||[]).map((p,i)=>comicPanel(p,i)).join("")||"<p><em>No comic for this section.</em></p>")
   };
-  const fmts = showAll ? ["bullets","prose","visual","comic"] : [fmt];
+  const fmts = showAll ? ["prose","bullets","visual","comic"] : [fmt];
   fmts.forEach(f=>{
     wrap.appendChild(make[f]());
     // callouts and commands ride along with every prose format so severity and
@@ -452,7 +452,7 @@ document.addEventListener("click", e=>{
 });
 
 function setFormat(next, push){
-  fmt = FORMATS.includes(next) ? next : "bullets"; showAll = false;
+  fmt = FORMATS.includes(next) ? next : "prose"; showAll = false;
   document.getElementById("allBtn").setAttribute("aria-pressed","false");
   document.querySelectorAll(".selbar button[data-fmt]").forEach(x=>x.setAttribute("aria-pressed", x.dataset.fmt===fmt?"true":"false"));
   if(push && location.hash.slice(1)!==fmt){ history.replaceState(null,"","#"+fmt); }
@@ -519,7 +519,7 @@ renderSiteBar();
 document.getElementById("foot").innerHTML =
   "Pick the format that fits how you learn. Same content, your way." +
   '<span class="credit">Created using <a href="https://www.youngleaders.tech/" rel="noopener noreferrer">enablement-html-renderer</a> from <a href="https://www.youngleaders.tech/" rel="noopener noreferrer">youngleaders.tech</a></span>';
-setFormat(location.hash.slice(1) || "bullets", false);
+setFormat(location.hash.slice(1) || "prose", false);
 </script>
 </body>
 </html>
