@@ -2,6 +2,18 @@
 
 All notable changes to the enablement-html-renderer plugin.
 
+## [1.6.2] - 2026-08-05
+
+### Fixed
+- `skills/enablement-html-renderer/SKILL.md`: the "Producing the file" section never instructed
+  substituting the `__TITLE__` placeholder in the static `<title>` tag - only the JS
+  `document.title` assignment (already fixed in `templates/renderer-template.html` at #51) corrects
+  the browser tab after script execution, but anything that reads the raw HTML without executing JS
+  (curl/view-source, some social-preview scrapers, or the brief flash before JS runs) still saw the
+  literal `__TITLE__` string if the generator skipped it. Added an explicit instruction to replace
+  the placeholder in both the `<title>` tag and the `<h1 id="title">` body heading. Mirrors the same
+  fix already applied to `ai-os-personal`'s sibling copy of this skill (PR #104).
+
 ## [1.6.1] - 2026-08-04
 
 ### Fixed
