@@ -494,6 +494,7 @@ syncThemeBtn();
 // Deep-link: share file.html#prose to open straight into a chosen format.
 window.addEventListener("hashchange",()=> setFormat(location.hash.slice(1), false));
 
+document.title = DATA.title || document.title;
 document.getElementById("title").textContent = DATA.title||"";
 document.getElementById("kicker").textContent = (DATA.kind||"").toUpperCase();
 document.getElementById("coreidea").textContent = DATA.coreIdea||"";
