@@ -237,6 +237,14 @@ functions, print styling, and the panels for agenda/tasks/links. Keep everything
 inline (CSS in `<style>`, JS in `<script>`); the offline output must remain a
 single file.
 
+**Replace the `__TITLE__` placeholder in BOTH locations** - the static `<title>__TITLE__</title>`
+tag near the top of `<head>` AND the `<h1 id="title">__TITLE__</h1>` body heading. The template's
+JS `document.title = DATA.title || document.title` assignment corrects the browser tab after
+script execution, but never touches the static `<title>` tag - anything that reads the raw HTML
+without executing JS (curl/view-source, some social-preview scrapers, or a brief flash of the
+placeholder before JS runs in a real browser) still sees the literal `__TITLE__` string if it
+isn't substituted at generation time.
+
 In Cowork-style sandboxes, write the offline fallback to
 `/mnt/user-data/outputs/<slug>.html`. Outside that environment, write to the
 caller's requested output directory or another explicit local path and report the
