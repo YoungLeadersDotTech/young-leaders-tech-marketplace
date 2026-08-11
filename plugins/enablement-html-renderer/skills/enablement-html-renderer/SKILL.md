@@ -158,6 +158,19 @@ renderer runs a `normalizeSvg` pass that remaps the legacy palette
 `currentColor` from the start rather than relying on the safety net. Leave
 `fill='none'` alone and keep any genuinely light fills explicit.
 
+**Sizing `visualSvg` (avoid text clipping).** Every text x-coordinate and string
+length must fit within the SVG's own declared `viewBox` width - text that runs
+past the right edge of the `viewBox` gets clipped in the Visual tab. Example
+failure: `viewBox="0 0 320 160"` with a `<text x="280">Automate & Optimize
+Immediately</text>` - the label is far wider than the 40px of `viewBox` left
+after `x="280"`, so most of it is cut off. Fix by widening the `viewBox` to fit
+the longest label, or by wrapping/shortening the text so it fits the declared
+width. The renderer's `.visual svg` rule sets `overflow:visible` as a safety
+net (ported from `toast-ai-os-standalone-skills` Phase 3) so out-of-bounds
+content is not hard-clipped by the browser, but a correctly-sized `viewBox` is
+still the right fix - `overflow:visible` only prevents the worst case, it does
+not make mis-sized text look intentional.
+
 ---
 
 ## How it works
