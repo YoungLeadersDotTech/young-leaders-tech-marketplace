@@ -2,6 +2,11 @@
 
 All notable changes to the enablement-html-renderer plugin.
 
+## [1.6.3] - 2026-08-11
+
+### Fixed
+- SVG text clipping in the Visual format tab: `.visual svg` scaled diagrams down with `max-width:100%` but never set `overflow:visible`, so text reaching or exceeding the declared `viewBox` width was hard-clipped by the browser. Added `overflow:visible` to the rule. SKILL.md's "Theming `visualSvg`" section gained a new "Sizing `visualSvg`" note explaining the real fix (size the `viewBox` to the label) versus what the CSS change catches (the worst case). Ported from `toast-ai-os-standalone-skills` (KTLO `standalone-skills-ktlo` Phase 3, issue #10).
+
 ## [1.6.2] - 2026-08-05
 
 ### Fixed

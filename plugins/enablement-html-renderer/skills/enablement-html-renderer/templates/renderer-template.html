@@ -60,7 +60,7 @@ try{
      The render-time normaliser (normalizeSvg) rewrites legacy hardcoded
      palettes to currentColor / accent vars, so old diagrams flip too. */
   .visual svg{max-width:100%;height:auto;border:1px solid var(--line);border-radius:10px;
-    background:var(--panel);color:var(--ink)}
+    background:var(--panel);color:var(--ink);overflow:visible}
   .visual svg text{fill:currentColor}
   .visual figcaption{color:var(--muted);font-size:.92rem;margin-top:.5em}
   /* section images: real screenshots or supplied art, shown with the section on every format tab.
