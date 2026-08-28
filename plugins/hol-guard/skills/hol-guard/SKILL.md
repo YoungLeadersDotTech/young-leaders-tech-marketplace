@@ -23,8 +23,8 @@ HOL Guard protects local AI harnesses before tools run. Use this skill when the 
 Check both CLIs independently:
 
 ```bash
-command -v hol-guard
-command -v plugin-scanner
+hol-guard --version
+plugin-scanner --version
 ```
 
 If `hol-guard` is missing and the user asked for runtime setup, prefer:
@@ -130,10 +130,12 @@ If Guard blocks or queues work:
 
 ```bash
 hol-guard approvals
-hol-guard approvals open
+hol-guard approvals open <request-id>
 hol-guard receipts
 hol-guard diff <harness>
 ```
+
+Use the pending request ID shown by `hol-guard approvals` when opening a request.
 
 For terminal-only resolution:
 
