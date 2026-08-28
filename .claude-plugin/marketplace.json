@@ -1,6 +1,6 @@
 {
   "name": "young-leaders-tech-marketplace",
-  "version": "1.5.21",
+  "version": "1.5.22",
   "description": "Personal Claude Code plugin marketplace",
   "owner": {
     "name": "Young Leaders Tech",
@@ -42,6 +42,12 @@
       "source": "./plugins/enablement-html-renderer",
       "version": "1.6.3",
       "description": "Packages finished enablement material into one self-contained HTML file where the reader toggles format: bullets, prose, visual diagram, comic, or cheat sheet. Theme-aware diagrams, a manual light/dark toggle, interleaved images, URL auto-linking, and an AI-ism voice gate."
+    },
+    {
+      "name": "hol-guard",
+      "source": "./plugins/hol-guard",
+      "version": "0.1.0",
+      "description": "HOL Guard local-first runtime protection for supported AI coding harnesses, approvals, receipts, and agent package scanning."
     }
   ]
 }

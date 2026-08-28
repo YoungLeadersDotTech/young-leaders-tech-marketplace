@@ -1,0 +1,13 @@
+{
+  "name": "hol-guard",
+  "description": "HOL Guard local-first runtime protection for supported AI coding harnesses, approvals, receipts, and agent package scanning.",
+  "author": {
+    "name": "Hashgraph Online",
+    "url": "https://hol.org"
+  },
+  "homepage": "https://github.com/hashgraph-online/hol-guard",
+  "version": "0.1.0",
+  "skills": [
+    "./skills/hol-guard"
+  ]
+}
