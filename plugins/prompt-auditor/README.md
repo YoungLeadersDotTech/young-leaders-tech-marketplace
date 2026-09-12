@@ -60,9 +60,11 @@ Ask the skill to audit a directory, or run the CLI it wraps directly:
 node "${CLAUDE_PLUGIN_ROOT}/skills/audit/scripts/audit.mjs" <directory>
 ```
 
-`examples/find-ai-events.md` is a task prompt written to trip every `PROMPT-*` check, with
-`examples/find-ai-events-fixed.md` alongside it as the corrected version - a quick way to
-see the full report shape without writing a prompt from scratch.
+[`examples/find-ai-events.md`](examples/find-ai-events.md) is a task prompt written to trip
+every `PROMPT-*` check, with
+[`examples/find-ai-events-fixed.md`](examples/find-ai-events-fixed.md) alongside it as the
+corrected version - a quick way to see the full report shape without writing a prompt from
+scratch.
 
 ### Optional pre-commit hook
 

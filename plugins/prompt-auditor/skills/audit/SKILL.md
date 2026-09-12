@@ -1,6 +1,6 @@
 ---
 name: audit
-description: Runs a deterministic offline static audit on a directory of skills, agents, or prompts (SKILL.md, AGENTS.md, CLAUDE.md) and prints findings. Use for local review of these. Not for runtime telemetry comparison or unrelated code review.
+description: Use this skill when auditing a directory of skills, agents, or prompts (SKILL.md, AGENTS.md, CLAUDE.md) for deterministic offline static findings, critical then major then minor. Not for runtime telemetry comparison or unrelated code review.
 allowed-tools: Read, Glob, Grep, Bash
 ---
 
@@ -34,6 +34,7 @@ at full local depth, against a directory the user names.
   does not have.
 - Read-only against the audited files. This skill never edits, moves, or deletes a file
   in the target repo, other than the hook file it is explicitly asked to write in step 4.
-- `examples/find-ai-events.md` (with `examples/find-ai-events-fixed.md` alongside it as
-  the corrected version) is a task prompt written to trip every `PROMPT-*` check - useful
+- [`examples/find-ai-events.md`](../../examples/find-ai-events.md) (with
+  [`examples/find-ai-events-fixed.md`](../../examples/find-ai-events-fixed.md) alongside it
+  as the corrected version) is a task prompt written to trip every `PROMPT-*` check - useful
   for seeing the full report shape without writing a prompt from scratch.
