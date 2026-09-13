@@ -26,10 +26,10 @@
       "description": "Type-driven README updater. Detects repo family, confirms it with the user, asks for style, audience, and depth, then generates from the matching template workflow. Auto-invoke on 'update readme' and 'refresh readme'."
     },
     {
-      "name": "standalone-skills",
-      "source": "./plugins/standalone-skills",
+      "name": "diy-build-companion",
+      "source": "./plugins/diy-build-companion",
       "version": "2.0.0",
-      "description": "Self-contained, Cowork-ready skills with no cross-skill or external plugin dependencies. Currently bundles diy-build-companion, which plans and runs DIY builds with project state kept in the build repo."
+      "description": "Plan and run DIY builds with energy-aware work blocks, enforced breaks, and an inline child-safety veto gate. Project state lives in the build repo. Self-contained, Cowork-ready, no cross-plugin dependencies."
     },
     {
       "name": "opencode-sync",

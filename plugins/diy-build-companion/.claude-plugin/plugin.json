@@ -1,0 +1,13 @@
+{
+  "name": "diy-build-companion",
+  "description": "Plan and run DIY builds with energy-aware work blocks, enforced breaks, and an inline child-safety veto gate. Project state lives in the build repo. Self-contained: all reference files ship inside the skill folder, with no cross-plugin dependencies.",
+  "author": {
+    "name": "Young Leaders Tech",
+    "url": "https://youngleaders.tech"
+  },
+  "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
+  "version": "2.0.0",
+  "skills": [
+    "./skills/diy-build-companion"
+  ]
+}

@@ -1,8 +1,19 @@
 # Changelog
 
-All notable changes to the standalone-skills plugin.
+All notable changes to the diy-build-companion plugin.
+
+Releases up to and including 1.0.1 were published as the `standalone-skills` plugin; the
+rename is recorded in 2.0.0 below.
 
 ## [2.0.0] - 2026-09-13
+
+### Changed
+- **BREAKING - the plugin is renamed from `standalone-skills` to `diy-build-companion`.** The
+  container held exactly one skill, so the bundle name hid what it actually did and would have
+  forced anyone wanting this skill to take every future unrelated skill with it. The plugin
+  directory moves from `plugins/standalone-skills/` to `plugins/diy-build-companion/`, and the
+  marketplace entry is renamed and re-sourced. Existing installs must remove `standalone-skills`
+  and install `diy-build-companion`; the skill itself is unchanged by the rename.
 
 ### Changed
 - **BREAKING - diy-build-companion no longer uses Google Drive.** The single source of truth is
