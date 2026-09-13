@@ -2,6 +2,36 @@
 
 All notable changes to the standalone-skills plugin.
 
+## [2.0.0] - 2026-09-13
+
+### Changed
+- **BREAKING - diy-build-companion no longer uses Google Drive.** The single source of truth is
+  now the project folder in the build repo, read from and written to disk directly. The previous
+  model declared Drive authoritative and instructed the skill not to trust local files, which was
+  wrong in practice: the Drive `DIY/` folder was empty while live project state sat committed in
+  the repo. Anyone who genuinely kept state in Drive must move those files into `projects/active/`
+  before upgrading.
+- `## Drive layout` is now `## Project layout`, describing `projects/active/<slug>/` and
+  `projects/completed/<slug>/` with the real file set, and noting the top-level `PROJECTS.md`
+  index. Completed builds move rather than being deleted.
+- The read/write asymmetry rule is replaced by "sync before you read, commit after you write".
+  The honest-handback rule is kept for sessions with no file-write ability, and the prohibition on
+  claiming a write that did not happen is unchanged.
+- Triage now runs at session start and on external-change signals, not at the top of every turn.
+  State written earlier in the same session is trusted, which removes a per-turn re-read.
+
+### Added
+- A not-found branch in triage (step 2). After a failed lookup the skill lists both project
+  directories, checks for a near-miss slug, and pulls, and only then asks an open question. It is
+  explicitly barred from offering to start fresh over state it has not found. This was the
+  proximate cause of the observed failure: five empty searches led to a closed three-option
+  question that offered "start fresh" while the real `state.md` was committed in the repo.
+
+### Fixed
+- Mode 3 read the whole of the append-only `progress-log.md` while Mode 2 correctly read only the
+  tail. Mode 3 now reads the last ~10 entries, and the layout section gains a rotation rule
+  (archive to `progress-log-<year>.md` past roughly 50 entries).
+
 ## [1.0.1] - 2026-07-25
 
 ### Added

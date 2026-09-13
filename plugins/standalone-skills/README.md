@@ -1,6 +1,6 @@
 # standalone-skills
 
-**Version**: 1.0.1
+**Version**: 2.0.0
 
 Self-contained skills for Claude Code and Cowork. Each skill in this plugin is a contained
 entity: its logic and reference files live inside its own folder, with no dependency on other
@@ -9,7 +9,8 @@ skills or plugins. That keeps them portable and Cowork-friendly.
 ## Skills
 
 - **diy-build-companion** - plan and run DIY builds with energy-aware work blocks and enforced
-  breaks, cross-device project state in Google Drive, and an inline child-safety veto gate.
+  breaks, project state kept in the build repo's `projects/` folder, and an inline child-safety
+  veto gate.
 
 ## Install
 

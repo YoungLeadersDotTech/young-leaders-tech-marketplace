@@ -1,61 +1,61 @@
 ---
 name: diy-build-companion
-description: Companion for planning and running DIY builds across Claude desktop, web, and mobile. Use to start, resume, or check a build, save state before a break, or run the child-safety veto gate. Keeps project state in Google Drive so devices stay in sync.
+description: Companion for planning and running DIY builds. Use to start, resume, or check a build, save state before a break, or run the child-safety veto gate. Keeps project state in the build repo, read from and written to disk.
 ---
 
 # DIY Build Companion
 
 A single companion for planning and running DIY builds. It follows an assembly-line
-workflow with energy-aware work blocks and enforced breaks, and keeps the same project state in
-sync across Claude desktop, web, and the mobile app. This replaces the older five-skill Claude
-Code suite (diy-start, diy-resume, diy-progress, diy-break, diy-safety-check) with one skill and
-five modes.
+workflow with energy-aware work blocks and enforced breaks, and keeps project state in the build
+repo so every session starts from the real current state. This replaces the older five-skill
+suite (diy-start, diy-resume, diy-progress, diy-break, diy-safety-check) with one skill and five
+modes.
 
-**Before you start (two things worth knowing).** First, if you previously installed the older
-five skills (diy-start, diy-resume, diy-progress, diy-break, diy-safety-check), remove them so a
-request does not trigger both the old and new behaviour. Second, this skill keeps state in Google
-Drive, and reading it back is what fixes the cross-surface drift. Reading is reliable; writing
-may need your help in sessions without a Drive write tool, in which case the skill hands you the
-updated file to save rather than writing it silently (see the write rule below). On those
-sessions, expect to paste state back occasionally; it is the honest cost of never trusting a
-write that did not happen.
+**Before you start.** If you previously installed the older five skills (diy-start, diy-resume,
+diy-progress, diy-break, diy-safety-check), remove them so a request does not trigger both the
+old and new behaviour.
 
-## The one rule that fixes the cross-surface problem
+## The one rule
 
-The previous suite kept project state in a local file tree, so mobile and web each had their
-own copy and they drifted. Here, **the single source of truth is a project folder in Google
-Drive**, reached through the Google Drive connector that is available in the chat regardless of
-which device you are on. Every mode reads the current state from Drive before doing anything. Do
-not cache state in your head across turns or assume a local file is current: read Drive first.
+**The single source of truth is the project folder in the build repo.** Read it from disk before
+doing anything, and write changes back to disk in the same turn you make them. Do not cache state
+in your head across turns, and do not treat anything said in conversation as recorded until it is
+written to the file.
 
-**Reads and writes are not symmetric, and this matters.** The Drive connector reliably supports
-*reading* (search and fetch), so always pull the live state at the start of a turn. *Writing*
-back to Drive may not be available as a direct tool in every session. Before claiming any write,
-confirm a Drive write/update tool is actually present. If it is, use it and confirm the path. If
-it is not, do the honest fallback: produce the updated file as a fenced Markdown block and tell
-the user the exact filename and folder to save or replace it with. **Never claim a write to Drive
-that did not happen** - this was the original failure mode and silent false-writes are worse than
-an honest handback. When in doubt, hand back the block.
+**Sync before you read, commit after you write.** The repo is the shared surface, so a session
+that starts from a stale checkout will confidently work from old state. At the start of a session
+run `git pull` (or tell the user to, if you cannot run commands), and after a state change commit
+the updated files so the next session sees the truth. **Never claim a write that did not happen**
+- if you have no ability to write files in this session, say so plainly and hand the user the
+updated file as a fenced Markdown block with the exact path to save it to. Silent false-writes
+are worse than an honest handback.
 
-## Drive layout
+## Project layout
 
-All builds live under a top-level `DIY/` folder in the user's Drive. One folder per project,
+All builds live under `projects/` in the build repo, split by status. One folder per project,
 slug-named:
 
 ```
-DIY/
-  <project-slug>/
-    overview.md          project name, target users, status, phase, key dimensions
-    state.md             the living "where am I" file (see schema below)
-    progress-log.md      append-only dated log of work blocks
-    safety.md            safety gate record: each gate, status, findings, date
-    cutting-plan.md       (optional) per-build planning docs
-    materials.md          (optional)
+projects/
+  active/
+    <project-slug>/
+      overview.md          project name, target users, status, phase, key dimensions
+      state.md             the living "where am I" file (see schema below)
+      progress-log.md      append-only dated log of work blocks
+      safety.md            safety gate record: each gate, status, findings, date
+      design.md             (optional) current dimensions and the vertical stack
+      cutting-plan.md       (optional) per-build planning docs
+      materials.md          (optional)
+  completed/
+    <project-slug>/        same shape, moved here when the build is done
 ```
 
-`state.md` is the file that matters most: every device reads it first and it is what makes a fast
-resume possible. Keep it short and current, and put anything that must not be missed at the very
-top. Real builds carry irreversible, safety-relevant decisions (e.g. a worktop height that is too
+A completed build moves from `active/` to `completed/`; it is not deleted. If the repo has a
+top-level `PROJECTS.md` index, update it when a project is created or moves.
+
+`state.md` is the file that matters most: it is read first and it is what makes a fast resume
+possible. Keep it short and current, and put anything that must not be missed at the very top.
+Real builds carry irreversible, safety-relevant decisions (e.g. a worktop height that is too
 tall for the child once board thickness is added), so the schema leads with a blocker band:
 
 ```
@@ -75,15 +75,25 @@ tall for the child once board thickness is added), so the schema leads with a bl
 Keep the READ FIRST band empty when there is nothing in it, but never drop it: it is where a
 height correction or a pending safety gate goes so it cannot be scrolled past.
 
+`progress-log.md` is append-only and grows without limit. Read its tail, not the whole file, and
+once it passes roughly 50 entries archive the older ones to `progress-log-<year>.md` alongside it.
+
 ## First: triage the request (before running any mode)
 
-Do this at the top of every turn, before the mode body runs. It is the classify-first step that
-keeps scope, safety, and persistence decisions out of the individual modes and made once, up
-front:
+Do this at the start of a session, and again on any signal that the state may have changed
+outside this conversation (the user mentions working on another machine, a long gap since the
+last turn, or an explicit re-sync request). Within a single session, state you wrote this session
+is trustworthy and does not need re-reading every turn.
 
-1. **Read live state from Drive.** Pull the current project state (per the one rule above) before
-   acting. Never work from cached or assumed state.
-2. **Classify the mode.** Map the request to exactly one of the five modes below:
+1. **Read live state from disk.** Locate the project folder under `projects/active/` and read
+   `state.md` before acting. Never work from cached or assumed state.
+2. **If the project is not where you expected, look before concluding.** List `projects/active/`
+   and `projects/completed/` and check for a near-miss slug, and run `git pull` in case the
+   project was created on another machine. Only after the folders are genuinely empty of a match
+   should you ask the user, and ask an open question ("I could not find a project matching
+   `<slug>`; what is it called, or is this new?") rather than offering a closed set of options
+   that assumes it does not exist. Never offer to start fresh over state you have not found.
+3. **Classify the mode.** Map the request to exactly one of the five modes below:
    - new project / "start a build ..."                -> Mode 1 (Start a build)
    - "where was I" / "resume" / "pick up ..."         -> Mode 2 (Resume a build)
    - "how's it going" / "progress" / "am I due a break" -> Mode 3 (Check progress)
@@ -91,12 +101,9 @@ front:
    - about to cut/assemble, a design changed, or an
      explicit safety-check request                    -> Mode 5 (Child-safety veto gate)
    If the request is genuinely ambiguous, ask once, then proceed.
-3. **Set the safety-critical flag now.** If the build is for or used by a child, or is elevated or
+4. **Set the safety-critical flag now.** If the build is for or used by a child, or is elevated or
    load-bearing, mark it safety-critical up front so Mode 5 is known to be required before any cut
    or assembly - not discovered late.
-4. **Confirm write capability once.** Check whether a Drive write/update tool is present this
-   session and record it, so every persistence step uses the right path (direct write vs. honest
-   hand-back per the write rule above) without re-deciding mid-mode.
 
 Then run the selected mode below.
 
@@ -108,7 +115,7 @@ This skill has five modes. Infer the mode from the request; if genuinely unclear
 
 When the user describes a new project ("start a build for...", "new DIY project...").
 
-1. Read `DIY/` to check the project does not already exist.
+1. List `projects/active/` and `projects/completed/` to check the project does not already exist.
 2. Derive a slug (lowercase, hyphenated) from the description.
 3. Decide whether it is **safety-critical**: anything built for or used by children, or any
    elevated or load-bearing structure. If so, flag that the safety gate (mode 5) is required
@@ -116,19 +123,17 @@ When the user describes a new project ("start a build for...", "new DIY project.
 4. Ask the two framing questions that proved useful (do not skip these, they set up workable
    work blocks): current energy level (high / medium / low / very low) and time available today
    (15 / 30 / 45 / 60+ min). Map energy to suitable tasks using `reference/field-notes.md`.
-5. Create the project folder and the initial files: `overview.md`, a starter `state.md` (with an
-   empty READ FIRST band), an empty `progress-log.md`, and, if safety-critical, a `safety.md`
-   with all gates pending. Persist them per the write rule above (direct Drive write if the tool
-   is present, otherwise hand the user the files to save). If you have to hand them back, say so
-   up front so the first experience is not a surprise wall of Markdown.
-6. Show the user the slug, the folder location, and the first concrete next action.
+5. Create `projects/active/<slug>/` and the initial files: `overview.md`, a starter `state.md`
+   (with an empty READ FIRST band), an empty `progress-log.md`, and, if safety-critical, a
+   `safety.md` with all gates pending. Write them to disk and commit.
+6. Show the user the slug, the folder path, and the first concrete next action.
 
 ### 2. Resume a build
 
 When the user returns ("where was I", "resume", "pick up the mud kitchen").
 
 1. Read `state.md` (and the tail of `progress-log.md`) for the named project, or the most
-   recently updated project if none named.
+   recently updated project under `projects/active/` if none named.
 2. Reconstruct: current phase, % done, exact last completed step, and the **ultra-specific next
    action** (not "continue assembly" but "attach left side panel with 4x 2.5in screws, top holes
    first"). List the tools that action needs and a rough time estimate.
@@ -142,9 +147,10 @@ Keep it to one screenful. The goal is to get back in flow, not to re-read the wh
 
 When the user wants status ("how's it going", "progress", "am I due a break").
 
-Read `state.md` and `progress-log.md` and give a compact dashboard: phase status, overall %,
-recent completed steps, current momentum, and whether a break is due (the 45-60 minute rule).
-Lead with the answer; a short list is fine here. Celebrate real progress without inflating it.
+Read `state.md` and the last ~10 entries of `progress-log.md`, and give a compact dashboard:
+phase status, overall %, recent completed steps, current momentum, and whether a break is due
+(the 45-60 minute rule). Lead with the answer; a short list is fine here. Celebrate real progress
+without inflating it.
 
 ### 4. Save state before a break
 
@@ -185,9 +191,8 @@ Return one verdict:
 
 This veto is non-negotiable and cannot be overridden by the user. If the user pushes to proceed
 past a FAIL or an unaddressed CONDITIONAL, decline and explain that child safety is the one place
-this companion will not bend, then offer to help fix the design. Apply the same standard whether
-the gate runs on desktop, web, or mobile. Full standards, age bands, and worked numbers are in
-`reference/safety-standards.md`.
+this companion will not bend, then offer to help fix the design. Full standards, age bands, and
+worked numbers are in `reference/safety-standards.md`.
 
 ## What carries over from past builds (read before planning a cut)
 
@@ -218,8 +223,8 @@ labelled, and converge with a single question on which direction the user prefer
 
 ## After any state change
 
-Always produce the updated `state.md` and the `progress-log.md` append in the same turn you made
-the change, so the next device to open the project sees the truth. If a Drive write tool is
-available, write them and confirm the path. If not, hand the user the updated blocks with the
-exact filenames to save. Either way the user must leave the turn with current state in hand;
-what is not allowed is changing the build in conversation and leaving Drive stale.
+Always write the updated `state.md` and the `progress-log.md` append in the same turn you made
+the change, then commit them, so the next session sees the truth. If you cannot write files in
+this session, hand the user the updated blocks with the exact paths to save them to. Either way
+the user must leave the turn with current state recorded; what is not allowed is changing the
+build in conversation and leaving the repo stale.
