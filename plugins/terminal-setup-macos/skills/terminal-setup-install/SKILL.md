@@ -1,7 +1,7 @@
 ---
 name: terminal-setup-install
 description: Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown preview and clickable-path extras.
-allowed-tools: [Bash, Read, Write, Edit, AskUserQuestion]
+allowed-tools: [Bash, Read, Write, Edit, AskUserQuestion, TaskCreate, TaskUpdate]
 version: 1.2.0
 category: Setup
 tags: [terminal, macos, ghostty, ohmyzsh, powerlevel10k, glow, markdown, tmux]
@@ -51,9 +51,53 @@ stopping.
 7. **Sanity tests.** Run `zsh -i -c` checks for parse, claude alias (if present), tool inits.
 8. **Hand off.** Tell the user to open Ghostty (Spotlight) and run `p10k configure` interactively.
 
+## Task Tracking Protocol
+
+(ghostty-terminal-improvements--2026-08-28, T-12) Create the full Step 1-12 chain before Step 1
+runs, so progress survives a mid-run interruption:
+
+```
+t1  = TaskCreate("Step 1: Preflight")
+t2  = TaskCreate("Step 2: Backup .zshrc")
+t3  = TaskCreate("Step 3: Install Ghostty")
+t4  = TaskCreate("Step 4: Install MesloLGS Nerd Font")
+t5  = TaskCreate("Step 5: Install Glow")
+t6  = TaskCreate("Step 6: Configure Ghostty")
+t6b = TaskCreate("Step 6b: AskUserQuestion - optional Ghostty config tweaks")
+t7  = TaskCreate("Step 7: Install Oh My Zsh + Powerlevel10k + plugins")
+t8  = TaskCreate("Step 8: Restore .zshrc customisations")
+t9  = TaskCreate("Step 9: AskUserQuestion - optional extras")
+t10 = TaskCreate("Step 10: Per-extra installs")
+t10b= TaskCreate("Step 10b: Apply selected Ghostty config-tweak bundles")
+t11 = TaskCreate("Step 11: Sanity tests")
+t12 = TaskCreate("Step 12: Hand off")
+
+TaskUpdate(t2.id, addBlockedBy=[t1.id])
+TaskUpdate(t3.id, addBlockedBy=[t2.id])
+TaskUpdate(t4.id, addBlockedBy=[t3.id])
+TaskUpdate(t5.id, addBlockedBy=[t4.id])
+TaskUpdate(t6.id, addBlockedBy=[t5.id])
+TaskUpdate(t6b.id, addBlockedBy=[t6.id])
+TaskUpdate(t7.id, addBlockedBy=[t6b.id])
+TaskUpdate(t8.id, addBlockedBy=[t7.id])
+TaskUpdate(t9.id, addBlockedBy=[t8.id])
+TaskUpdate(t10.id, addBlockedBy=[t9.id])
+TaskUpdate(t10b.id, addBlockedBy=[t10.id])
+TaskUpdate(t11.id, addBlockedBy=[t10b.id])
+TaskUpdate(t12.id, addBlockedBy=[t11.id])
+```
+
+Mark each task `in_progress` on entry to its step and `completed` on exit. If Step 1 reports
+everything already installed, mark Steps 3-8 `completed` immediately (no-op) rather than leaving
+them `pending` - matches the "skip to Step 8" shortcut Step 1 already documents below.
+
 ## Step-by-step
 
-### Step 1 - Preflight
+### Step 1 - Preflight (classify what needs to run)
+
+Detect what's already installed on this machine and classify the run: full install, extras-only,
+or already-current. Everything downstream (which steps run, which are skipped) follows from this
+classification, not from re-checking state ad hoc in later steps.
 
 ```bash
 brew --version >/dev/null 2>&1 || { echo "Homebrew not installed; install it first: https://brew.sh"; exit 1; }
@@ -140,40 +184,10 @@ Before this step, use `AskUserQuestion` (header "Working dir"; recommended optio
 
 (ghostty-terminal-improvements--2026-08-28, T-07) Confirmed fixes and community-survey findings
 from Phase 1 research, offered as opt-in additions to `~/.config/ghostty/config` - none of these
-are applied by default. Fire all four questions in a single `AskUserQuestion` call (multiSelect),
-then append the config lines for every selected bundle to `~/.config/ghostty/config` in Step 10b.
-
-- **Question 1 - "Issue fixes"** (header "Issue fixes"):
-  1. **Pane divider visibility + resize keybinds** (fix, config key) - dividers between splits
-     are hard to see and resizing has no visible shortcut. Adds `split-divider-color` (hex or
-     named colour), `unfocused-split-opacity` + `unfocused-split-fill` (dim inactive panes), and
-     `keybind` entries for `resize_split:<direction>,<pixels>`, `equalize_splits`, and
-     `goto_split:<next|previous|top|left|bottom|right>`.
-  2. **Session persistence via tmux-resurrect** (workaround, third-party tool) - Ghostty has no
-     native split-layout restore; this is the lightest-weight real option. See Step 10 - if
-     picked, this is installed as a full extra (like grip/mdwatch), not just a config line.
-
-- **Question 2 - "Appearance tweaks"** (header "Appearance"), up to 4 bundles from the T-06
-  community survey:
-  1. **Theme & colour overrides** - `theme` (light:X,dark:Y pair syntax supported), custom
-     `background`/`foreground` hex.
-  2. **Background effects** - `background-opacity` (~0.80-0.85 typical), `background-blur`,
-     `custom-shader` (GLSL CRT/cursor-trail effects; can silently break `background-opacity` if
-     the shader draws over the background - [GH Discussion #4835](https://github.com/ghostty-org/ghostty/discussions/4835)).
-  3. **Font tuning** - `font-family`/`font-size` (14-16pt common), `font-thicken`/
-     `font-thicken-strength`, `adjust-cell-height`.
-  4. **Cursor & window chrome** - `cursor-style`/`cursor-style-blink`/`adjust-cursor-thickness`,
-     `macos-titlebar-style: hidden`, `window-theme: system`.
-
-- **Question 3 - "Behaviour tweaks"** (header "Behaviour"), up to 4 bundles:
-  1. **Shell integration & cwd** - `shell-integration` (already set in Step 6), `window-inherit-working-directory`.
-  2. **Mouse & selection** - `mouse-hide-while-typing`, `copy-on-select: clipboard`, `macos-option-as-alt: left`.
-  3. **Window/session behaviour** - `confirm-close-surface: false`, `quick-terminal-size` (Ghostty
-     1.2+), `command` (launch straight into tmux).
-  4. **Custom keybinds** - tmux-style pane/tab navigation `keybind` entries.
-
-- **Question 4 - "Performance tweaks"** (header "Performance"), up to 3 options (no bundling
-  needed - fits the 4-option cap directly): `window-vsync`, `scrollback-limit`, `resize-overlay: never`.
+are applied by default. Fire 4 questions (Issue fixes / Appearance / Behaviour / Performance) in
+a single `AskUserQuestion` call (multiSelect); full question text and every config key is in
+`references/ghostty-config-tweaks.md`. Then append the config lines for every selected bundle to
+`~/.config/ghostty/config` in Step 10b (same reference file has the exact lines to apply).
 
 If `AskUserQuestion` is unavailable, fall back to the same plain-text lettered-list pattern the
 skill already uses elsewhere (see "What this skill does" above).
@@ -413,63 +427,12 @@ o() {
 
 ### Step 10b - Apply selected Ghostty config-tweak bundles
 
-For every bundle selected in Step 6b Questions 2-4, append the matching config block below to
-`~/.config/ghostty/config` (use Edit, not a heredoc, to avoid clobbering earlier Step 6 content):
-
-```
-# --- Appearance: Theme & colour overrides ---
-theme = light:<light-theme>,dark:<dark-theme>
-# background = #hex
-# foreground = #hex
-
-# --- Appearance: Background effects ---
-background-opacity = 0.85
-background-blur = true
-# custom-shader = <path-to-shader.glsl>
-
-# --- Appearance: Font tuning ---
-font-family = "MesloLGS NF"
-font-size = 15
-font-thicken = true
-# adjust-cell-height = 0
-
-# --- Appearance: Cursor & window chrome ---
-cursor-style = block
-cursor-style-blink = true
-macos-titlebar-style = hidden
-window-theme = system
-
-# --- Behaviour: Shell integration & cwd ---
-window-inherit-working-directory = true
-
-# --- Behaviour: Mouse & selection ---
-mouse-hide-while-typing = true
-copy-on-select = clipboard
-macos-option-as-alt = left
-
-# --- Behaviour: Window/session behaviour ---
-confirm-close-surface = false
-quick-terminal-size = 40%
-
-# --- Behaviour: Custom keybinds ---
-keybind = super+ctrl+shift+up=resize_split:up,10
-keybind = super+ctrl+shift+equal=equalize_splits
-keybind = super+ctrl+bracketright=goto_split:next
-keybind = super+ctrl+bracketleft=goto_split:previous
-
-# --- Performance ---
-window-vsync = true
-scrollback-limit = 10000
-resize-overlay = never
-```
-
-Only append the specific lines for bundles the user actually selected - do not write the whole
-block unconditionally. Comment out or omit any line whose value needs a user-specific choice
-(theme names, shader path) and ask via free text if the user wants it filled in now.
-
-Also apply the **Pane divider visibility + resize keybinds** bundle (Step 6b Question 1) here if
-selected: `split-divider-color`, `unfocused-split-opacity`, `unfocused-split-fill`, and the three
-`resize_split`/`equalize_splits`/`goto_split` keybind lines.
+For every bundle selected in Step 6b, append the matching config lines to
+`~/.config/ghostty/config` (use Edit, not a heredoc, to avoid clobbering earlier Step 6 content).
+The exact config block for every bundle - Issue fixes, Appearance, Behaviour, Performance - is in
+`references/ghostty-config-tweaks.md` under "Applying selected bundles". Only append the lines
+for bundles the user actually selected; comment out or omit any line needing a user-specific
+value (theme names, shader path) and ask via free text if the user wants it filled in now.
 
 ### Step 11 - Sanity tests
 
