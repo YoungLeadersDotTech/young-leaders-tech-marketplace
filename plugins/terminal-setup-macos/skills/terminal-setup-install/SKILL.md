@@ -2,10 +2,10 @@
 name: terminal-setup-install
 description: Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown preview and clickable-path extras.
 allowed-tools: [Bash, Read, Write, Edit, AskUserQuestion]
-version: 1.1.0
+version: 1.2.0
 category: Setup
-tags: [terminal, macos, ghostty, ohmyzsh, powerlevel10k, glow, markdown]
-last-updated: 2026-05-10
+tags: [terminal, macos, ghostty, ohmyzsh, powerlevel10k, glow, markdown, tmux]
+last-updated: 2026-09-14
 ---
 
 # terminal-setup-install
@@ -136,6 +136,48 @@ shell-integration = zsh
 
 Before this step, use `AskUserQuestion` (header "Working dir"; recommended option "Use ~/Projects (default)"; other option "Something else" - the tool's free-text fallback covers a custom path) to confirm the `working-directory` value rather than assuming the default.
 
+### Step 6b - AskUserQuestion: optional Ghostty config tweaks
+
+(ghostty-terminal-improvements--2026-08-28, T-07) Confirmed fixes and community-survey findings
+from Phase 1 research, offered as opt-in additions to `~/.config/ghostty/config` - none of these
+are applied by default. Fire all four questions in a single `AskUserQuestion` call (multiSelect),
+then append the config lines for every selected bundle to `~/.config/ghostty/config` in Step 10b.
+
+- **Question 1 - "Issue fixes"** (header "Issue fixes"):
+  1. **Pane divider visibility + resize keybinds** (fix, config key) - dividers between splits
+     are hard to see and resizing has no visible shortcut. Adds `split-divider-color` (hex or
+     named colour), `unfocused-split-opacity` + `unfocused-split-fill` (dim inactive panes), and
+     `keybind` entries for `resize_split:<direction>,<pixels>`, `equalize_splits`, and
+     `goto_split:<next|previous|top|left|bottom|right>`.
+  2. **Session persistence via tmux-resurrect** (workaround, third-party tool) - Ghostty has no
+     native split-layout restore; this is the lightest-weight real option. See Step 10 - if
+     picked, this is installed as a full extra (like grip/mdwatch), not just a config line.
+
+- **Question 2 - "Appearance tweaks"** (header "Appearance"), up to 4 bundles from the T-06
+  community survey:
+  1. **Theme & colour overrides** - `theme` (light:X,dark:Y pair syntax supported), custom
+     `background`/`foreground` hex.
+  2. **Background effects** - `background-opacity` (~0.80-0.85 typical), `background-blur`,
+     `custom-shader` (GLSL CRT/cursor-trail effects; can silently break `background-opacity` if
+     the shader draws over the background - [GH Discussion #4835](https://github.com/ghostty-org/ghostty/discussions/4835)).
+  3. **Font tuning** - `font-family`/`font-size` (14-16pt common), `font-thicken`/
+     `font-thicken-strength`, `adjust-cell-height`.
+  4. **Cursor & window chrome** - `cursor-style`/`cursor-style-blink`/`adjust-cursor-thickness`,
+     `macos-titlebar-style: hidden`, `window-theme: system`.
+
+- **Question 3 - "Behaviour tweaks"** (header "Behaviour"), up to 4 bundles:
+  1. **Shell integration & cwd** - `shell-integration` (already set in Step 6), `window-inherit-working-directory`.
+  2. **Mouse & selection** - `mouse-hide-while-typing`, `copy-on-select: clipboard`, `macos-option-as-alt: left`.
+  3. **Window/session behaviour** - `confirm-close-surface: false`, `quick-terminal-size` (Ghostty
+     1.2+), `command` (launch straight into tmux).
+  4. **Custom keybinds** - tmux-style pane/tab navigation `keybind` entries.
+
+- **Question 4 - "Performance tweaks"** (header "Performance"), up to 3 options (no bundling
+  needed - fits the 4-option cap directly): `window-vsync`, `scrollback-limit`, `resize-overlay: never`.
+
+If `AskUserQuestion` is unavailable, fall back to the same plain-text lettered-list pattern the
+skill already uses elsewhere (see "What this skill does" above).
+
 ### Step 7 - Install Oh My Zsh + Powerlevel10k + plugins
 
 ```bash
@@ -242,6 +284,29 @@ Append to `~/.zshrc`:
 alias mdwatch='f() { echo "$1" | entr -c glow -p "$1" }; f'
 ```
 
+If user picked **Session persistence via tmux-resurrect** (Step 6b, Question 1):
+
+```bash
+which tmux >/dev/null 2>&1 || brew install tmux
+CUSTOM_TMUX="$HOME/.tmux/plugins"
+mkdir -p "$CUSTOM_TMUX"
+git clone --depth=1 https://github.com/tmux-plugins/tmux-resurrect "$CUSTOM_TMUX/tmux-resurrect"
+git clone --depth=1 https://github.com/tmux-plugins/tmux-continuum "$CUSTOM_TMUX/tmux-continuum"
+```
+
+Append to `~/.tmux.conf` (create if absent):
+
+```
+run-shell ~/.tmux/plugins/tmux-resurrect/resurrect.tmux
+set -g @continuum-restore 'on'
+run-shell ~/.tmux/plugins/tmux-continuum/continuum.tmux
+```
+
+`tmux-resurrect` binds `prefix + Ctrl-s` (save) and `prefix + Ctrl-r` (restore); `tmux-continuum`
+auto-saves every 15 minutes and auto-restores on tmux server start. This is a third-party
+workaround, not a native Ghostty feature - Ghostty's own `window-save-state` is macOS-only and
+does not reliably restore split-pane layout (T-02 finding).
+
 If user picked **Clickable file paths**:
 
 **Step A - Install the OSC 8 formatter utility:**
@@ -346,6 +411,66 @@ o() {
 - **Hook** (Step B): automatic - every Bash tool call in Claude Code scans stdout for bare filenames and makes them clickable without any manual action
 - **`mdls`/`o` aliases** (Step C): manual - run `mdls docs/workflows/` or `o somefile.md` explicitly in a terminal
 
+### Step 10b - Apply selected Ghostty config-tweak bundles
+
+For every bundle selected in Step 6b Questions 2-4, append the matching config block below to
+`~/.config/ghostty/config` (use Edit, not a heredoc, to avoid clobbering earlier Step 6 content):
+
+```
+# --- Appearance: Theme & colour overrides ---
+theme = light:<light-theme>,dark:<dark-theme>
+# background = #hex
+# foreground = #hex
+
+# --- Appearance: Background effects ---
+background-opacity = 0.85
+background-blur = true
+# custom-shader = <path-to-shader.glsl>
+
+# --- Appearance: Font tuning ---
+font-family = "MesloLGS NF"
+font-size = 15
+font-thicken = true
+# adjust-cell-height = 0
+
+# --- Appearance: Cursor & window chrome ---
+cursor-style = block
+cursor-style-blink = true
+macos-titlebar-style = hidden
+window-theme = system
+
+# --- Behaviour: Shell integration & cwd ---
+window-inherit-working-directory = true
+
+# --- Behaviour: Mouse & selection ---
+mouse-hide-while-typing = true
+copy-on-select = clipboard
+macos-option-as-alt = left
+
+# --- Behaviour: Window/session behaviour ---
+confirm-close-surface = false
+quick-terminal-size = 40%
+
+# --- Behaviour: Custom keybinds ---
+keybind = super+ctrl+shift+up=resize_split:up,10
+keybind = super+ctrl+shift+equal=equalize_splits
+keybind = super+ctrl+bracketright=goto_split:next
+keybind = super+ctrl+bracketleft=goto_split:previous
+
+# --- Performance ---
+window-vsync = true
+scrollback-limit = 10000
+resize-overlay = never
+```
+
+Only append the specific lines for bundles the user actually selected - do not write the whole
+block unconditionally. Comment out or omit any line whose value needs a user-specific choice
+(theme names, shader path) and ask via free text if the user wants it filled in now.
+
+Also apply the **Pane divider visibility + resize keybinds** bundle (Step 6b Question 1) here if
+selected: `split-divider-color`, `unfocused-split-opacity`, `unfocused-split-fill`, and the three
+`resize_split`/`equalize_splits`/`goto_split` keybind lines.
+
 ### Step 11 - Sanity tests
 
 ```bash
@@ -380,6 +505,22 @@ Tell the user:
 | `docker` plugin warns when docker not installed | Skill conditionally adds `docker` to plugins line |
 | New tabs don't reload Ghostty font | Skill instructs user to fully Cmd+Q and reopen |
 | Powerlevel10k wizard needs interactive input | Skill installs theme then hands off to user for `p10k configure` |
+| A clickable OSC 8 link's display text wraps across a terminal line break and loses grouping | `format-clickable-path.js` and `post-bash-filename-links.py` set an `id=` param on the OSC 8 link so wrapped text still resolves as one logical hyperlink (ghostty-terminal-improvements--2026-08-28, T-01/T-07) |
+
+## Known limitations (investigated, not fixable at config level)
+
+(ghostty-terminal-improvements--2026-08-28, Phase 1)
+
+- **Claude Code statusline truncation on narrow windows**: not a Ghostty config issue - root cause
+  is in Claude Code itself. Multi-line custom statuslines get truncated on narrow terminals; no
+  scroll/config workaround exists. Closed "not planned" by Anthropic
+  ([#26371](https://github.com/anthropics/claude-code/issues/26371),
+  [#28750](https://github.com/anthropics/claude-code/issues/28750)). Mitigation: keep custom
+  statuslines to a single line, or widen the terminal past ~100 columns.
+- **Full-screen feature breaking mouse clicks**: ruled out within a 20-minute timebox - no
+  changelog entry found for the reported date. `cursor-click-to-move` is the most plausible
+  candidate for "mouse clicks behave unexpectedly" reports but wasn't confirmed as the cause and
+  is not applied automatically. If you hit this, try `cursor-click-to-move = false` manually.
 
 ## Failure modes
 
