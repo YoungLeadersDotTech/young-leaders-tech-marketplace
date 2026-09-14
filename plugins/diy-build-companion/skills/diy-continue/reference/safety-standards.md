@@ -67,11 +67,50 @@ youngest band's height and feature limits.
 
 ## Domain 3: Tool safety and builder capability
 
-- Check the cuts and joins the design needs against the tools on hand and the builder's stated
-  proficiency. If the design needs a tool or technique the builder has not got or used, flag it
-  and offer an alternative approach rather than assuming it will be fine.
-- Account for any physical limitations the user has stated. Do not invent constraints that were
-  not stated; do not ignore ones that were.
+Check the cuts and joins the design needs against the tools actually on hand and the builder's
+stated proficiency. If the design needs a tool or technique they have not got or used, flag it and
+offer an alternative approach rather than assuming it will be fine.
+
+**If the build repo has a `tools.yaml` beside `projects/`, read it for what is owned and the
+stated proficiency.** Never require it: with no file, ask instead. This file belongs to the user's
+own build repo and never to this plugin.
+
+### Tool risk tiers
+
+| Tier | Tools | Conditions and protocol |
+|---|---|---|
+| **Very high** | Chainsaw, angle grinder, concrete saw | Beyond most home builds. Flag explicitly and offer an alternative approach before assuming it goes ahead. |
+| **High** | Circular saw, table saw | Stable work surface, two-handed operation, deliberate stance. Material clamped before the cut, no awkward reaches, power disconnected between cuts. |
+| **Medium** | Drill/driver, jigsaw, reciprocating saw, belt sander | Proper grip, stable positioning, clear workspace. Depth stops set, guards in place. |
+| **Low** | Hand saw, chisel, screwdriver, measuring and marking tools | Keep edges sharp (a blunt chisel slips), standard hand-tool technique, stored safely between uses. |
+
+### Builder capability
+
+Match the tier to stated experience rather than assuming. A beginner is a confident hand-tool and
+drill user; intermediate adds a jigsaw and circular saw with guided cuts; advanced covers table
+saw, router and freehand circular work. A design needing a tier above the builder's stated level
+is a flag, not a fail: offer the alternative (a hand saw and a guide rail instead of a table saw,
+pre-cut stock from the merchant instead of ripping sheet goods).
+
+### Required safety equipment
+
+Check these are present before any cutting starts, not once it has:
+
+- Eye protection to **ANSI Z87.1** or equivalent, for every cutting, drilling and sanding operation
+- Hearing protection for any tool over **85dB** (most power saws and routers)
+- Dust mask or respirator for sanding, and for cutting treated lumber in particular
+- Gloves for material handling, **not** for power tools - a glove caught in a rotating blade pulls
+  the hand in, which is why this one is stated as a prohibition rather than a recommendation
+- Stable work surface or sawhorses, so nothing is cut freehand or against the knee
+- First aid kit accessible on site
+
+### Stated physical limitations
+
+Account for any limitation the builder has stated. Do not invent constraints that were not stated,
+and do not quietly ignore ones that were. Where a limitation affects the work, accommodate rather
+than refuse: raise the work to standing height on sawhorses or a bench instead of kneeling, use a
+wheeled cart rather than carrying, split a lift that needs two people, and build a rest into the
+work block rather than pushing through.
 
 ## Domain 4: Material safety and environmental hazards
 
@@ -88,6 +127,25 @@ youngest band's height and feature limits.
 - Non-safety-critical dimensions: +/-3mm is fine.
 - Double-check every safety-critical dimension against the relevant limit above before approving.
 
+### Practices that prevent the errors
+
+- Measure twice, cut once, and work from a consistent reference point rather than measuring from
+  the last cut. Measuring from the previous piece is how tolerance accumulates.
+- Verify square with the 3-4-5 method rather than trusting a framing square on a large assembly.
+- Account for material thickness explicitly. A worktop height derived from the frame alone is
+  wrong by the thickness of the board that goes on top, which is the single most common way a
+  child-height dimension drifts out of band.
+- Test-fit before final assembly. Dry-fit the whole thing before a single screw goes in.
+
+### Red flags on measurement
+
+- A safety-critical dimension taken once and never checked.
+- Imprecision in the stated dimension itself ("about three feet") on anything load-bearing or
+  child-height.
+- Accumulating error across a multi-step build, where each piece is measured from the last.
+- No cut list. If the pieces have not been written down with dimensions before cutting starts,
+  the cut list is being held in someone's head and it will drift.
+
 ---
 
 ## Verdict rules
@@ -98,3 +156,14 @@ youngest band's height and feature limits.
 - **FAIL**: a critical child-safety or structural hazard with no in-place fix (e.g. toxic
   material, load capacity far below the 4x factor, fall height way over the age band). Hard veto:
   record it, block the build, redesign from scratch. The user cannot override this.
+
+## What to keep as a record
+
+`safety.md` holds the gate record itself. Two things are worth keeping alongside it on a build a
+child will use:
+
+- **Receipts for structural timber, fixings and finishes.** These are the only durable proof that
+  what went into the build is what was approved at the gate. A year on, nobody remembers whether
+  the decking screws were the exterior-rated ones.
+- **Photographs during assembly**, particularly of connections that end up hidden. When a
+  structure is inspected or modified later, buried fixings are otherwise guesswork.

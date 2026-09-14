@@ -36,6 +36,34 @@ rename is recorded in 2.0.0 below.
   what it actually does. A command wrapper was considered and rejected: command wrappers are
   deprecated and fail validation (`C14-COMMAND-WRAPPER`), and skills are directly invokable as
   `/plugin:skill-name`, so renaming the skill is the supported way to get the trigger.
+- **Domain 3 rebuilt in `reference/safety-standards.md`.** It was seven lines of judgement prose.
+  It now carries tool risk tiers (very high, high, medium, low) with named tools and per-tier
+  protocol, builder capability levels with the alternative to offer when a design outruns them, and
+  a required safety equipment checklist: ANSI Z87.1 eye protection, hearing protection above 85dB,
+  dust mask for sanding and for cutting treated lumber, gloves for handling but **not** for power
+  tools, a stable work surface, and a first aid kit on site. Stated physical limitations now come
+  with accommodations to offer rather than only an instruction to take them into account.
+- Domain 5 gains the practices and red flags behind the tolerances: measure twice from a consistent
+  reference point, 3-4-5 for square, account for material thickness explicitly, test-fit before
+  assembly. Red flags: a safety-critical dimension measured once, imprecision in the stated
+  dimension itself, accumulating error across a multi-step build, and no written cut list.
+- A short record-keeping section: receipts for structural timber, fixings and finishes as the only
+  durable proof that what went in is what was approved at the gate, and photographs of connections
+  that end up hidden.
+- **`reference/field-notes.md` gains the craft content**: the cutting checklist (blade depth set to
+  material thickness plus about 3mm, roughly 3 seconds to full speed before contact, midpoint
+  on-line check, wait for the blade to stop before moving, 20-25 minutes per large panel); the
+  wrong-cut decision table (under 3mm carry on if non-structural, 3-6mm stop and evaluate, over 6mm
+  re-cut) plus reject warped stock and stop on a wrong delivery rather than substituting at the
+  bench; nominal versus actual timber and sheet sizes; the plywood grade time trade-off (roughly 3
+  extra hours for construction grade against about 30 minutes for pre-sanded); a tiered kit list;
+  break mechanics (warn at 40 minutes, stop at 45, never past 60, 15-minute break, 5-minute
+  micro-break every 20-30); task sizing with never more than 90 minutes continuous and ending on a
+  completion rather than mid-task; re-asking energy after each break with named low-energy work and
+  ending the day early as a legitimate outcome; and a pre-break workspace safety check.
+- The skill now reads an optional `tools.yaml` from the build repo, if present, for what tools are
+  owned and the builder's proficiency. It is never required, and it belongs to the user's own build
+  repo rather than to this plugin, so a tool inventory is never published here.
 - **Scan-first triage.** Triage now opens by scanning every project in `projects/active/` rather
   than starting from a project the request happened to name: read each `state.md`'s header line
   and `READ FIRST` band only (not whole files, not `progress-log.md`), then select - zero active
