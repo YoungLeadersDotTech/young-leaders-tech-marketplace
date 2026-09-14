@@ -1,5 +1,5 @@
 ---
-name: diy-build-companion
+name: diy-continue
 description: Companion for planning and running DIY builds. Use to start, resume, or check a build, save state before a break, or run the child-safety veto gate. Keeps project state in the build repo, read from and written to disk.
 ---
 

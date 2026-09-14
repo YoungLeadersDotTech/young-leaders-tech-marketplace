@@ -45,6 +45,16 @@ irreversible decisions. The skill pulls before reading and commits after writing
 never claim a write it did not make: with no file-write ability it hands you the updated file and
 the exact path instead.
 
+## Invoking it
+
+```
+/diy-build-companion:diy-continue
+```
+
+The skill also fires on plain requests like "resume my build", "where was I", or "start a build
+for a mud kitchen". One entry point works out where you are: it scans every project in the build
+repo, resumes the one you are on, or starts a new one.
+
 ## Install
 
 Published in the young-leaders-tech-marketplace. Add that marketplace and install the

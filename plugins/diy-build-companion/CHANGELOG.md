@@ -14,9 +14,7 @@ rename is recorded in 2.0.0 below.
   directory moves from `plugins/standalone-skills/` to `plugins/diy-build-companion/`, and the
   marketplace entry is renamed and re-sourced. Existing installs must remove `standalone-skills`
   and install `diy-build-companion`; the skill itself is unchanged by the rename.
-
-### Changed
-- **BREAKING - diy-build-companion no longer uses Google Drive.** The single source of truth is
+- **BREAKING - the skill no longer uses Google Drive.** The single source of truth is
   now the project folder in the build repo, read from and written to disk directly. The previous
   model declared Drive authoritative and instructed the skill not to trust local files, which was
   wrong in practice: the Drive `DIY/` folder was empty while live project state sat committed in
@@ -32,6 +30,12 @@ rename is recorded in 2.0.0 below.
   State written earlier in the same session is trusted, which removes a per-turn re-read.
 
 ### Added
+- **The skill is renamed from `diy-build-companion` to `diy-continue`**, so it is invoked as
+  `/diy-build-companion:diy-continue`. The plugin keeps its name. The skill now scans the project
+  set and works out where you are rather than inferring a mode from phrasing, so "continue" is
+  what it actually does. A command wrapper was considered and rejected: command wrappers are
+  deprecated and fail validation (`C14-COMMAND-WRAPPER`), and skills are directly invokable as
+  `/plugin:skill-name`, so renaming the skill is the supported way to get the trigger.
 - **Scan-first triage.** Triage now opens by scanning every project in `projects/active/` rather
   than starting from a project the request happened to name: read each `state.md`'s header line
   and `READ FIRST` band only (not whole files, not `progress-log.md`), then select - zero active
