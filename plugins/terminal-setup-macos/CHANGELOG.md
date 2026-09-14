@@ -2,6 +2,28 @@
 
 All notable changes to `terminal-setup-macos` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-09-14
+
+### Added
+- **OSC 8 `id=` link grouping** in `format-clickable-path.js` and `post-bash-filename-links.py`. A
+  clickable link's display text now keeps its logical grouping even when the terminal wraps it
+  across a line break (previously investigated as a Ghostty-side gap; the fix belongs in these
+  scripts, which weren't setting the `id=` parameter Ghostty groups on).
+- **Step 6b - opt-in Ghostty config tweaks menu**. New `AskUserQuestion` (Issue fixes /
+  Appearance / Behaviour / Performance) offering pane-divider visibility + resize keybinds,
+  tmux-resurrect session persistence, and a curated set of community config tweaks (theme,
+  background effects, font tuning, cursor/window chrome, mouse/selection behaviour,
+  window/session behaviour, performance). Full reference: `references/ghostty-config-tweaks.md`.
+- **tmux-resurrect extra** alongside grip/mdwatch/MacDown 3000 - installs tmux + tmux-resurrect +
+  tmux-continuum when selected, since Ghostty has no native split-layout session restore.
+- **Known limitations section** documenting two investigated-but-not-fixable issues: Claude Code
+  statusline truncation on narrow terminals (confirmed Claude Code issue, not Ghostty), and the
+  full-screen/mouse-click regression (ruled out within timebox, no confirmed root cause).
+- **Task Tracking Protocol** section chaining all 14 install steps, with `TaskCreate`/
+  `TaskUpdate`/`TaskGet`/`TaskList` added to `allowed-tools`.
+- New `references/ghostty-config-tweaks.md` holding the full Step 6b/10b bundle detail, keeping
+  the main SKILL.md body under the 500-line guideline.
+
 ## [1.3.1] - 2026-07-26
 
 ### Fixed
