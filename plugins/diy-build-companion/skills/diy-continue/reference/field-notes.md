@@ -153,3 +153,82 @@ router and nail gun, none of which a first build needs.
   first cut.
 - Frame width gotcha: decide early whether legs sit inside or outside the cross members; it
   changes the outer dimension and which rails span the full width. Confirm at dry-fit.
+
+## Clamping when you do not have enough clamps
+
+Almost nobody has enough clamps. These work.
+
+- **Gravity clamping.** Stack heavy things directly over the glue joint. A 40kg railway sleeper or
+  a couple of bags of sand is an excellent clamp and costs nothing.
+- **Corner bracing.** Wedge the work between two fixed surfaces and let the existing structure be
+  the vice.
+- **Ratchet straps** are giant clamps, and a rope with a stick twisted through it is a tourniquet
+  clamp for awkward shapes.
+- **Drill every pilot hole while the pieces are still flat.** Far easier than drilling vertically
+  or at an angle later, and it removes most of the need to clamp during assembly.
+
+## Keeping the workspace stable
+
+- Trestles wobble. Clamp a heavy board across them: it makes a stable platform, doubles as the
+  cutting surface, and stops the trestles walking mid-cut.
+- Stand boards sideways in the trestle notches so they cannot roll. They stay sorted and you can
+  pull one out without lifting the stack.
+- Set the trestles in a triangle with a wall as the third point, and lean long boards against the
+  wall rather than chasing them across the floor.
+
+## Wood filler
+
+- **Push it deep first.** Stab the filler into the hole with the tip of the putty knife rather
+  than smearing it across the surface.
+- **Overfill by 2-3mm.** It shrinks as it dries, and a flush fill becomes a dent.
+- **One swipe to finish**, at about 45 degrees. Do not overwork it, and then walk away and leave
+  it alone.
+- Too much on the knife? Scrape the excess onto a second knife. One for applying, one for
+  collecting, no waste.
+- After about five minutes, a damp finger over the top leaves a smooth dome and saves most of the
+  sanding later. Works best with water-based fillers.
+
+## Painting and finishing
+
+- **End grain first**, while the brush is still loaded. It drinks far more than the faces, and
+  doing it last gives you dry-brush streaks.
+- Prime in the morning when humidity is lower, and topcoat in the afternoon while the primer is
+  tacky but no longer wet.
+- Do not prime late in the day outdoors. Dew lands on a surface that has not cured and ruins it.
+- A slightly damp cotton t-shirt beats a tack cloth for dust, catches what the sander missed, and
+  can be washed and reused.
+
+## Measuring and marking habits
+
+- **The story stick.** Rather than measuring the same dimension repeatedly, mark every repeated
+  measurement once on a single board and transfer the marks to each workpiece. It removes a whole
+  class of measurement error, and it is faster.
+- Keep the pencil and the tape in the same place every single time - the same pocket, the same
+  spot on the belt. Time spent hunting for the pencil is time the cut is not getting made.
+
+## Workshop habits worth having
+
+- **Shadow board.** Trace the tools onto a sheet of pegboard or ply so everything has one home.
+  You can see at a glance what is missing, and nothing gets stood on.
+- **Sawdust is a slip hazard.** Sweep every half hour. A handful thrown onto a spill makes a
+  temporary non-slip surface until you can clean it properly at the break.
+- **Number the batteries** and use and charge them in rotation, so you always know which is
+  freshest and never get caught with all of them flat.
+- **Pre-flight each phase.** Gather every tool, material and piece of hardware, count the fixings,
+  and get the safety gear on before starting. It saves the five trips back to the shed.
+- **Photograph before you move or cut anything.** If the session gets interrupted, the photo tells
+  you exactly where you were far better than memory does.
+
+## Handling material efficiently
+
+- **Flip-stack when sanding.** Sand one face of every piece, stacking each one sanded-side down.
+  When the pile is done, every unsanded face is now pointing up.
+- **Board butter.** Leftover mixed filler or caulk keeps far longer sandwiched between two boards.
+  Pull them apart when you need it again.
+
+## Recovering awkward situations
+
+- **Seized clamps**: soak in penetrating oil overnight, tap with a hammer while working the jaw
+  open and closed, then wire-brush the threads. Usually recoverable.
+- Wrong material delivered, or stock that turns out warped: stop rather than adapting at the
+  bench. A substitution made mid-build has not been through the safety gate.

@@ -69,6 +69,17 @@ rename is recorded in 2.0.0 below.
   public and ships with the skill, while the build repo's `reference/` is the builder's own and
   stays in their repo. Personal data (what they own, where they shop, what they paid, how they
   work) belongs to the second and must never be copied into the first.
+- **`reference/field-notes.md` gains the workshop craft** harvested from a live build repo's own
+  tips glossary rather than from the retired suite: clamping when you are short of clamps (gravity
+  clamping with a 40kg sleeper, ratchet straps, drilling pilot holes while flat), trestle stability,
+  wood filler technique (push deep, overfill 2-3mm because it shrinks, one swipe at 45 degrees,
+  then leave it), painting and finishing (end grain first while the brush is loaded, prime in the
+  morning and topcoat in the afternoon, never prime late outdoors, a damp cotton t-shirt instead of
+  a tack cloth), the story stick for repeated measurements, shadow boards, sawdust as a slip
+  hazard, battery rotation, pre-flight gathering, photographing before moving anything, flip-stack
+  sanding, board butter for leftover filler, and seized-clamp recovery. Personal framing was
+  stripped on the way in: nothing about a specific injury or diagnosis carries into the public
+  skill.
 - **Scan-first triage.** Triage now opens by scanning every project in `projects/active/` rather
   than starting from a project the request happened to name: read each `state.md`'s header line
   and `READ FIRST` band only (not whole files, not `progress-log.md`), then select - zero active
