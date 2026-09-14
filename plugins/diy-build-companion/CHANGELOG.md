@@ -61,12 +61,14 @@ rename is recorded in 2.0.0 below.
   micro-break every 20-30); task sizing with never more than 90 minutes continuous and ending on a
   completion rather than mid-task; re-asking energy after each break with named low-energy work and
   ending the day early as a legitimate outcome; and a pre-break workspace safety check.
-- **Optional `tools.yaml` in the build repo.** The skill reads it when present for what tools are
-  owned, the builder's proficiency, PPE and any stated limitations, and uses it for the Domain 3
-  check. It is never required, never created unprompted, and a missing key means unknown rather
-  than absent. It lives beside `projects/` in the builder's own repo and never in this plugin, so
-  a tool inventory is never published with the skill; whether to commit it is the owner's choice.
-  Documented in the project layout with the schema under Domain 3.
+- **The build repo's own `reference/` folder is now a documented layer.** A build repo commonly
+  carries a tool inventory, supplier and pricing notes, accumulated tips and personal working
+  patterns. The skill reads these when present and relevant, in particular
+  `reference/tool-inventory.md` for the Domain 3 tools check, and never requires or creates them.
+  The two reference layers are kept explicitly distinct: this plugin's `reference/` is generic and
+  public and ships with the skill, while the build repo's `reference/` is the builder's own and
+  stays in their repo. Personal data (what they own, where they shop, what they paid, how they
+  work) belongs to the second and must never be copied into the first.
 - **Scan-first triage.** Triage now opens by scanning every project in `projects/active/` rather
   than starting from a project the request happened to name: read each `state.md`'s header line
   and `READ FIRST` band only (not whole files, not `progress-log.md`), then select - zero active

@@ -71,33 +71,19 @@ Check the cuts and joins the design needs against the tools actually on hand and
 stated proficiency. If the design needs a tool or technique they have not got or used, flag it and
 offer an alternative approach rather than assuming it will be fine.
 
-**If the build repo has a `tools.yaml` beside `projects/`, read it for what is owned and the
-stated proficiency.** Never require it: with no file, ask instead, and do not offer to create one
-unprompted. This file belongs to the user's own build repo and never to this plugin, so a tool
-inventory is never published with the skill. Whether to commit it is the owner's choice; in a
-private repo it is simply tracked, and in a public one they may prefer it ignored.
+**If the build repo has a `reference/tool-inventory.md`, read it before asking what tools are on
+hand.** A useful inventory records the tool, its condition, and the details that change a cut: the
+actual model, blade kerf, battery state. Keep it as a table so a half-filled row still reads
+cleanly, and treat an empty condition column as unknown rather than as "does not own it".
 
-```yaml
-# tools.yaml - optional. Lives beside projects/ in the build repo.
-proficiency: intermediate        # beginner | intermediate | advanced
-owned:
-  - circular saw
-  - drill/driver
-  - jigsaw
-  - orbital sander
-  - clamps
-ppe:
-  - eye protection            # note the standard if known, e.g. ANSI Z87.1
-  - ear defenders
-  - dust mask
-limitations:
-  - no overhead work for long periods
-notes: borrow a table saw from next door for rip cuts
-```
-
-Everything is optional. Treat a missing key as unknown and ask, rather than assuming absence. If
-a design needs a tool that is not listed, say so and offer the alternative rather than silently
+Never require the file. With no inventory, ask, and do not create one unprompted - a fabricated
+tool list is worse than none, because this domain would then check the design against a fiction.
+If the design needs a tool that is not listed, say so and offer the alternative rather than
 assuming it will be bought.
+
+This file belongs to the builder's own repo and never to this plugin, so an inventory is never
+published with the skill. Whether to commit it is the owner's choice: tracked in a private repo,
+ignored in a public one.
 
 ### Tool risk tiers
 

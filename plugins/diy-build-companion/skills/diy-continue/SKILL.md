@@ -50,11 +50,16 @@ projects/
     <project-slug>/        same shape, moved here when the build is done
 ```
 
-Optionally, a `tools.yaml` sits beside `projects/` in the same repo, listing what tools the builder
-owns, their proficiency, PPE and any stated limitations. Read it when present and use it for the
-Domain 3 check; never require it, and never create it unprompted. It is the builder's own data and
-lives in their build repo, never in this plugin. The schema is in
-`reference/safety-standards.md` under Domain 3.
+A build repo commonly also has its own top-level `reference/` folder, holding the things that are
+specific to this builder rather than to the craft: a tool inventory, supplier and pricing notes,
+their own accumulated tips, and personal working patterns. Read these when they are present and
+relevant, in particular `reference/tool-inventory.md` for the Domain 3 tools check. **Never require
+them, and never create them unprompted.**
+
+Keep the two layers distinct. This plugin's own `reference/` is generic and public, and ships with
+the skill. The build repo's `reference/` is the builder's own and stays in their repo. Personal
+data (what they own, where they shop, what they paid, how they work) belongs to the second and must
+never be copied into the first.
 
 A completed build moves from `active/` to `completed/`; it is not deleted. If the repo has a
 top-level `PROJECTS.md` index, treat it as **derived output, never as a source of truth** - read
