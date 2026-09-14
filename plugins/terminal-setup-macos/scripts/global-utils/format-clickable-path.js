@@ -1,9 +1,25 @@
 // Clickable File Path Formatter for Claude Code Terminal
 // Uses OSC 8 standard for cross-platform terminal hyperlinks
-// Version: 2.0.0 - Security hardened with comprehensive error handling
+// Version: 2.1.0 - OSC 8 id= grouping for wrapped display text
 
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
+
+/**
+ * Derive a short, stable OSC 8 link id from a file URI so that a single
+ * logical hyperlink whose display text wraps across a terminal line break
+ * still resolves as one link (ghostty-terminal-improvements--2026-08-28, T-01/T-07).
+ * Ghostty groups non-adjacent text runs that share an OSC 8 `id=` param into
+ * one logical hyperlink, even across a line wrap - a feature the emitting
+ * program must opt into per link.
+ * @private
+ * @param {string} fileUri - the file:// URI this link points to
+ * @returns {string} short hex id, stable for the same URI
+ */
+function deriveLinkId(fileUri) {
+  return crypto.createHash('sha1').update(fileUri).digest('hex').slice(0, 12);
+}
 
 /**
  * Sanitize file path to prevent injection attacks
@@ -87,16 +103,19 @@ function safeEncodeURIComponent(component) {
  * @param {string} options.displayText - Custom display text (default: filename)
  * @param {boolean} options.plainText - Force plain text output (default: false)
  * @param {boolean} options.skipValidation - Skip safety validation (use with caution, default: false)
+ * @param {string} options.id - Explicit OSC 8 link id (default: derived hash of the file URI).
+ *   Groups this link's display text as one logical hyperlink even if the terminal wraps it
+ *   across a line break (ghostty-terminal-improvements--2026-08-28, T-01/T-07).
  * @returns {string} OSC 8 formatted hyperlink or plain text
  * @throws {Error} If path validation or formatting fails
  *
  * @example
  * formatClickablePath('/Users/john/file.md')
- * // => "\e]8;;file:///Users/john/file.md\e\\file.md\e]8;;\e\\"
+ * // => "\e]8;id=<hash>;file:///Users/john/file.md\e\\file.md\e]8;;\e\\"
  *
  * @example
  * formatClickablePath('/Users/john/file.ts', { line: 42 })
- * // => "\e]8;;file:///Users/john/file.ts:42\e\\file.ts:42\e]8;;\e\\"
+ * // => "\e]8;id=<hash>;file:///Users/john/file.ts:42\e\\file.ts:42\e]8;;\e\\"
  *
  * @example Error handling
  * try {
@@ -197,7 +216,13 @@ function formatClickablePath(filePath, options = {}) {
     const OSC = `${ESC}]8`;
     const ST = `${ESC}\\`;
 
-    return `${OSC};;${fileUri}${ST}${displayText}${OSC};;${ST}`;
+    // id= groups this link's display text as one logical hyperlink even if
+    // the terminal wraps it across a line break (options.id lets a caller
+    // force a shared id across multiple formatClickablePath() calls that
+    // represent one logical link split into separate emitted tokens).
+    const linkId = options.id || deriveLinkId(fileUri);
+
+    return `${OSC};id=${linkId};${fileUri}${ST}${displayText}${OSC};;${ST}`;
 
   } catch (error) {
     // Log error for debugging (if console available)

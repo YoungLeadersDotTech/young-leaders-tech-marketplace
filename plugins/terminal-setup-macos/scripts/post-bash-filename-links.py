@@ -15,6 +15,7 @@ Resolution strategy: for each bare filename, check:
   4. Home-relative
 """
 
+import hashlib
 import json
 import os
 import re
@@ -42,7 +43,11 @@ ESC = '\x1b'
 
 def osc8_link(abs_path: str, display: str) -> str:
     uri = 'file://' + abs_path
-    return f'{ESC}]8;;{uri}{ESC}\\{display}{ESC}]8;;{ESC}\\'
+    # id= groups this link's display text as one logical hyperlink even if the
+    # terminal wraps it across a line break (ghostty-terminal-improvements--2026-08-28,
+    # T-01/T-07). Derived from the URI so repeated mentions of the same file share an id.
+    link_id = hashlib.sha1(uri.encode()).hexdigest()[:12]
+    return f'{ESC}]8;id={link_id};{uri}{ESC}\\{display}{ESC}]8;;{ESC}\\'
 
 def resolve_filename(name: str, cwd: str) -> str | None:
     """Return absolute path for bare filename, or None if not found."""
