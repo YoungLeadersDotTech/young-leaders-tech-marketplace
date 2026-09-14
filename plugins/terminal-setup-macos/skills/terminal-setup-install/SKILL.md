@@ -1,7 +1,7 @@
 ---
 name: terminal-setup-install
 description: Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown preview and clickable-path extras.
-allowed-tools: [Bash, Read, Write, Edit, AskUserQuestion, TaskCreate, TaskUpdate]
+allowed-tools: [Bash, Read, Write, Edit, AskUserQuestion, TaskCreate, TaskUpdate, TaskGet, TaskList]
 version: 1.2.0
 category: Setup
 tags: [terminal, macos, ghostty, ohmyzsh, powerlevel10k, glow, markdown, tmux]
@@ -31,7 +31,8 @@ If `AskUserQuestion` is unavailable (for example on OpenCode or Cowork), present
 choice as a plain-text lettered list and continue from the user's written answer instead of
 stopping.
 
-1. **Preflight.** Detects what's already installed and skips it.
+1. **Preflight & classify.** Detects what's already installed and classifies the run - full
+   install, extras-only, or already-current - before any install step runs.
 2. **Core install** in this exact order (sequential to avoid Homebrew portable-Ruby lock conflicts):
    1. Ghostty (cask)
    2. MesloLGS Nerd Font (cask)
