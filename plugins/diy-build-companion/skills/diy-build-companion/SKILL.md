@@ -51,7 +51,11 @@ projects/
 ```
 
 A completed build moves from `active/` to `completed/`; it is not deleted. If the repo has a
-top-level `PROJECTS.md` index, update it when a project is created or moves.
+top-level `PROJECTS.md` index, treat it as **derived output, never as a source of truth** - read
+the per-project `state.md` files instead. A hand-maintained index of this kind drifted badly in
+practice (three completed projects still listed as active, with dead links, while both live
+projects were missing), so if the repo ships a generator script for it, run that after a project
+is created or moves; if it does not, leave the index alone rather than hand-editing it.
 
 `state.md` is the file that matters most: it is read first and it is what makes a fast resume
 possible. Keep it short and current, and put anything that must not be missed at the very top.
@@ -85,15 +89,33 @@ outside this conversation (the user mentions working on another machine, a long 
 last turn, or an explicit re-sync request). Within a single session, state you wrote this session
 is trustworthy and does not need re-reading every turn.
 
-1. **Read live state from disk.** Locate the project folder under `projects/active/` and read
-   `state.md` before acting. Never work from cached or assumed state.
-2. **If the project is not where you expected, look before concluding.** List `projects/active/`
-   and `projects/completed/` and check for a near-miss slug, and run `git pull` in case the
-   project was created on another machine. Only after the folders are genuinely empty of a match
-   should you ask the user, and ask an open question ("I could not find a project matching
-   `<slug>`; what is it called, or is this new?") rather than offering a closed set of options
-   that assumes it does not exist. Never offer to start fresh over state you have not found.
-3. **Classify the mode.** Map the request to exactly one of the five modes below:
+1. **Scan every project before assuming which one.** List `projects/active/` and read each
+   project's `state.md`, taking only the `**Updated**` / `**Phase**` / `**Progress**` header line
+   and the `## READ FIRST` band. Do not read whole state files, and do not read
+   `progress-log.md` at this stage. Two details matter because real repos contain both: the header
+   line is **not** at a fixed line number (some files put it directly under the H1, others leave a
+   blank line first, so scan the top of the file for the `**Updated**:` marker rather than
+   indexing a line), and a project folder with **no** `state.md` pre-dates the schema and is
+   archived, not broken - report it as archived and move on rather than erroring. Never work from
+   cached or assumed state.
+2. **Select the project.** Zero active projects: go to Mode 1 (Start a build). Exactly one: resume
+   it and say which one you picked. Two or more: ask once, at most four options, ordered by most
+   recently updated, with "start something new" last.
+3. **If the named project is not where you expected, look before concluding.** Check
+   `projects/completed/` too and look for a near-miss slug, and run `git pull` in case it was
+   created on another machine. Only after both folders are genuinely empty of a match should you
+   ask, and ask an open question ("I could not find a project matching `<slug>`; what is it
+   called, or is this new?") rather than offering a closed set of options that assumes it does not
+   exist. **Never offer to start fresh over state you have not found** - doing so risks forking a
+   second copy of a build that already exists.
+4. **Check the safety gate before offering any physical action.** Read the chosen project's
+   `safety.md`. If the project is safety-critical and there is no recorded PASS, say so and treat
+   every cut, drill, fixing or assembly as blocked until Mode 5 runs to a PASS. This check is one
+   file read and runs every time; the full five-domain evaluation (Mode 5) is the expensive part
+   and runs only when this check fails or a design changed. **Fail closed**: if `safety.md` is
+   missing, unreadable, or the verdict cannot be determined, treat the gate as blocking, never as
+   a PASS and never as silence. Run Mode 5 inline; never hand the gate to a separate agent.
+5. **Classify the mode.** Map the request to exactly one of the five modes below:
    - new project / "start a build ..."                -> Mode 1 (Start a build)
    - "where was I" / "resume" / "pick up ..."         -> Mode 2 (Resume a build)
    - "how's it going" / "progress" / "am I due a break" -> Mode 3 (Check progress)
@@ -101,7 +123,7 @@ is trustworthy and does not need re-reading every turn.
    - about to cut/assemble, a design changed, or an
      explicit safety-check request                    -> Mode 5 (Child-safety veto gate)
    If the request is genuinely ambiguous, ask once, then proceed.
-4. **Set the safety-critical flag now.** If the build is for or used by a child, or is elevated or
+6. **Set the safety-critical flag now.** If the build is for or used by a child, or is elevated or
    load-bearing, mark it safety-critical up front so Mode 5 is known to be required before any cut
    or assembly - not discovered late.
 
