@@ -1,6 +1,6 @@
 # terminal-setup-macos
 
-Current version: `1.3.0`
+Current version: `1.4.0`
 
 Idempotent installer for a kitted macOS terminal: Ghostty, Oh My Zsh, Powerlevel10k,
 Glow, MesloLGS Nerd Font, plus an optional markdown-preview kit (MacDown 3000, grip,
@@ -58,30 +58,55 @@ Then run the installer slash command:
 7. **Wires the Claude Code PostToolUse hook** if you picked the Clickable file paths
    extra: drops `post-bash-filename-links.py` into `~/.claude/hooks/` and patches
    `~/.claude/settings.json` so every Bash tool result is scanned for bare filenames
-   and rewritten as OSC 8 links with the short name as display text — automatically,
+   and rewritten as OSC 8 links with the short name as display text - automatically,
    with no manual `mdls` needed.
-8. **Runs sanity tests** on the new shell config before declaring victory.
+8. **Asks about optional Ghostty config tweaks** via a second multi-select picker
+   (Issue fixes / Appearance / Behaviour / Performance) - see "Ghostty config tweaks"
+   below.
+9. **Runs sanity tests** on the new shell config before declaring victory.
 
-## Optional extras — what each one installs
+## Optional extras - what each one installs
 
 | Extra | What you get |
 |-------|-------------|
 | MacDown 3000 + .md handler | Native split-view markdown editor that auto-refreshes on external file edits; registered as default `.md` opener |
-| grip — live browser preview | `preview` alias → GitHub-flavoured localhost:6419 preview that reloads on save |
-| mdwatch — live terminal re-render | `mdwatch` alias → `entr` + `glow -p` re-renders the terminal preview on every save |
+| grip - live browser preview | `preview` alias -> GitHub-flavoured localhost:6419 preview that reloads on save |
+| mdwatch - live terminal re-render | `mdwatch` alias -> `entr` + `glow -p` re-renders the terminal preview on every save |
 | Clickable file paths | OSC 8 hyperlinks in Ghostty and other modern terminals; `mdls` and `o` shell aliases for manual use; **automatic Claude Code hook** that linkifies bare filenames in Bash tool output |
 
-## Clickable file paths — two modes
+## Ghostty config tweaks - opt-in
+
+A second multi-select picker offers config additions to `~/.config/ghostty/config`, sourced from
+Phase 1 research on [the plugin's builder plan](https://github.com/YoungLeadersDotTech/ai-os-personal/tree/main/builder-plans/ghostty-terminal-improvements--2026-08-28)
+and a community config survey. None of these are applied by default. Full detail:
+[`skills/terminal-setup-install/references/ghostty-config-tweaks.md`](skills/terminal-setup-install/references/ghostty-config-tweaks.md).
+
+| Category | What you get |
+|-------|-------------|
+| Issue fixes | Pane divider visibility + resize keybinds (`split-divider-color`, `unfocused-split-opacity`, `resize_split`/`equalize_splits`/`goto_split` keybinds); tmux-resurrect session persistence (Ghostty has no native split-layout restore) |
+| Appearance | Theme & colour overrides, background effects (opacity/blur/shader), font tuning, cursor & window chrome |
+| Behaviour | Shell integration & cwd, mouse & selection, window/session behaviour, custom keybinds |
+| Performance | `window-vsync`, `scrollback-limit`, `resize-overlay` |
+
+**Known limitations investigated, not fixable at config level**: Claude Code statusline
+truncation on narrow terminals (confirmed Claude Code issue, closed "not planned" upstream - not
+a Ghostty config fix), and the full-screen/mouse-click regression from a nightly Ghostty build
+(ruled out within a timebox, no confirmed root cause). See the SKILL.md "Known limitations"
+section for details and the best-guess workaround for the latter.
+
+## Clickable file paths - two modes
 
 **Automatic (Claude Code hook):** After install, every Bash tool result in Claude Code
 is scanned for bare filenames with known extensions (`.md`, `.yaml`, `.py`, `.ts`,
 etc.). Each one is resolved to an absolute path and rewritten as an OSC 8 hyperlink
 with the short filename as display text. A bare `btt-ai-ways-of-working-faq.md` in
-output becomes a short, clickable link — no full path printed.
+output becomes a short, clickable link - no full path printed. A link whose display
+text wraps across a terminal line break stays grouped as one logical link via an
+`id=` parameter set on the OSC 8 escape sequence.
 
 **Manual (shell aliases):** Outside of Claude Code, use:
-- `mdls [dir]` — list `.md` files in a directory as clickable terminal links
-- `o <file>` — print a clickable link and open the file
+- `mdls [dir]` - list `.md` files in a directory as clickable terminal links
+- `o <file>` - print a clickable link and open the file
 
 Both modes use the same OSC 8 formatter at
 `~/.claude/global-utils/clickable-paths/format-clickable-path.js` and work in Ghostty,
@@ -91,8 +116,8 @@ text in unsupported terminals or when `FORCE_HYPERLINK` is not set.
 ## Known gotchas the skill handles for you
 
 - This plugin uses **MacDown 3000** (cask `macdown-3000`), not the original
-  MacDown. The original does not auto-refresh on external file edits — close and
-  reopen the file is required — which breaks the "watch your agent edit live"
+  MacDown. The original does not auto-refresh on external file edits - close and
+  reopen the file is required - which breaks the "watch your agent edit live"
   use case. MacDown 3000 is a notarised fork (MIT, by Schuyler Erle) that refreshes
   live.
 - The MacDown 3000 bundle ID is `app.macdown.macdown3000`. The skill uses this and

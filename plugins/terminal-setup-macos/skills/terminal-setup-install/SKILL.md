@@ -1,11 +1,11 @@
 ---
 name: terminal-setup-install
 description: Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown preview and clickable-path extras.
-allowed-tools: [Bash, Read, Write, Edit, AskUserQuestion]
-version: 1.1.0
+allowed-tools: [Bash, Read, Write, Edit, AskUserQuestion, TaskCreate, TaskUpdate, TaskGet, TaskList]
+version: 1.4.0
 category: Setup
-tags: [terminal, macos, ghostty, ohmyzsh, powerlevel10k, glow, markdown]
-last-updated: 2026-05-10
+tags: [terminal, macos, ghostty, ohmyzsh, powerlevel10k, glow, markdown, tmux]
+last-updated: 2026-09-14
 ---
 
 # terminal-setup-install
@@ -31,7 +31,8 @@ If `AskUserQuestion` is unavailable (for example on OpenCode or Cowork), present
 choice as a plain-text lettered list and continue from the user's written answer instead of
 stopping.
 
-1. **Preflight.** Detects what's already installed and skips it.
+1. **Preflight & classify.** Detects what's already installed and classifies the run - full
+   install, extras-only, or already-current - before any install step runs.
 2. **Core install** in this exact order (sequential to avoid Homebrew portable-Ruby lock conflicts):
    1. Ghostty (cask)
    2. MesloLGS Nerd Font (cask)
@@ -51,9 +52,53 @@ stopping.
 7. **Sanity tests.** Run `zsh -i -c` checks for parse, claude alias (if present), tool inits.
 8. **Hand off.** Tell the user to open Ghostty (Spotlight) and run `p10k configure` interactively.
 
+## Task Tracking Protocol
+
+(ghostty-terminal-improvements--2026-08-28, T-12) Create the full Step 1-12 chain before Step 1
+runs, so progress survives a mid-run interruption:
+
+```
+t1  = TaskCreate("Step 1: Preflight")
+t2  = TaskCreate("Step 2: Backup .zshrc")
+t3  = TaskCreate("Step 3: Install Ghostty")
+t4  = TaskCreate("Step 4: Install MesloLGS Nerd Font")
+t5  = TaskCreate("Step 5: Install Glow")
+t6  = TaskCreate("Step 6: Configure Ghostty")
+t6b = TaskCreate("Step 6b: AskUserQuestion - optional Ghostty config tweaks")
+t7  = TaskCreate("Step 7: Install Oh My Zsh + Powerlevel10k + plugins")
+t8  = TaskCreate("Step 8: Restore .zshrc customisations")
+t9  = TaskCreate("Step 9: AskUserQuestion - optional extras")
+t10 = TaskCreate("Step 10: Per-extra installs")
+t10b= TaskCreate("Step 10b: Apply selected Ghostty config-tweak bundles")
+t11 = TaskCreate("Step 11: Sanity tests")
+t12 = TaskCreate("Step 12: Hand off")
+
+TaskUpdate(t2.id, addBlockedBy=[t1.id])
+TaskUpdate(t3.id, addBlockedBy=[t2.id])
+TaskUpdate(t4.id, addBlockedBy=[t3.id])
+TaskUpdate(t5.id, addBlockedBy=[t4.id])
+TaskUpdate(t6.id, addBlockedBy=[t5.id])
+TaskUpdate(t6b.id, addBlockedBy=[t6.id])
+TaskUpdate(t7.id, addBlockedBy=[t6b.id])
+TaskUpdate(t8.id, addBlockedBy=[t7.id])
+TaskUpdate(t9.id, addBlockedBy=[t8.id])
+TaskUpdate(t10.id, addBlockedBy=[t9.id])
+TaskUpdate(t10b.id, addBlockedBy=[t10.id])
+TaskUpdate(t11.id, addBlockedBy=[t10b.id])
+TaskUpdate(t12.id, addBlockedBy=[t11.id])
+```
+
+Mark each task `in_progress` on entry to its step and `completed` on exit. If Step 1 reports
+everything already installed, mark Steps 3-8 `completed` immediately (no-op) rather than leaving
+them `pending` - matches the "skip to Step 8" shortcut Step 1 already documents below.
+
 ## Step-by-step
 
-### Step 1 - Preflight
+### Step 1 - Preflight (classify what needs to run)
+
+Detect what's already installed on this machine and classify the run: full install, extras-only,
+or already-current. Everything downstream (which steps run, which are skipped) follows from this
+classification, not from re-checking state ad hoc in later steps.
 
 ```bash
 brew --version >/dev/null 2>&1 || { echo "Homebrew not installed; install it first: https://brew.sh"; exit 1; }
@@ -135,6 +180,18 @@ shell-integration = zsh
 **Critical:** `shell-integration` must be a shell name (`zsh`, `bash`, `fish`), NOT `true`. The latter triggers a Configuration Errors dialog when Ghostty starts.
 
 Before this step, use `AskUserQuestion` (header "Working dir"; recommended option "Use ~/Projects (default)"; other option "Something else" - the tool's free-text fallback covers a custom path) to confirm the `working-directory` value rather than assuming the default.
+
+### Step 6b - AskUserQuestion: optional Ghostty config tweaks
+
+(ghostty-terminal-improvements--2026-08-28, T-07) Confirmed fixes and community-survey findings
+from Phase 1 research, offered as opt-in additions to `~/.config/ghostty/config` - none of these
+are applied by default. Fire 4 questions (Issue fixes / Appearance / Behaviour / Performance) in
+a single `AskUserQuestion` call (multiSelect); full question text and every config key is in
+`references/ghostty-config-tweaks.md`. Then append the config lines for every selected bundle to
+`~/.config/ghostty/config` in Step 10b (same reference file has the exact lines to apply).
+
+If `AskUserQuestion` is unavailable, fall back to the same plain-text lettered-list pattern the
+skill already uses elsewhere (see "What this skill does" above).
 
 ### Step 7 - Install Oh My Zsh + Powerlevel10k + plugins
 
@@ -242,6 +299,29 @@ Append to `~/.zshrc`:
 alias mdwatch='f() { echo "$1" | entr -c glow -p "$1" }; f'
 ```
 
+If user picked **Session persistence via tmux-resurrect** (Step 6b, Question 1):
+
+```bash
+which tmux >/dev/null 2>&1 || brew install tmux
+CUSTOM_TMUX="$HOME/.tmux/plugins"
+mkdir -p "$CUSTOM_TMUX"
+git clone --depth=1 https://github.com/tmux-plugins/tmux-resurrect "$CUSTOM_TMUX/tmux-resurrect"
+git clone --depth=1 https://github.com/tmux-plugins/tmux-continuum "$CUSTOM_TMUX/tmux-continuum"
+```
+
+Append to `~/.tmux.conf` (create if absent):
+
+```
+run-shell ~/.tmux/plugins/tmux-resurrect/resurrect.tmux
+set -g @continuum-restore 'on'
+run-shell ~/.tmux/plugins/tmux-continuum/continuum.tmux
+```
+
+`tmux-resurrect` binds `prefix + Ctrl-s` (save) and `prefix + Ctrl-r` (restore); `tmux-continuum`
+auto-saves every 15 minutes and auto-restores on tmux server start. This is a third-party
+workaround, not a native Ghostty feature - Ghostty's own `window-save-state` is macOS-only and
+does not reliably restore split-pane layout (T-02 finding).
+
 If user picked **Clickable file paths**:
 
 **Step A - Install the OSC 8 formatter utility:**
@@ -346,6 +426,15 @@ o() {
 - **Hook** (Step B): automatic - every Bash tool call in Claude Code scans stdout for bare filenames and makes them clickable without any manual action
 - **`mdls`/`o` aliases** (Step C): manual - run `mdls docs/workflows/` or `o somefile.md` explicitly in a terminal
 
+### Step 10b - Apply selected Ghostty config-tweak bundles
+
+For every bundle selected in Step 6b, append the matching config lines to
+`~/.config/ghostty/config` (use Edit, not a heredoc, to avoid clobbering earlier Step 6 content).
+The exact config block for every bundle - Issue fixes, Appearance, Behaviour, Performance - is in
+`references/ghostty-config-tweaks.md` under "Applying selected bundles". Only append the lines
+for bundles the user actually selected; comment out or omit any line needing a user-specific
+value (theme names, shader path) and ask via free text if the user wants it filled in now.
+
 ### Step 11 - Sanity tests
 
 ```bash
@@ -380,6 +469,22 @@ Tell the user:
 | `docker` plugin warns when docker not installed | Skill conditionally adds `docker` to plugins line |
 | New tabs don't reload Ghostty font | Skill instructs user to fully Cmd+Q and reopen |
 | Powerlevel10k wizard needs interactive input | Skill installs theme then hands off to user for `p10k configure` |
+| A clickable OSC 8 link's display text wraps across a terminal line break and loses grouping | `format-clickable-path.js` and `post-bash-filename-links.py` set an `id=` param on the OSC 8 link so wrapped text still resolves as one logical hyperlink (ghostty-terminal-improvements--2026-08-28, T-01/T-07) |
+
+## Known limitations (investigated, not fixable at config level)
+
+(ghostty-terminal-improvements--2026-08-28, Phase 1)
+
+- **Claude Code statusline truncation on narrow windows**: not a Ghostty config issue - root cause
+  is in Claude Code itself. Multi-line custom statuslines get truncated on narrow terminals; no
+  scroll/config workaround exists. Closed "not planned" by Anthropic
+  ([#26371](https://github.com/anthropics/claude-code/issues/26371),
+  [#28750](https://github.com/anthropics/claude-code/issues/28750)). Mitigation: keep custom
+  statuslines to a single line, or widen the terminal past ~100 columns.
+- **Full-screen feature breaking mouse clicks**: ruled out within a 20-minute timebox - no
+  changelog entry found for the reported date. `cursor-click-to-move` is the most plausible
+  candidate for "mouse clicks behave unexpectedly" reports but wasn't confirmed as the cause and
+  is not applied automatically. If you hit this, try `cursor-click-to-move = false` manually.
 
 ## Failure modes
 
