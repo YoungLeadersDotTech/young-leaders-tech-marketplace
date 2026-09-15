@@ -69,7 +69,7 @@ Verify with `/plugin marketplace list`.
 | [skills-toolkit](./plugins/skills-toolkit/README.md) | 2.0.7 | Toolkit for authoring and validating Claude Code skills and agents. Ships `agent-author`, `agent-validator`, reusable templates, validator references, and installable commands for common authoring flows. |
 | [terminal-setup-macos](./plugins/terminal-setup-macos/README.md) | 1.2.2 | Idempotent macOS terminal installer covering Ghostty, Oh My Zsh, Powerlevel10k, Glow, and MesloLGS Nerd Font, plus optional markdown-preview and clickable-path extras. |
 | [update-readme](./plugins/update-readme/README.md) | 1.1.0 | Type-driven README updater. Detects repo family, confirms it with the user, asks for style, audience, and depth, then generates a matched README preview before writing. |
-| [standalone-skills](./plugins/standalone-skills/README.md) | 1.0.0 | Self-contained, Cowork-friendly skills with no cross-plugin dependencies. |
+| [diy-build-companion](./plugins/diy-build-companion/README.md) | 2.0.0 | Plan and run DIY builds with energy-aware work blocks, enforced breaks, and an inline child-safety veto gate. Project state lives in the build repo. |
 | [opencode-sync](./plugins/opencode-sync/README.md) | 1.6.5 | Sync and validate Claude Code assets for OpenCode: ingest marketplaces or repos, generate agents and command wrappers, verify discovery coverage, and route MCP config by scope. |
 | [enablement-html-renderer](./plugins/enablement-html-renderer/README.md) | 1.5.4 | Packages finished enablement content into one self-contained HTML handoff with multiple reader-selectable formats. |
 
