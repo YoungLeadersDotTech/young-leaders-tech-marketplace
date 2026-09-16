@@ -1,6 +1,6 @@
 # terminal-setup-macos
 
-Current version: `1.4.0`
+Current version: `1.4.1`
 
 Idempotent installer for a kitted macOS terminal: Ghostty, Oh My Zsh, Powerlevel10k,
 Glow, MesloLGS Nerd Font, plus an optional markdown-preview kit (MacDown 3000, grip,
@@ -55,11 +55,13 @@ Then run the installer slash command:
    changed externally - the original MacDown requires close+reopen), registers it
    as the default `.md` handler using bundle ID `app.macdown.macdown3000`, adds
    `preview`, `mdwatch`, `mdls`, and `o` aliases.
-7. **Wires the Claude Code PostToolUse hook** if you picked the Clickable file paths
-   extra: drops `post-bash-filename-links.py` into `~/.claude/hooks/` and patches
-   `~/.claude/settings.json` so every Bash tool result is scanned for bare filenames
-   and rewritten as OSC 8 links with the short name as display text - automatically,
-   with no manual `mdls` needed.
+7. **The Claude Code PostToolUse hook is always on** - it ships in the plugin's own
+   `hooks/hooks.json` (not a file the skill copies anywhere), so it's registered
+   automatically the moment `terminal-setup-macos` is enabled and deregistered
+   automatically if you disable the plugin. It scans every Bash tool result for bare
+   filenames and rewrites them as OSC 8 links with the short name as display text -
+   no manual `mdls` needed, and not gated on picking the Clickable file paths extra
+   below (that extra adds the manual `mdls`/`o` aliases instead).
 8. **Asks about optional Ghostty config tweaks** via a second multi-select picker
    (Issue fixes / Appearance / Behaviour / Performance) - see "Ghostty config tweaks"
    below.
@@ -72,7 +74,7 @@ Then run the installer slash command:
 | MacDown 3000 + .md handler | Native split-view markdown editor that auto-refreshes on external file edits; registered as default `.md` opener |
 | grip - live browser preview | `preview` alias -> GitHub-flavoured localhost:6419 preview that reloads on save |
 | mdwatch - live terminal re-render | `mdwatch` alias -> `entr` + `glow -p` re-renders the terminal preview on every save |
-| Clickable file paths | OSC 8 hyperlinks in Ghostty and other modern terminals; `mdls` and `o` shell aliases for manual use; **automatic Claude Code hook** that linkifies bare filenames in Bash tool output |
+| Clickable file paths | OSC 8 hyperlinks in Ghostty and other modern terminals; `mdls` and `o` shell aliases for manual use. (The automatic Claude Code hook that linkifies bare filenames in Bash tool output is not part of this extra - it's always on while the plugin is enabled.) |
 
 ## Ghostty config tweaks - opt-in
 
@@ -96,13 +98,17 @@ section for details and the best-guess workaround for the latter.
 
 ## Clickable file paths - two modes
 
-**Automatic (Claude Code hook):** After install, every Bash tool result in Claude Code
-is scanned for bare filenames with known extensions (`.md`, `.yaml`, `.py`, `.ts`,
-etc.). Each one is resolved to an absolute path and rewritten as an OSC 8 hyperlink
-with the short filename as display text. A bare `btt-ai-ways-of-working-faq.md` in
-output becomes a short, clickable link - no full path printed. A link whose display
-text wraps across a terminal line break stays grouped as one logical link via an
-`id=` parameter set on the OSC 8 escape sequence.
+**Automatic (Claude Code hook):** ships in the plugin's `hooks/hooks.json`, registered
+automatically whenever `terminal-setup-macos` is enabled - no install step, no picking
+the Clickable file paths extra, nothing to copy or patch into your global
+`~/.claude/settings.json`. Every Bash tool result in Claude Code is scanned for bare
+filenames with known extensions (`.md`, `.yaml`, `.py`, `.ts`, etc.). Each one is
+resolved to an absolute path and rewritten as an OSC 8 hyperlink with the short
+filename as display text. A bare `btt-ai-ways-of-working-faq.md` in output becomes a
+short, clickable link - no full path printed. A link whose display text wraps across a
+terminal line break stays grouped as one logical link via an `id=` parameter set on
+the OSC 8 escape sequence. Disabling the plugin removes the hook along with it - there
+is nothing left behind in `~/.claude/hooks/` or `~/.claude/settings.json`.
 
 **Manual (shell aliases):** Outside of Claude Code, use:
 - `mdls [dir]` - list `.md` files in a directory as clickable terminal links
@@ -141,10 +147,11 @@ text in unsupported terminals or when `FORCE_HYPERLINK` is not set.
 If something goes wrong, your original `~/.zshrc` is at `~/.zshrc.pre-oh-my-zsh`.
 Restore with `mv ~/.zshrc.pre-oh-my-zsh ~/.zshrc && rm -rf ~/.oh-my-zsh`.
 
-If the Claude Code hook was installed but filenames aren't linking, check that
-`~/.claude/settings.json` contains a `PostToolUse > Bash` entry for
-`post-bash-filename-links.py`, and that `~/.claude/global-utils/clickable-paths/format-clickable-path.js`
-exists. Re-run `/terminal-setup-install` to repair either.
+If filenames aren't linking, first confirm `terminal-setup-macos` is enabled - the hook
+is declared in its `hooks/hooks.json` and only active while the plugin is. If it's
+enabled and links still aren't appearing, check that
+`~/.claude/global-utils/clickable-paths/format-clickable-path.js` exists (installed by
+picking the Clickable file paths extra); re-run `/terminal-setup-install` to repair it.
 
 ## Source material
 

@@ -2,10 +2,10 @@
 name: terminal-setup-install
 description: Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown preview and clickable-path extras.
 allowed-tools: [Bash, Read, Write, Edit, AskUserQuestion, TaskCreate, TaskUpdate, TaskGet, TaskList]
-version: 1.4.0
+version: 1.4.1
 category: Setup
 tags: [terminal, macos, ghostty, ohmyzsh, powerlevel10k, glow, markdown, tmux]
-last-updated: 2026-09-14
+last-updated: 2026-09-16
 ---
 
 # terminal-setup-install
@@ -89,8 +89,10 @@ TaskUpdate(t12.id, addBlockedBy=[t11.id])
 ```
 
 Mark each task `in_progress` on entry to its step and `completed` on exit. If Step 1 reports
-everything already installed, mark Steps 3-8 `completed` immediately (no-op) rather than leaving
-them `pending` - matches the "skip to Step 8" shortcut Step 1 already documents below.
+everything already installed, mark Steps 2-5, 7, and 8 `completed` immediately (no-op) rather than
+leaving them `pending` - matches the "nothing to install" shortcut Step 1 documents below. Steps
+6b and 9 are NOT part of that shortcut - both are `AskUserQuestion` prompts for opt-in choices
+independent of what's already installed, and always run.
 
 ## Step-by-step
 
@@ -112,7 +114,11 @@ ls "$HOME/Library/Fonts/" 2>/dev/null | grep -qi meslolgs && FONT_INSTALLED=yes 
 [ -d "/Applications/MacDown.app" ] && brew list --cask macdown >/dev/null 2>&1 && MACDOWN_ORIGINAL=yes || MACDOWN_ORIGINAL=no
 ```
 
-Report each as a tick or "skip - already installed". If everything is already installed, skip to Step 8 (extras).
+Report each as a tick or "skip - already installed". If everything is already installed, skip
+Steps 2-5, 7, and 8 (nothing to install or back up) - but still run **Step 6b** and **Step 9**.
+Those two are `AskUserQuestion` prompts for opt-in choices (Ghostty config tweaks, markdown
+extras) that apply regardless of whether the core stack already exists; they are not gated on this
+shortcut.
 
 **MacDown preflight rules:**
 - MacDown 3000 installed → `✓ MacDown 3000 - skip`
@@ -236,7 +242,7 @@ Use this exact AskUserQuestion (multi-select):
   1. **MacDown 3000 + .md handler** - Native macOS split-view markdown editor (notarised fork of MacDown that auto-refreshes when the file is changed externally). After install, double-clicking any .md in Finder opens it. Screenshots and details: `https://www.youngleaders.tech/i/196949342/macdown-3000`
   2. **grip - live browser preview** - Serves a GitHub-flavoured preview at localhost:6419 and auto-reloads on save. Screenshots and details: `https://www.youngleaders.tech/i/196949342/grip`
   3. **mdwatch - live terminal re-render** - Pairs entr with glow -p so the terminal preview re-renders the moment you save. Screenshots and details: `https://www.youngleaders.tech/i/196949342/mdwatch`
-  4. **Clickable file paths (mdls + o)** - OSC 8 hyperlinks in any modern terminal; mdls lists .md files as Cmd-clickable links. Screenshots and details: `https://www.youngleaders.tech/i/196949342/clickable-paths`
+  4. **Clickable file paths (mdls + o)** - manual `mdls`/`o` zsh aliases for Cmd-clickable OSC 8 links. The automatic version (every bare filename in Bash output becomes clickable, no alias needed) is not part of this choice - it ships as the plugin's own hook and is always on while `terminal-setup-macos` is enabled. Screenshots and details: `https://www.youngleaders.tech/i/196949342/clickable-paths`
 
 
 ### Step 10 - Per-extra installs
@@ -336,61 +342,14 @@ cp "$SKILL_DIR/../../scripts/global-utils/format-clickable-path.js" \
 
 If the script location can't be determined, fall back to checking whether `~/.claude/global-utils/clickable-paths/format-clickable-path.js` already exists. If absent in both cases, warn the user and offer to skip.
 
-**Step B - Install the Claude Code PostToolUse hook:**
-
-This hook makes bare filenames in Bash tool output clickable automatically - no manual `mdls` needed.
-
-```bash
-# Copy the hook script
-cp "$SKILL_DIR/../../scripts/post-bash-filename-links.py" \
-   "$HOME/.claude/hooks/post-bash-filename-links.py"
-```
-
-Then patch `~/.claude/settings.json` to wire up the hook. Use Python to read/write so JSON stays valid:
-
-```python
-import json, os
-
-settings_path = os.path.expanduser('~/.claude/settings.json')
-
-# Load existing settings (create minimal structure if missing)
-if os.path.exists(settings_path):
-    with open(settings_path) as f:
-        settings = json.load(f)
-else:
-    settings = {}
-
-settings.setdefault('hooks', {})
-settings['hooks'].setdefault('PostToolUse', [])
-
-# Find or create the Bash PostToolUse entry
-bash_entry = next(
-    (e for e in settings['hooks']['PostToolUse'] if e.get('matcher') == 'Bash'),
-    None
-)
-if bash_entry is None:
-    bash_entry = {'matcher': 'Bash', 'hooks': []}
-    settings['hooks']['PostToolUse'].append(bash_entry)
-
-bash_entry.setdefault('hooks', [])
-
-new_hook = {
-    'type': 'command',
-    'command': 'python3 ~/.claude/hooks/post-bash-filename-links.py',
-    'timeout': 8
-}
-
-# Idempotent - don't add twice
-already = any('post-bash-filename-links' in h.get('command', '')
-               for h in bash_entry['hooks'])
-if not already:
-    bash_entry['hooks'].append(new_hook)
-    with open(settings_path, 'w') as f:
-        json.dump(settings, f, indent=4)
-    print('✓ Claude Code hook wired up in ~/.claude/settings.json')
-else:
-    print('✓ Claude Code hook already present - skipped')
-```
+**Step B - none needed.** The Bash PostToolUse hook that makes bare filenames clickable is declared
+in the plugin's own `hooks/hooks.json` (`${CLAUDE_PLUGIN_ROOT}/scripts/post-bash-filename-links.py`)
+and is registered automatically whenever `terminal-setup-macos` is enabled - it applies to every
+user of the plugin, not only users who pick this extra, and it deregisters cleanly if the plugin is
+disabled. There is nothing to copy into `~/.claude/hooks/` or patch into `~/.claude/settings.json`.
+(ghostty-terminal-improvements--2026-08-28, T-15: a prior version of this skill copied the hook
+script to `~/.claude/hooks/` and hand-patched the user's global `settings.json` - if the plugin was
+then disabled, the copied script and the settings.json entry both stayed behind and kept running.)
 
 **Step C - Add zsh aliases for manual use:**
 
@@ -423,8 +382,8 @@ o() {
 ```
 
 **How the two approaches differ:**
-- **Hook** (Step B): automatic - every Bash tool call in Claude Code scans stdout for bare filenames and makes them clickable without any manual action
-- **`mdls`/`o` aliases** (Step C): manual - run `mdls docs/workflows/` or `o somefile.md` explicitly in a terminal
+- **Hook** (plugin-native, always on): every Bash tool call in Claude Code scans stdout for bare filenames and makes them clickable without any manual action. Not gated on this Step 9 choice at all - see "Step B - none needed" above.
+- **`mdls`/`o` aliases** (Step C, gated on this choice): manual - run `mdls docs/workflows/` or `o somefile.md` explicitly in a terminal
 
 ### Step 10b - Apply selected Ghostty config-tweak bundles
 
