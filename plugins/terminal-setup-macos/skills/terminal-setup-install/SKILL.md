@@ -89,8 +89,10 @@ TaskUpdate(t12.id, addBlockedBy=[t11.id])
 ```
 
 Mark each task `in_progress` on entry to its step and `completed` on exit. If Step 1 reports
-everything already installed, mark Steps 3-8 `completed` immediately (no-op) rather than leaving
-them `pending` - matches the "skip to Step 8" shortcut Step 1 already documents below.
+everything already installed, mark Steps 2-5, 7, and 8 `completed` immediately (no-op) rather than
+leaving them `pending` - matches the "nothing to install" shortcut Step 1 documents below. Steps
+6b and 9 are NOT part of that shortcut - both are `AskUserQuestion` prompts for opt-in choices
+independent of what's already installed, and always run.
 
 ## Step-by-step
 
@@ -112,7 +114,11 @@ ls "$HOME/Library/Fonts/" 2>/dev/null | grep -qi meslolgs && FONT_INSTALLED=yes 
 [ -d "/Applications/MacDown.app" ] && brew list --cask macdown >/dev/null 2>&1 && MACDOWN_ORIGINAL=yes || MACDOWN_ORIGINAL=no
 ```
 
-Report each as a tick or "skip - already installed". If everything is already installed, skip to Step 8 (extras).
+Report each as a tick or "skip - already installed". If everything is already installed, skip
+Steps 2-5, 7, and 8 (nothing to install or back up) - but still run **Step 6b** and **Step 9**.
+Those two are `AskUserQuestion` prompts for opt-in choices (Ghostty config tweaks, markdown
+extras) that apply regardless of whether the core stack already exists; they are not gated on this
+shortcut.
 
 **MacDown preflight rules:**
 - MacDown 3000 installed → `✓ MacDown 3000 - skip`
