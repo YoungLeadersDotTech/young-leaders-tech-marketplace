@@ -1,6 +1,6 @@
 # terminal-setup-macos
 
-Current version: `1.4.1`
+Current version: `1.5.0`
 
 Idempotent installer for a kitted macOS terminal: Ghostty, Oh My Zsh, Powerlevel10k,
 Glow, MesloLGS Nerd Font, plus an optional markdown-preview kit (MacDown 3000, grip,
@@ -85,7 +85,7 @@ and a community config survey. None of these are applied by default. Full detail
 
 | Category | What you get |
 |-------|-------------|
-| Issue fixes | Pane divider visibility + resize keybinds (`split-divider-color`, `unfocused-split-opacity`, `resize_split`/`equalize_splits`/`goto_split` keybinds); tmux-resurrect session persistence (Ghostty has no native split-layout restore) |
+| Issue fixes | Pane divider visibility + resize keybinds (`split-divider-color`, `unfocused-split-opacity`, `resize_split`/`equalize_splits`/`goto_split` keybinds); tmux-resurrect session persistence (Ghostty has no native split-layout restore) - the installer explains what tmux's "prefix" key is and offers to remap it from the default `Ctrl-b` to `Ctrl-a` |
 | Appearance | Theme & colour overrides, background effects (opacity/blur/shader), font tuning, cursor & window chrome |
 | Behaviour | Shell integration & cwd, mouse & selection, window/session behaviour, custom keybinds |
 | Performance | `window-vsync`, `scrollback-limit`, `resize-overlay` |
@@ -113,6 +113,11 @@ is nothing left behind in `~/.claude/hooks/` or `~/.claude/settings.json`.
 **Manual (shell aliases):** Outside of Claude Code, use:
 - `mdls [dir]` - list `.md` files in a directory as clickable terminal links
 - `o <file>` - print a clickable link and open the file
+
+Running these (or `preview`/`mdwatch`) from a raw terminal is just typing the command. Running
+them from inside a Claude Code session needs a leading `!` (e.g. `!mdls docs/`) - without it, the
+text is sent to Claude as a chat message instead of running as a shell command. `p10k configure`
+and any other interactive wizard should always be run in a raw terminal, never through `!`.
 
 Both modes use the same OSC 8 formatter at
 `~/.claude/global-utils/clickable-paths/format-clickable-path.js` and work in Ghostty,
