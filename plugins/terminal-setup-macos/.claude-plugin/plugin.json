@@ -6,7 +6,7 @@
     "url": "https://youngleaders.tech"
   },
   "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "skills": [
     "./skills/terminal-setup-install"
   ]

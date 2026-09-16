@@ -2,6 +2,25 @@
 
 All notable changes to `terminal-setup-macos` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2026-09-16
+
+### Fixed
+- **Step 1's preflight skip logic silently skipped Step 6b.** "If everything is already installed,
+  skip to Step 8 (extras)" was wrong on two counts - Step 8 is `.zshrc` restore, not extras (Step 9
+  is), and it swallowed Step 6b (the new Ghostty config tweaks menu) on every repeat install.
+  Reported after the menu never appeared on a second machine with the core stack already present.
+  Step 1 and the Task Tracking Protocol note now explicitly carve out Steps 6b and 9 as always-run
+  `AskUserQuestion` prompts, independent of what else is skipped.
+- **Clickable-paths hook was installed the wrong way.** The Bash PostToolUse hook (makes bare
+  filenames in Bash output clickable) used to be copied to `~/.claude/hooks/` with a hand-patch of
+  the user's global `~/.claude/settings.json` - if the plugin was later disabled, both the copied
+  script and the settings.json entry stayed behind and kept running. Replaced with a plugin-native
+  `hooks/hooks.json` manifest (`${CLAUDE_PLUGIN_ROOT}/scripts/post-bash-filename-links.py`), which
+  Claude Code registers and deregisters automatically with the plugin's enabled state. Behaviour
+  change: the hook is now always on while `terminal-setup-macos` is enabled, no longer gated behind
+  the Step 9 "Clickable file paths" choice (that choice now only controls the manual `mdls`/`o`
+  aliases).
+
 ## [1.4.0] - 2026-09-14
 
 ### Added
