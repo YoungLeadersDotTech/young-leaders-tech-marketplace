@@ -50,24 +50,40 @@ def osc8_link(abs_path: str, display: str) -> str:
     return f'{ESC}]8;id={link_id};{uri}{ESC}\\{display}{ESC}]8;;{ESC}\\'
 
 def resolve_filename(name: str, cwd: str) -> str | None:
-    """Return absolute path for bare filename, or None if not found."""
+    """Return absolute path for bare filename, or None if not found or ambiguous.
+
+    A generic basename like `index.md` or `state.json` commonly exists under many
+    unrelated directories in the same repo (e.g. one per builder-plans/* folder).
+    Returning the first match found by `os.walk` silently links to an arbitrary
+    one of them - wrong more often than not for a repo with several such folders,
+    and worse than no link at all since a wrong link looks confidently correct.
+    So this collects every candidate across all search locations and only
+    resolves when exactly one distinct file matches; two or more real matches is
+    treated as ambiguous and returns None rather than guessing (T-16 follow-up,
+    ghostty-terminal-improvements--2026-08-28 - caught live: `index.md` for one
+    plan folder resolved to an unrelated plan folder's `index.md`).
+    """
     # Already absolute
     if os.path.isabs(name):
         return name if os.path.exists(name) else None
 
-    # cwd first, then search roots
+    candidates: set[str] = set()
+
+    # Direct join under each search root (cwd first, then the fixed roots)
     roots = [cwd] + [r for r in SEARCH_ROOTS if r != cwd]
     for root in roots:
         if not root:
             continue
         candidate = os.path.join(root, name)
         if os.path.exists(candidate):
-            return os.path.realpath(candidate)
-        # Also try a one-level glob within the root
-        # (e.g. file is in docs/workflows/ but we only know the basename)
+            candidates.add(os.path.realpath(candidate))
 
-    # Try rglob-style: walk up to 3 levels deep in cwd and work-registry
+    # Recursive search in cwd and work-registry, depth-limited to 5 levels.
+    # Stops walking as soon as ambiguity is confirmed (2+ distinct matches) -
+    # the answer is already "None" at that point, no need to keep scanning.
     for root in [cwd, os.path.expanduser('~/work-registry')]:
+        if len(candidates) > 1:
+            break
         if not root:
             continue
         try:
@@ -82,10 +98,14 @@ def resolve_filename(name: str, cwd: str) -> str | None:
                     dirnames.clear()
                     continue
                 if name in filenames:
-                    return os.path.realpath(os.path.join(dirpath, name))
+                    candidates.add(os.path.realpath(os.path.join(dirpath, name)))
+                    if len(candidates) > 1:
+                        break
         except PermissionError:
             continue
 
+    if len(candidates) == 1:
+        return candidates.pop()
     return None
 
 def linkify_stdout(text: str, cwd: str) -> str:
