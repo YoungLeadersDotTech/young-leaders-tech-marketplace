@@ -2,6 +2,32 @@
 
 All notable changes to `terminal-setup-macos` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-09-16
+
+### Added
+- **tmux prefix explanation + remap offer.** Step 10's tmux-resurrect block now explains what
+  tmux's "prefix" key is before using it (the two-key combo tmux commands are triggered by) and
+  asks via `AskUserQuestion` whether to keep the default `Ctrl-b` or remap to `Ctrl-a`, writing
+  the chosen remap into `~/.tmux.conf`. Reported after a user asked "what is prefix?" mid-install.
+- **Dual-form command examples throughout the skill and README.** Every terminal command the
+  install process tells the user to run now shows both a `Raw terminal:` form and a
+  `Claude Code:` form (leading `!`), plus a note near the top of the skill explaining the
+  distinction - `glow -p`/`mdwatch`, the `mdls`/`o` aliases, `grip`'s `preview` alias, and the
+  Step 12 hand-off smoke tests. Interactive wizards (`p10k configure`, tmux itself) are flagged
+  raw-terminal-only, since interactive prompts don't work through Claude Code's `!` passthrough.
+
+### Fixed
+- **`post-bash-filename-links.py` could link a filename to the wrong file.** A generic basename
+  like `index.md` or `state.json` commonly exists under many unrelated directories in the same
+  repo (one per `builder-plans/*` folder, for example). The resolver returned the first match
+  `os.walk` happened to find, which silently linked to an arbitrary one of them - caught live
+  while dogfooding this plugin's own hook, where `index.md` for one plan folder resolved to an
+  unrelated plan folder's `index.md`. The resolver now collects every candidate across all search
+  locations and only returns a match when exactly one distinct file exists; two or more matches is
+  treated as ambiguous and yields no link (a wrong link is worse than no link, since it looks
+  confidently correct). Walking stops as soon as ambiguity is confirmed, so this adds no
+  measurable cost to the common single-match case.
+
 ## [1.4.1] - 2026-09-16
 
 ### Fixed

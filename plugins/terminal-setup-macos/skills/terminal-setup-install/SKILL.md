@@ -2,7 +2,7 @@
 name: terminal-setup-install
 description: Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown preview and clickable-path extras.
 allowed-tools: [Bash, Read, Write, Edit, AskUserQuestion, TaskCreate, TaskUpdate, TaskGet, TaskList]
-version: 1.4.1
+version: 1.5.0
 category: Setup
 tags: [terminal, macos, ghostty, ohmyzsh, powerlevel10k, glow, markdown, tmux]
 last-updated: 2026-09-16
@@ -30,6 +30,13 @@ Do NOT invoke for:
 If `AskUserQuestion` is unavailable (for example on OpenCode or Cowork), present the same extras
 choice as a plain-text lettered list and continue from the user's written answer instead of
 stopping.
+
+**A note on the commands shown throughout this skill.** Every command below is shown as
+`Raw terminal:` and `Claude Code:`. Typing it straight into a terminal prompt (Ghostty, Terminal.app,
+etc.) is the `Raw terminal:` form. Typing it into a Claude Code session needs a leading `!` -
+without it, the text goes to Claude as a chat message instead of running as a shell command. An
+interactive wizard like `p10k configure` should always be run in a raw terminal - interactive
+prompts don't render reliably through the `!` passthrough.
 
 1. **Preflight & classify.** Detects what's already installed and classifies the run - full
    install, extras-only, or already-current - before any install step runs.
@@ -293,6 +300,13 @@ Append to `~/.zshrc`:
 alias preview="grip"
 ```
 
+Usage after install:
+
+```
+Raw terminal:  preview
+Claude Code:   !preview
+```
+
 If user picked **mdwatch**:
 
 ```bash
@@ -305,6 +319,13 @@ Append to `~/.zshrc`:
 alias mdwatch='f() { echo "$1" | entr -c glow -p "$1" }; f'
 ```
 
+Usage after install:
+
+```
+Raw terminal:  mdwatch somefile.md
+Claude Code:   !mdwatch somefile.md
+```
+
 If user picked **Session persistence via tmux-resurrect** (Step 6b, Question 1):
 
 ```bash
@@ -315,7 +336,30 @@ git clone --depth=1 https://github.com/tmux-plugins/tmux-resurrect "$CUSTOM_TMUX
 git clone --depth=1 https://github.com/tmux-plugins/tmux-continuum "$CUSTOM_TMUX/tmux-continuum"
 ```
 
-Append to `~/.tmux.conf` (create if absent):
+**What "prefix" means** (ghostty-terminal-improvements--2026-08-28, T-16): tmux commands aren't
+typed - they're triggered by a two-key combo. You press the "prefix" key first (a signal to tmux
+that the next keystroke is a tmux command, not something to send to the running program), release
+it, then press the command key. tmux's own default prefix is `Ctrl-b`, which is awkward to reach
+one-handed - a lot of people remap it to `Ctrl-a` instead. `tmux-resurrect` uses whatever prefix is
+currently set: save is `prefix` then `Ctrl-s`, restore is `prefix` then `Ctrl-r` (e.g. with the
+default prefix: `Ctrl-b`, release, `Ctrl-s`).
+
+Before writing `~/.tmux.conf`, use `AskUserQuestion` (header "tmux prefix"):
+- **Keep default (`Ctrl-b`)** (recommended) - no config change, matches tmux's out-of-the-box behaviour and most online tmux guides.
+- **Remap to `Ctrl-a`** - common alternative, easier to reach with one hand, closer to screen's default prefix if migrating from screen.
+- **Something else** (free text) - the tool's free-text fallback covers a custom key.
+
+If the user picks a remap, prepend these lines to `~/.tmux.conf` (before the resurrect/continuum
+lines below, so the prefix is set before the plugins load):
+
+```
+set -g prefix C-a
+unbind C-b
+bind C-a send-prefix
+```
+
+(substitute the chosen key for `C-a` if "something else" was picked). Append to `~/.tmux.conf`
+(create if absent):
 
 ```
 run-shell ~/.tmux/plugins/tmux-resurrect/resurrect.tmux
@@ -323,10 +367,19 @@ set -g @continuum-restore 'on'
 run-shell ~/.tmux/plugins/tmux-continuum/continuum.tmux
 ```
 
-`tmux-resurrect` binds `prefix + Ctrl-s` (save) and `prefix + Ctrl-r` (restore); `tmux-continuum`
-auto-saves every 15 minutes and auto-restores on tmux server start. This is a third-party
+`tmux-continuum` auto-saves every 15 minutes and auto-restores on tmux server start, so the
+prefix+Ctrl-s/Ctrl-r keys above are for a manual save/restore on demand. This is a third-party
 workaround, not a native Ghostty feature - Ghostty's own `window-save-state` is macOS-only and
 does not reliably restore split-pane layout (T-02 finding).
+
+Starting and using tmux itself is a raw-terminal-only workflow (tmux is its own interactive
+program, not something the `!` passthrough runs sensibly):
+
+```
+Raw terminal:  tmux                      (starts a new tmux session)
+Raw terminal:  <prefix> then Ctrl-s      (save the session)
+Raw terminal:  <prefix> then Ctrl-r      (restore the session)
+```
 
 If user picked **Clickable file paths**:
 
@@ -381,6 +434,13 @@ o() {
 }
 ```
 
+Usage after install:
+
+```
+Raw terminal:  mdls docs/workflows/       Claude Code:  !mdls docs/workflows/
+Raw terminal:  o somefile.md              Claude Code:  !o somefile.md
+```
+
 **How the two approaches differ:**
 - **Hook** (plugin-native, always on): every Bash tool call in Claude Code scans stdout for bare filenames and makes them clickable without any manual action. Not gated on this Step 9 choice at all - see "Step B - none needed" above.
 - **`mdls`/`o` aliases** (Step C, gated on this choice): manual - run `mdls docs/workflows/` or `o somefile.md` explicitly in a terminal
@@ -409,9 +469,16 @@ zsh -i -c 'glow --version'
 Tell the user:
 
 > 1. Open Ghostty (Spotlight, type "Ghostty"). It should start in dracula theme with the Nerd Font.
-> 2. Run `p10k configure` - interactive wizard for prompt style, character set, colours, icons, git status, time display.
+> 2. Run `p10k configure` in that Ghostty window - interactive wizard for prompt style, character
+>    set, colours, icons, git status, time display. This one is raw-terminal-only; an interactive
+>    wizard doesn't work through Claude Code's `!` passthrough.
 > 3. If icons render as boxes or `?`: Cmd+Q out of Ghostty and reopen. New tabs alone don't reload the font.
-> 4. Optional smoke tests: `glow README.md`, type `gi` (autosuggestions kick in), `cd ` then a dir name (highlighting).
+> 4. Optional smoke tests - both work equally well from either place:
+>    - `glow README.md` (raw terminal) or `!glow README.md` (Claude Code)
+>    - Type `gi` at a raw terminal prompt and pause - autosuggestions should offer to complete it
+>      (this one only makes sense typed live at a prompt, not via `!`)
+>    - `cd ` then start typing a directory name at a raw terminal prompt - tab-completion should
+>      highlight as you type (same - live-typing only)
 
 ## Known gotchas (encoded in this skill)
 
