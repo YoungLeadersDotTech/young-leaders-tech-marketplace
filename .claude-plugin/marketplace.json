@@ -1,6 +1,6 @@
 {
   "name": "young-leaders-tech-marketplace",
-  "version": "1.5.25",
+  "version": "1.5.26",
   "description": "Personal Claude Code plugin marketplace",
   "owner": {
     "name": "Young Leaders Tech",
@@ -28,7 +28,7 @@
     {
       "name": "diy-build-companion",
       "source": "./plugins/diy-build-companion",
-      "version": "2.0.0",
+      "version": "2.0.1",
       "description": "Plan and run DIY builds with energy-aware work blocks, enforced breaks, and an inline child-safety veto gate. Project state lives in the build repo. Self-contained, Cowork-ready, no cross-plugin dependencies."
     },
     {

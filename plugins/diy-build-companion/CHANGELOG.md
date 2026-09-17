@@ -5,6 +5,45 @@ All notable changes to the diy-build-companion plugin.
 Releases up to and including 1.0.1 were published as the `standalone-skills` plugin; the
 rename is recorded in 2.0.0 below.
 
+## [2.0.1] - 2026-09-17
+
+### Fixed
+- **Domain 1 (child safety) rebuilt on EN 71-8:2011, replacing uncited US figures.** The previous
+  content used CPSC/ASTM-derived numbers (89mm/230mm entrapment thresholds, imperial-rooted
+  values, four age bands with per-band height limits) that do not apply to a domestic build in
+  Ireland/EU and were never cited to any standard. Domain 1 now cites every figure to its EN 71-8
+  clause: a universal 2500mm height cap with no age banding (4.1.3), platform barrier and ladder
+  figures (4.2.1, 4.2.2 b/c/e/f/g/h), slide run-out and handrail bands (4.5.3 c/e), entrapment
+  limits scoped to 600mm-and-above (4.3.1 b/c, 4.3.3, 4.3.4, 4.6.7 d), and placement clearance
+  (5.2). The file states plainly that EN 71-8 has no fall-zone-radius formula rather than
+  inventing one.
+- **Domain 2 (structural integrity) now states honestly that the 4x safety factor is convention,
+  not a cited regulation**, and requires the calculated factor to be shown explicitly before a
+  verdict is recorded - "roughly fine" is not a calculation, and the FAIL condition is now a
+  load-bearing element with no credible path to 4x, not a vague "far below" threshold.
+- **Domain 3's eye-protection citation corrected from ANSI Z87.1 (US) to EN ISO 16321**, the
+  current EU/Irish standard, after research surfaced that the obvious replacement (EN 166) has
+  itself been withdrawn and superseded.
+- **Domain 4 rebuilt on BS EN 335 (timber durability use classes) and BS 8417**, the EU/Irish
+  equivalent of the American treatment codes the previous content cited. The CCA-treated lumber
+  line is corrected from self-contradictory "prohibited and heavily restricted" phrasing to one
+  consistent claim: prohibited for anything a child will be near.
+- **`SKILL.md`'s Mode 5 dispatch corrected to match**: the "age-specific fall height" summary line
+  contradicted Domain 1's rebuilt "no age banding" rule one file away, a cross-file inconsistency
+  an adversarial review flagged as the most damaging fault in the rebuild - a future contributor
+  reading only `SKILL.md` could otherwise reintroduce banded figures. Also added a mandatory
+  question, asked before the safety gate runs, on whether the equipment will ever be used by
+  children outside the builder's own household - the domestic/public-use boundary was previously
+  stated correctly in `reference/safety-standards.md`'s header but never actually elicited from
+  the builder.
+- Two dropped scope conditions restored: entrapment rules apply only 600mm and above ground, and
+  the platform barrier requirement applies only to platforms 1000mm and above.
+- All twelve clause citations rewritten from fabricated three-level decimal sub-numbers (e.g.
+  `4.2.2.5`, which does not exist in the real standard) to EN 71-8's actual lettered-sub-item
+  format (e.g. `4.2.2 e)`). Caught by an independent citation-verification pass, not by the
+  original drafting - all cited figures were numerically correct, only the clause addresses were
+  invented.
+
 ## [2.0.0] - 2026-09-13
 
 ### Changed
