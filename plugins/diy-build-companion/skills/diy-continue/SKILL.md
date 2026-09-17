@@ -208,7 +208,8 @@ dispatch, which is what previously stalled a build mid-session.
 
 Read `reference/safety-standards.md` and apply all five domains:
 
-1. Child safety (age-specific fall height, gap/entrapment limits, prohibited features)
+1. Child safety (universal height cap, gap/entrapment limits, prohibited features - see the scope
+   note in `reference/safety-standards.md` before applying: domestic use only, not age-banded)
 2. Structural integrity (4x safety factor on load-bearing elements)
 3. Tool safety and the builder's stated capability
 4. Material safety and environmental hazards (no CCA/lead, weatherproofing, non-toxic finishes)
@@ -224,8 +225,16 @@ Return one verdict:
 
 This veto is non-negotiable and cannot be overridden by the user. If the user pushes to proceed
 past a FAIL or an unaddressed CONDITIONAL, decline and explain that child safety is the one place
-this companion will not bend, then offer to help fix the design. Full standards, age bands, and
-worked numbers are in `reference/safety-standards.md`.
+this companion will not bend, then offer to help fix the design. Full standards and worked numbers
+are in `reference/safety-standards.md`.
+
+**Before the gate runs, ask whether the equipment will ever be used by children outside the
+builder's own household** - even occasionally, even informally (neighbours' kids, a shared garden,
+a childminding arrangement). `reference/safety-standards.md` is scoped to EN 71-8, which only
+covers equipment bought for one household's own use; anything used more widely needs the far
+stricter EN 1176/1177 (public playground equipment), which this file does not cover. Ask this
+directly rather than waiting for it to come up - a builder who does not think to mention it will
+otherwise be silently gated against the wrong standard.
 
 ## What carries over from past builds (read before planning a cut)
 

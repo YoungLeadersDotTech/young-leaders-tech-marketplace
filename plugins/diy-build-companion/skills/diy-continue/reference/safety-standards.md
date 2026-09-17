@@ -4,66 +4,121 @@ This is the reference the safety gate (mode 5) applies. It is self-contained so 
 inline on any device with no separate agent. All figures are non-negotiable minimums; when in
 doubt, choose the safer option. A FAIL on child-safety or structural grounds is a hard veto.
 
+**Scope**: this file assumes a domestic build in one household's own garden or home, and Domain 1
+is built on EN 71-8, the standard for that case, with every figure cited to its clause. **If the
+equipment will ever be used by people outside that household** (a shared amenity, a school, a
+community space, anything semi-public), EN 71-8 no longer applies and the far stricter EN 1176/1177
+(public playground equipment) governs instead. Stop and say so plainly rather than gating against
+the wrong standard.
+
 ## The five domains
 
 A gate run checks all five and returns one verdict (PASS / CONDITIONAL / FAIL):
 
-1. Child safety (age-specific)
-2. Structural integrity (4x safety factor)
+1. Child safety (EN 71-8, domestic use - see the scope note above)
+2. Structural integrity (conservative engineering convention, not a cited standard)
 3. Tool safety and builder capability
-4. Material safety and environmental hazards
+4. Material safety and environmental hazards (BS EN 335 / BS 8417)
 5. Measurement accuracy and tolerances
 
 ---
 
-## Domain 1: Child safety by age band
+## Domain 1: Child safety
 
-Pick the band for the youngest intended user. If a build will be used by a wide range, use the
-youngest band's height and feature limits.
+**Basis**: EN 71-8 (Safety of toys, Part 8: Activity toys for domestic use). This is the standard
+that applies to equipment bought for one household's own garden. It stops applying the moment the
+equipment serves people beyond that household (a shared amenity, a school, a public space) - at
+that point **EN 1176/1177 (public playground equipment) applies instead**, which is stricter and
+outside this file's scope. Every figure below is followed by the clause it comes from. Clauses not
+listed here were checked and found not relevant to a typical DIY build; do not extrapolate beyond
+what is cited.
 
-### Toddlers (2-3)
-- Max platform height: 600mm. Max climbing height: 300mm steps.
-- Full enclosure on elevated areas; constant direct supervision assumed.
-- Prohibited: ropes, ladders, monkey/hanging elements, steps over 150mm rise.
+**No age banding exists in this standard for height.** Earlier drafts of this file, and the older
+suite it replaced, split height limits into four age bands with different figures per band. That
+structure does not appear anywhere in EN 71-8: it is a single universal rule.
 
-### Preschool (4-5)
-- Max platform height: 1200mm. Max climbing height: 1500mm with safety features.
-- Guard rails 700-800mm on elevated platforms; closed stair risers; handrails both sides.
-- Fall zone: 1.8m minimum radius. Impact-attenuating surface required.
-- Prohibited: open-backed stairs, rope ladders, overhead elements over 1500mm.
+### Maximum height
+- No part of the equipment may let a child climb, sit or stand higher than **2500mm** above the
+  ground, for any age (4.1.3).
+- Two structure types get their own, lower, universal figures rather than an age-scaled one:
+  swings intended for under-36-months use, crossbeam at **1200mm or less** (4.6.1.3); see-saws,
+  the sitting/standing point at **1200mm or less** (4.7.2); carousels and rocking toys, free
+  height of fall **600mm or less** (4.8 c)).
 
-### Elementary (6-8)
-- Max platform height: 2000mm. Max climbing height: 2400mm with proper features.
-- Guard rails 900-1000mm; fall zone 2.1m minimum radius; emergency egress from elevated areas.
-- Prohibited: overhead elements over 2400mm, crush/pinch moving parts, sharp edges, protruding bolts.
+### Platform barriers and ladders
+- A platform **1000mm or more** above the ground needs a barrier, and that barrier is at least
+  **600mm** high (4.2.1). Not age-scaled: this is the one figure to apply regardless of who the
+  build is for.
+- Ladder rungs: cross-section **16mm to 45mm** (4.2.2 e)).
+- Tread or rung vertical spacing: no more than **310mm** between the upper surfaces (4.2.2 c)).
+- Tread or rung lateral width: **240mm or more** (4.2.2 b)).
+- Tread depth on a closed step ladder: **120mm or more** (4.2.2 f)).
+- Ladder incline: between **55 and 90 degrees** to the horizontal (4.2.2 g)).
+- A ladder reaching 1200mm or more needs a handrail, starting no more than 600mm above the ground
+  measured to the top of the platform (4.2.2 h)).
 
-### Pre-teen (9-12)
-- Max platform height: 3000mm. Max climbing height: 3600mm with proper anchoring.
-- Guard rails 1000-1100mm; multiple egress routes; fall zone 2.4m minimum radius.
-- Professional structural review required for zip lines, suspended elements, heights over 3000mm,
-  or complex multi-user structures.
+### Slides
+- The run-out (exit) section ends **300mm or less** above the ground, inclined between 0 and 10
+  degrees to the horizontal (4.5.3 e)).
+- Handrail height on the slide's starting section, banded by that section's own height: under
+  600mm needs **100mm or more**; 600-999mm needs **150mm or more**; 1000-1799mm needs **350mm or
+  more**; 1800mm or above needs **500mm or more** (4.5.3 c)).
 
-### Entrapment limits (all ages)
-- Head and limb gaps must be either under 89mm or over 229mm. Nothing in between.
-- No finger-trap gaps of 5-12mm.
-- No V-shaped gaps that narrow below 89mm (neck/clothing entrapment).
+### Entrapment
+- On any opening whose lower edge is **600mm or more** above the ground: avoid a circular or
+  near-circular internal diameter between **130mm and 230mm** (4.3.1 b)), and keep any V-shaped
+  opening from narrowing below **60 degrees** (4.3.1 c)). This is the figure that replaces the
+  old, uncited 89-229mm rule; below 600mm this specific rule does not apply, but the general
+  entrapment principle still does.
+- Foot entrapment on any walking surface: no gap greater than **30mm** (4.3.3).
+- Finger entrapment: a rigid opening must not admit a **7mm** diameter rod to a depth of 10mm or
+  more, unless a **12mm** diameter rod also passes (4.3.4). For equipment intended for under
+  36 months - roughly the toddler range - the test tightens to a **5mm** rod under the same
+  10mm-depth and 12mm-clearance rule (4.3.4).
+- Chain openings (swing chains, cargo nets): **5mm or less** (4.6.7 d)).
 
-### Fall protection
-- Minimum fall-zone radius = 2x platform height (e.g. 1200mm platform -> 2400mm radius).
-- Slides: extend the fall zone 1.2m beyond the exit.
-- Impact-attenuating surface (rubber mulch, wood chips, pea gravel, foam tiles) under any height
-  a child can fall from.
+### Placement
+- Site the equipment at least **2m** from any structure or obstruction (5.2). EN 71-8 does not
+  specify a fall-zone radius or an impact-surface depth formula for domestic equipment - that is
+  an EN 1176/1177 (public playground) requirement, not a domestic one, and inventing a figure here
+  would claim an authority the standard does not have.
+- An impact-attenuating surface (rubber mulch, bark, sand, rubber tiles) under anything a child can
+  fall from is still good practice, and is recommended for anything above the 600mm stability
+  threshold below. Treat it as a sensible precaution, not a cited minimum.
+
+### Stability
+- Equipment with a free height of fall of 600mm or less is tested against one tip-over standard;
+  above 600mm a different, more demanding stability test applies (4.4.2, 4.4.3). In practice: any
+  freestanding structure over about 600mm needs its base, anchoring or footing sized so it cannot
+  be tipped or walked over, not just so it can bear a static load.
 
 ---
 
 ## Domain 2: Structural integrity
 
-- Apply a **4x safety factor**: a load-bearing element must be calculated to hold at least four
-  times the maximum realistic load (including dynamic loads, e.g. a child jumping, not just static
-  weight).
+**Not covered by EN 71-8.** A toy safety standard regulates the toy's own dimensions and
+mechanical hazards, not structural load design for a DIY-built garden structure - there is no
+single domestic standard that plays the role EN 71-8 plays for Domain 1. What follows is
+conservative engineering convention, stated as such rather than dressed up with a citation it
+does not have.
+
+- Apply a **4x safety factor**: a load-bearing element should be sized to hold at least four times
+  the maximum realistic load, including dynamic loads (a child jumping, not just standing weight).
+  This is standard conservative practice for structures built without individual engineering
+  sign-off, not a figure taken from EN 71-8 or any cited regulation. Being a convention rather
+  than a citation does not make it optional: apply it as strictly as any of the cited figures
+  above.
+- **State the calculated factor explicitly before recording a verdict, do not eyeball it.** Show
+  the working: maximum realistic dynamic load, the section and material's actual load capacity,
+  and the resulting multiple. "Roughly fine" is not a calculation. A design that comes out under
+  4x is CONDITIONAL at best - strengthen the element or reduce the span - and a design with no
+  credible path to 4x on a genuinely load-bearing, child-relied-upon element is a FAIL, not a
+  judgement call to talk around.
 - No single point of failure on any element a child relies on to not fall.
 - Verify the chosen timber section and fixings actually meet the calculated load, not just nominal
   sizing. Remember nominal vs actual dimensions (a "2x4" is 38x89mm).
+- The stability test referenced in Domain 1 (EN 71-8 4.4.2/4.4.3) is the closest this build gets
+  to a cited structural requirement, and it covers tip-over resistance, not load capacity.
 
 ## Domain 3: Tool safety and builder capability
 
@@ -106,7 +161,9 @@ pre-cut stock from the merchant instead of ripping sheet goods).
 
 Check these are present before any cutting starts, not once it has:
 
-- Eye protection to **ANSI Z87.1** or equivalent, for every cutting, drilling and sanding operation
+- Eye protection to **EN ISO 16321** (the current EU/Irish eye-protection standard, superseding
+  the older EN 166 - check the marking on the glasses themselves, both still appear on the shelf),
+  for every cutting, drilling and sanding operation
 - Hearing protection for any tool over **85dB** (most power saws and routers)
 - Dust mask or respirator for sanding, and for cutting treated lumber in particular
 - Gloves for material handling, **not** for power tools - a glove caught in a rotating blade pulls
@@ -124,12 +181,45 @@ work block rather than pushing through.
 
 ## Domain 4: Material safety and environmental hazards
 
-- Prohibited outright for child use: CCA-treated lumber (arsenic), lead-containing finishes.
-- Outdoor structural timber must be appropriately treated (ACQ or CA-B) or naturally durable
-  (cedar, redwood). Untreated whitewood/SPF needs sealing and is not suitable structurally outdoors.
-- Finishes in reach of children must be non-toxic when cured (child-safe stains/oils, food-safe
-  where relevant for surfaces like a mud-kitchen worktop).
-- Weatherproofing and a realistic maintenance interval for any outdoor build.
+**Basis**: BS EN 335 (use classes, what governs which treatment a piece of timber needs for where
+it goes) and BS 8417 (the code of practice that pairs a use class with a treatment and a desired
+service life). These are the UK/Irish equivalents of the American treatment codes an earlier
+version of this file used, which a merchant here would not recognise.
+
+### Specify by use class, not by product code
+
+Ask for timber treated to the use class the piece actually needs, not by a named chemical:
+
+| Use class | Situation | Typical build application |
+|---|---|---|
+| UC1 | Internal, no risk of water contact | Not relevant outdoors |
+| UC2 | Internal, risk of water contact | Not relevant outdoors |
+| UC3.1 | External, above ground, dries quickly | Vertical cladding, rails that shed water |
+| UC3.2 | External, above ground, stays wet | Horizontal surfaces, anything water can pool on |
+| UC4 | External, in contact with the ground or fresh water | Posts set in or against soil, any below-grade element |
+| UC5 | Permanent seawater contact | Not relevant to a garden build |
+
+Any post going into the ground, or any timber touching soil, needs **UC4** at minimum. Above-ground
+structural framing that stays dry-ish needs **UC3**, and 3.2 rather than 3.1 if it is horizontal or
+otherwise holds water. BS 8417 sets the desired service life against the use class - 15 years is
+the common default for a garden structure, 30 for something meant to last longer.
+
+Naturally durable species (cedar, redwood) can substitute for treatment at the equivalent
+durability class without chemical preservative, and remain a valid choice regardless of
+jurisdiction. Untreated whitewood or SPF is UC1/UC2 material: it needs sealing and is not suitable
+as structural timber outdoors regardless of finish.
+
+### Prohibited and restricted
+
+- CCA-treated lumber (chromated copper arsenate): prohibited for anything a child will be near.
+  Its residential use is restricted at EU regulatory level, and a merchant here should not be
+  selling it for a domestic build in the first place - if it turns up in reclaimed or old stock,
+  treat it as a hard no regardless of source.
+- Lead-containing finishes: prohibited outright.
+- Finishes in reach of children must be non-toxic when cured (child-safe stains and oils, food-safe
+  where relevant, e.g. a mud-kitchen worktop).
+- A realistic maintenance interval for any outdoor build, and reapply finish before it fails
+  rather than after.
 
 ## Domain 5: Measurement accuracy and tolerances
 
@@ -164,8 +254,10 @@ work block rather than pushing through.
 - **CONDITIONAL**: one or more fixable issues. For each: the problem, its severity (CRITICAL /
   HIGH / MEDIUM), and the exact correction. Build stays blocked until fixed and re-gated to PASS.
 - **FAIL**: a critical child-safety or structural hazard with no in-place fix (e.g. toxic
-  material, load capacity far below the 4x factor, fall height way over the age band). Hard veto:
-  record it, block the build, redesign from scratch. The user cannot override this.
+  material, a load-bearing element with no credible path to the calculated 4x factor, height over
+  the 2500mm universal cap, or the build turning out to be for shared/public use, which needs
+  EN 1176 rather than this file). Hard veto: record it, block the build, redesign from scratch.
+  The user cannot override this.
 
 ## What to keep as a record
 

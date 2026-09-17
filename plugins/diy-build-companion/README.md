@@ -1,6 +1,6 @@
 # diy-build-companion
 
-**Version**: 2.0.0
+**Version**: 2.0.1
 
 A companion for planning and running real DIY builds. It works in assembly-line order, sizes work
 to the energy you actually have, enforces breaks, and will not let a child-safety concern through
