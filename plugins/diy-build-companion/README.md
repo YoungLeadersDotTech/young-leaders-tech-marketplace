@@ -1,6 +1,6 @@
 # diy-build-companion
 
-**Version**: 2.0.1
+**Version**: 2.1.0
 
 A companion for planning and running real DIY builds. It works in assembly-line order, sizes work
 to the energy you actually have, enforces breaks, and will not let a child-safety concern through
@@ -17,6 +17,10 @@ on a promise to fix it later.
   safety factor, material hazards, and tolerances. A FAIL is a hard veto and cannot be overridden.
 - **To-scale visuals only.** Design sketches are drawn to a real mm-to-px scale or labelled as
   not-to-scale. Never presented as representative when they are not.
+- **SketchUp MCP patterns, when relevant.** If a build's 3D design work goes through SketchUp via
+  MCP, `reference/sketchup-mcp-tips.md` covers connection-flakiness triage, camera gotchas, and a
+  working piece-code labelling recipe, so a modelling session doesn't relearn the hard-won parts
+  from scratch.
 
 ## Modes
 
@@ -64,5 +68,5 @@ In Cowork, install from Customize then Plugins.
 ## Design principle
 
 Self-contained. The skill has no cross-skill or external plugin dependencies, and its reference
-files (`safety-standards.md`, `field-notes.md`) live inside its own folder, so it runs the same
-way standalone or bundled.
+files (`safety-standards.md`, `field-notes.md`, `sketchup-mcp-tips.md`) live inside its own
+folder, so it runs the same way standalone or bundled.
