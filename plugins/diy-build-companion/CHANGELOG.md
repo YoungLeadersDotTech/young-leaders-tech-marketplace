@@ -5,6 +5,19 @@ All notable changes to the diy-build-companion plugin.
 Releases up to and including 1.0.1 were published as the `standalone-skills` plugin; the
 rename is recorded in 2.0.0 below.
 
+## [2.1.0] - 2026-09-25
+
+### Added
+- **`reference/sketchup-mcp-tips.md`**: patterns for any build whose 3D design work goes through
+  SketchUp via MCP (`eval_ruby` / `export_scene`). Covers setup/pinning, the actual
+  connection-flakiness triage order (quantified from a real build's audited session log:
+  42.2% of `eval_ruby` calls failed with a routine "Connection closed" error, none compounding
+  thanks to a verify-before-retry discipline), the `export_scene` file-identity gotcha, camera and
+  screenshot pitfalls, a working `add_3d_text` piece-code labelling recipe, rebuild-in-place and
+  affine-transform helper patterns, and known geometry bugs (pushpull direction,
+  shared-ComponentDefinition renames, outliner-audit coverage). `SKILL.md`'s "What carries over
+  from past builds" section now points to it whenever a project's design work uses SketchUp MCP.
+
 ## [2.0.1] - 2026-09-17
 
 ### Fixed
