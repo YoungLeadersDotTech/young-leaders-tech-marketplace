@@ -17,6 +17,14 @@ First connection of a session throws one spurious `-32601 Method not found` on t
 initial `ping` health-check, which this Ruby extension doesn't handle - expect exactly one of
 these per fresh session/reconnect, then it's stable. Just retry once, don't debug it.
 
+The `diy-sketchup-mcp` plugin registers this MCP server for you (pinned `mcp[cli]<2`, scoped so it
+only activates when you enable that plugin) - install it instead of doing the manual `uv tool
+install` above.
+
+Managing multiple email addresses for test/trial accounts on any tool (not SketchUp-specific): see
+[this post on Gmail plus-addressing](https://www.youngleaders.tech/p/johns-tips-2024w4-use-plus-addressing-to-get-unlimited-email-addresses-a3a90968db2d) -
+one mailbox, unlimited addresses.
+
 ## Connection flakiness - the actual triage order
 
 **Quantified from one real build's audited session log: 42.2% of all `eval_ruby` calls (156 of

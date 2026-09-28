@@ -1,0 +1,11 @@
+{
+  "name": "diy-sketchup-mcp",
+  "description": "Registers the SketchUp MCP server (github.com/mhyrr/sketchup-mcp) so Claude can drive SketchUp directly - scoped to this plugin only, so it activates when you specifically want SketchUp rather than for every diy-build-companion user. No bundled skill; see README for setup.",
+  "author": {
+    "name": "Young Leaders Tech",
+    "url": "https://youngleaders.tech"
+  },
+  "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
+  "version": "0.1.0",
+  "skills": []
+}

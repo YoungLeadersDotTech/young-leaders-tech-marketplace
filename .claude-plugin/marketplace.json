@@ -1,6 +1,6 @@
 {
   "name": "young-leaders-tech-marketplace",
-  "version": "1.5.27",
+  "version": "1.5.28",
   "description": "Personal Claude Code plugin marketplace",
   "owner": {
     "name": "Young Leaders Tech",
@@ -28,8 +28,14 @@
     {
       "name": "diy-build-companion",
       "source": "./plugins/diy-build-companion",
-      "version": "2.1.0",
+      "version": "2.1.1",
       "description": "Plan and run DIY builds with energy-aware work blocks, enforced breaks, and an inline child-safety veto gate. Project state lives in the build repo. Self-contained, Cowork-ready, no cross-plugin dependencies."
+    },
+    {
+      "name": "diy-sketchup-mcp",
+      "source": "./plugins/diy-sketchup-mcp",
+      "version": "0.1.0",
+      "description": "Registers the SketchUp MCP server (github.com/mhyrr/sketchup-mcp), scoped to this plugin only - enable it when you specifically want SketchUp. No bundled skill; see reference/sketchup-mcp-tips.md in diy-build-companion for usage patterns."
     },
     {
       "name": "opencode-sync",

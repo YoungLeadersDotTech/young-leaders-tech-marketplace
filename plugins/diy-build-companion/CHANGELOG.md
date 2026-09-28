@@ -5,6 +5,15 @@ All notable changes to the diy-build-companion plugin.
 Releases up to and including 1.0.1 were published as the `standalone-skills` plugin; the
 rename is recorded in 2.0.0 below.
 
+## [2.1.1] - 2026-09-28
+
+### Changed
+- **`skills/diy-continue/SKILL.md`**: the SketchUp reference paragraph now points to the new
+  `diy-sketchup-mcp` plugin for the MCP server registration itself (scoped so it only activates
+  when you specifically want SketchUp), rather than assuming a manual install.
+- **`reference/sketchup-mcp-tips.md`**: Setup section notes the new plugin and links to a general
+  Gmail plus-addressing post for managing test/trial accounts on any tool.
+
 ## [2.1.0] - 2026-09-25
 
 ### Added

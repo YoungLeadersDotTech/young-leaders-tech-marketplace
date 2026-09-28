@@ -246,8 +246,10 @@ kitchen lesson: post-assembly sanding cost an extra grit step and was harder to 
 structural timber, go to a builders' provider, not a DIY shed.
 
 If the project's 3D design work goes through SketchUp via MCP (`eval_ruby` / `export_scene`
-against a live SketchUp document), read [reference/sketchup-mcp-tips.md](reference/sketchup-mcp-tips.md) before the first model
-edit of a session: connection-flakiness triage order, the `export_scene` file-identity gotcha,
+against a live SketchUp document), install the `diy-sketchup-mcp` plugin to get the MCP server
+itself (scoped so it only activates when you specifically want SketchUp), then read
+[reference/sketchup-mcp-tips.md](reference/sketchup-mcp-tips.md) before the first model edit of a
+session: connection-flakiness triage order, the `export_scene` file-identity gotcha,
 camera/screenshot pitfalls, the working `add_3d_text` piece-labelling recipe, and known geometry
 bugs (pushpull direction, shared-ComponentDefinition renames) worth knowing before hitting them
 cold.
