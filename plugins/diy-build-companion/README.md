@@ -18,7 +18,8 @@ on a promise to fix it later.
 - **To-scale visuals only.** Design sketches are drawn to a real mm-to-px scale or labelled as
   not-to-scale. Never presented as representative when they are not.
 - **SketchUp MCP patterns, when relevant.** If a build's 3D design work goes through SketchUp via
-  MCP, install the optional `diy-sketchup-mcp` plugin for the MCP server itself, then
+  MCP (local Claude Code with SketchUp desktop, not Cowork), install the optional
+  `diy-sketchup-mcp` plugin for the MCP server itself, then
   `reference/sketchup-mcp-tips.md` covers connection-flakiness triage, camera gotchas, and a
   working piece-code labelling recipe, so a modelling session doesn't relearn the hard-won parts
   from scratch.

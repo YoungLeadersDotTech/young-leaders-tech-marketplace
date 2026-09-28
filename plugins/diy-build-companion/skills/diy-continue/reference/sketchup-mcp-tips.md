@@ -9,17 +9,22 @@ through SketchUp rather than sketches or a CAD file.
 
 Community project `github.com/mhyrr/sketchup-mcp` (SketchupMCP) is the one that actually works
 from Claude Code - the official Trimble "SketchUp Connector for Claude" is claude.ai-only
-(web/desktop), not usable from Claude Code, and generation-only even there. Pin `mcp[cli]<2` when
-installing (`uv tool install --with "mcp[cli]<2" .` from a clone) - the published PyPI package's
+(web/desktop), not usable from Claude Code, and generation-only even there.
+
+**Recommended: install the `diy-sketchup-mcp` plugin.** It registers this MCP server for you
+(pinned `sketchup-mcp==0.1.17` and `mcp[cli]<2`, registered only while that plugin is enabled).
+Its README covers prerequisites, the `.rbz` install, a verify step and the `eval_ruby` trust
+guidance. If you previously registered the server by hand, `claude mcp remove sketchup` first.
+
+**Fallback, manual install**: from a clone, `uv tool install --with "mcp[cli]<2" .`, then
+register it with `claude mcp add`. Always pin `mcp[cli]<2` - the published PyPI package's
 unpinned `mcp[cli]>=1.3.0` dependency resolves to a breaking mcp 2.x by default.
 
 First connection of a session throws one spurious `-32601 Method not found` on the client's
 initial `ping` health-check, which this Ruby extension doesn't handle - expect exactly one of
-these per fresh session/reconnect, then it's stable. Just retry once, don't debug it.
-
-The `diy-sketchup-mcp` plugin registers this MCP server for you (pinned `mcp[cli]<2`, scoped so it
-only activates when you enable that plugin) - install it instead of doing the manual `uv tool
-install` above.
+these per fresh session/reconnect, then it's stable. Retry once. Likely upstream cause, for anyone
+reporting it: `sketchup_mcp/server.py` (0.1.17) sends a `ping` whenever it reuses a connection and
+returns without reading the reply, which may also contribute to the flakiness below.
 
 Managing multiple email addresses for test/trial accounts on any tool (not SketchUp-specific): see
 [this post on Gmail plus-addressing](https://www.youngleaders.tech/p/johns-tips-2024w4-use-plus-addressing-to-get-unlimited-email-addresses-a3a90968db2d) -

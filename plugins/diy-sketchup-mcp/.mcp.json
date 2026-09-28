@@ -2,7 +2,7 @@
   "mcpServers": {
     "sketchup": {
       "command": "uvx",
-      "args": ["--with", "mcp[cli]<2", "sketchup-mcp"]
+      "args": ["--with", "mcp[cli]<2", "sketchup-mcp==0.1.17"]
     }
   }
 }

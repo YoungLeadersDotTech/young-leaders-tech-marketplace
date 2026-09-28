@@ -35,7 +35,7 @@
       "name": "diy-sketchup-mcp",
       "source": "./plugins/diy-sketchup-mcp",
       "version": "0.1.0",
-      "description": "Registers the SketchUp MCP server (github.com/mhyrr/sketchup-mcp), scoped to this plugin only - enable it when you specifically want SketchUp. No bundled skill; see reference/sketchup-mcp-tips.md in diy-build-companion for usage patterns."
+      "description": "Registers the community SketchUp MCP server so Claude Code can drive SketchUp desktop directly. Opt-in: enable only when you want SketchUp. Includes eval_ruby, which runs arbitrary Ruby; see README for setup and trust guidance."
     },
     {
       "name": "opencode-sync",
