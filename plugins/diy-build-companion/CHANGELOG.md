@@ -5,6 +5,19 @@ All notable changes to the diy-build-companion plugin.
 Releases up to and including 1.0.1 were published as the `standalone-skills` plugin; the
 rename is recorded in 2.0.0 below.
 
+## [2.1.1] - 2026-09-29
+
+### Changed
+- **`skills/diy-continue/SKILL.md`**: the SketchUp paragraph now checks whether the SketchUp MCP
+  tools are available first and, if not, tells the user to install the new `diy-sketchup-mcp`
+  plugin (never installs anything itself). States it only works in local Claude Code on the same
+  machine as SketchUp desktop, not Cowork.
+- **`reference/sketchup-mcp-tips.md`**: Setup section now recommends the `diy-sketchup-mcp`
+  plugin first, keeps the manual `uv tool install` as a labelled fallback, adds the migration step
+  for hand-registered servers, explains the first-call `-32601` and the connection-lifetime root
+  cause of the flakiness (with which failures are safe to retry), adds a one-session rule, and
+  links a general Gmail plus-addressing post for managing test/trial accounts on any tool.
+
 ## [2.1.0] - 2026-09-25
 
 ### Added

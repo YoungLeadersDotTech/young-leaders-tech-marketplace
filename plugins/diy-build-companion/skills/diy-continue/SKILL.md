@@ -246,8 +246,13 @@ kitchen lesson: post-assembly sanding cost an extra grit step and was harder to 
 structural timber, go to a builders' provider, not a DIY shed.
 
 If the project's 3D design work goes through SketchUp via MCP (`eval_ruby` / `export_scene`
-against a live SketchUp document), read [reference/sketchup-mcp-tips.md](reference/sketchup-mcp-tips.md) before the first model
-edit of a session: connection-flakiness triage order, the `export_scene` file-identity gotcha,
+against a live SketchUp document), first check whether `eval_ruby` and `export_scene` are among
+your available tools. If they are not, do not try to install anything yourself: tell the user to
+run `/plugin install diy-sketchup-mcp@young-leaders-tech-marketplace` (removing any hand-registered
+`sketchup` server first, per that plugin's README) and restart. It only works in local Claude Code
+on the same machine as SketchUp desktop, not in Cowork. Then read
+[reference/sketchup-mcp-tips.md](reference/sketchup-mcp-tips.md) before the first model edit of a
+session: connection-flakiness triage order, the `export_scene` file-identity gotcha,
 camera/screenshot pitfalls, the working `add_3d_text` piece-labelling recipe, and known geometry
 bugs (pushpull direction, shared-ComponentDefinition renames) worth knowing before hitting them
 cold.

@@ -1,0 +1,10 @@
+{
+  "name": "diy-sketchup-mcp",
+  "description": "Registers the community SketchUp MCP server so Claude Code can drive SketchUp desktop directly. Opt-in: enable only when you want SketchUp. Includes eval_ruby, which runs arbitrary Ruby; see README for setup and trust guidance.",
+  "author": {
+    "name": "Young Leaders Tech",
+    "url": "https://youngleaders.tech"
+  },
+  "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
+  "version": "0.1.0"
+}
