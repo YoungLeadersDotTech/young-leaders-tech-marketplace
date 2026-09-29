@@ -17,7 +17,9 @@ SketchUp via `eval_ruby`. The server is scoped to this plugin: it is registered 
   "args": ["--with", "mcp[cli]<2", "sketchup-mcp==0.1.17"]
   ```
 
-  `sketchup-mcp==0.1.17` is the build this plugin was tested against, pinned so a new PyPI release
+  `sketchup-mcp==0.1.17` is the PyPI build this plugin was checked with (from a clean uv cache it
+  starts, connects to SketchUp and lists all 10 tools; a full modelling session through the
+  installed plugin has not been run yet). It is pinned so a new PyPI release
   is a deliberate change here rather than a silent one. `mcp[cli]<2` is pinned because the
   package's own unpinned `mcp[cli]>=1.3.0` dependency otherwise resolves to a breaking mcp 2.x.
 - **Starts with every session while enabled, so use one session at a time**: Claude Code launches
@@ -39,8 +41,10 @@ SketchUp via `eval_ruby`. The server is scoped to this plugin: it is registered 
   remote machine.
 - **`uv`**: `brew install uv` on macOS, or the
   [cross-platform installer](https://docs.astral.sh/uv/getting-started/installation/). The first
-  start downloads `sketchup-mcp` and its dependencies, so it can take a minute; if `/mcp` shows the
-  server as failed on the very first session, restart Claude Code once.
+  start downloads `sketchup-mcp` and its dependencies, so it can take a minute. If `/mcp` shows the
+  server as failed, run the command by hand (see Troubleshooting) to see the real error.
+- **`git` and `zip`** to build the SketchUp extension (both ship with macOS). Written and checked
+  on macOS with SketchUp 2026.
 
 ## Setup
 
@@ -49,15 +53,18 @@ SketchUp via `eval_ruby`. The server is scoped to this plugin: it is registered 
    `claude mcp remove sketchup` (and optionally `uv tool uninstall sketchup-mcp`). Permission
    rules written for `mcp__sketchup__*` no longer match; see the allow-list under Security and
    trust for the plugin's tool names.
-2. **Enable this plugin**:
+2. **Enable this plugin**: add this marketplace first if you haven't (see
+   [Quick install](../../README.md#quick-install)), then
    `/plugin install diy-sketchup-mcp@young-leaders-tech-marketplace`, then restart Claude Code.
 3. **Install the SketchUp-side extension** (GUI only, no CLI path). Upstream publishes no tagged
-   releases, so build the `.rbz` from the commit this plugin was tested with:
+   releases, so build the `.rbz` from the commit this plugin was checked with. The extension
+   package lives in the repo's `su_mcp/` folder, so zip from inside it:
 
    ```bash
    git clone https://github.com/mhyrr/sketchup-mcp && cd sketchup-mcp
-   git checkout aa096f0          # extension 0.1.0, tested with sketchup-mcp 0.1.17
-   zip -r su_mcp.rbz su_mcp.rb su_mcp/
+   git checkout aa096f0          # extension 0.1.0, checked with sketchup-mcp 0.1.17
+   cd su_mcp && zip -r ../su_mcp.rbz su_mcp.rb su_mcp && cd ..
+   unzip -l su_mcp.rbz           # must list su_mcp.rb and su_mcp/main.rb at the top level
    ```
 
    A newer upstream `.rbz` is untested with the pinned server. Then:
@@ -70,11 +77,14 @@ SketchUp via `eval_ruby`. The server is scoped to this plugin: it is registered 
 `/mcp` showing the server as connected only proves `uvx` started; it shows connected even when
 SketchUp is closed. The real test is a tool call:
 
-1. Ask Claude to call `eval_ruby` with `Sketchup.version`. **Pass**: the reply is a SketchUp
-   version string. `get_selection` also works; a pass there contains `"success": true`.
-2. **Fail**: any reply that starts with `Error`, or a timeout.
-3. A single `-32601 Method not found` on the very first call is the known startup quirk (see
-   Troubleshooting); retry once, and if the retry passes, you are set up.
+1. Ask Claude to call `eval_ruby` with `Sketchup.version`. **Pass**: the reply is
+   `{"success": true, "result": "<version>"}`.
+2. **Fail**: `{"success": false, "error": "..."}`, for example
+   `"Communication error with Sketchup: No data received"` (SketchUp didn't answer - is the
+   extension's server started, and is another session holding it?). Typed tools such as
+   `get_selection` report failure as text starting `Error ...` instead.
+3. A single `Communication error with Sketchup: Method not found` on the very first call is the
+   known startup quirk (see Troubleshooting); retry once, and if the retry passes, you are set up.
 
 ## Security and trust
 
@@ -106,22 +116,24 @@ SketchUp is closed. The real test is a tool call:
   machine, can send it Ruby. Use `Extensions > MCP Server > Stop Server` when you are not
   modelling.
 - **Logs contain your code.** Upstream logs full `eval_ruby` payloads and results at INFO level,
-  and those end up in Claude Code's MCP logs.
+  and the SketchUp extension prints raw requests and results to the Ruby Console, which it opens on
+  load - so your code is on screen, not just on disk.
 
 ## Troubleshooting
 
 - **Server shows failed in `/mcp`**: run it by hand in a terminal to see the error (keep the
   quotes; it then waits for input, so Ctrl-C to exit):
-  `uvx --with "mcp[cli]<2" sketchup-mcp==0.1.17`. Usually `uv` is missing or the first download
-  timed out.
-- **SketchUp frozen, or every call times out**: another Claude Code session with this plugin
-  enabled is holding SketchUp's single connection. Close that session or disable the plugin there.
-- **One `-32601 Method not found` on the first call of a session**: the server opened its
-  connection at session start and sent nothing, so SketchUp sat blocked until this first call.
-  Retry once. To avoid it, start SketchUp's server after Claude Code is up, or make a SketchUp
-  call straight away.
-- **Calls fail intermittently or repeatedly**: follow the triage order in
-  [`sketchup-mcp-tips.md`](https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace/blob/master/plugins/diy-build-companion/skills/diy-continue/reference/sketchup-mcp-tips.md#connection-flakiness---the-actual-triage-order)
-  (a dialog blocking the target, corrupted geometry from an earlier write, then restart).
+  `uvx --with "mcp[cli]<2" sketchup-mcp==0.1.17`. The terminal shows the real error (a
+  traceback, a missing `uv`, or a download failure).
+- **SketchUp frozen, or every call times out with "No data received"**: another Claude Code
+  session with this plugin enabled is holding SketchUp's single connection, or a SketchUp dialog is
+  open. Close the other session or disable the plugin there, and dismiss any dialog.
+- **"Communication error with Sketchup: Method not found" on the first call of a session**: the
+  server opened its connection at session start and sent nothing, so SketchUp sat blocked until
+  this first call. Retry once. To avoid it, start SketchUp's server after Claude Code is up.
+- **"Connection closed before receiving any data"**: routine. SketchUp closes each connection after
+  one request; the request never reached SketchUp, so retry once. If the same call fails 3+ times
+  in a row, follow the triage order in
+  [`sketchup-mcp-tips.md`](https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace/blob/master/plugins/diy-build-companion/skills/diy-continue/reference/sketchup-mcp-tips.md#connection-flakiness---the-actual-triage-order).
 - **Screenshots**: there is no screenshot tool; ask for `eval_ruby` with
   `Sketchup.active_model.active_view.write_image(...)`.
