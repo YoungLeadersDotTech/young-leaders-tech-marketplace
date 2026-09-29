@@ -14,7 +14,8 @@ rename is recorded in 2.0.0 below.
   machine as SketchUp desktop, not Cowork.
 - **`reference/sketchup-mcp-tips.md`**: Setup section now recommends the `diy-sketchup-mcp`
   plugin first, keeps the manual `uv tool install` as a labelled fallback, adds the migration step
-  for hand-registered servers, notes the likely upstream cause of the first-call `-32601`, and
+  for hand-registered servers, explains the first-call `-32601` and the connection-lifetime root
+  cause of the flakiness (with which failures are safe to retry), adds a one-session rule, and
   links a general Gmail plus-addressing post for managing test/trial accounts on any tool.
 
 ## [2.1.0] - 2026-09-25

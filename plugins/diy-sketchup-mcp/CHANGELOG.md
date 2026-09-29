@@ -11,6 +11,9 @@ All notable changes to the diy-sketchup-mcp plugin.
   the tested 0.1.17; `mcp[cli]<2` avoids the breaking mcp 2.x that the package's unpinned
   dependency otherwise resolves to.
 - **`README.md`**: prerequisites (licensed SketchUp desktop, `uv`), setup including migration from
-  a hand-registered `sketchup` server, the one manual step (installing the `.rbz` via
-  Window > Extension Manager, tested with extension 0.1.0), a verify step, a security and trust
-  section for `eval_ruby`, and troubleshooting.
+  a hand-registered `sketchup` server, the one manual step (building the `.rbz` from the tested
+  upstream commit and installing it via Window > Extension Manager; the menu is
+  `Extensions > MCP Server`), a verify step that can actually fail (a real `eval_ruby` call, not
+  just `/mcp` connected), a one-session-at-a-time rule (an idle session holds SketchUp's single
+  connection), a security and trust section for `eval_ruby` with the exact plugin-prefixed
+  allow-list, and troubleshooting.
