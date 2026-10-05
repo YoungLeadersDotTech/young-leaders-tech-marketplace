@@ -2,10 +2,15 @@
 
 All notable changes to the enablement-html-renderer plugin.
 
+## [1.6.4] - 2026-10-05
+
+### Changed
+- Removed leftover provenance wording that pointed at an internal copy of this plugin: the `overflow:visible` note in SKILL.md and three older CHANGELOG entries now describe the change without naming the internal source. No behaviour change.
+
 ## [1.6.3] - 2026-08-11
 
 ### Fixed
-- SVG text clipping in the Visual format tab: `.visual svg` scaled diagrams down with `max-width:100%` but never set `overflow:visible`, so text reaching or exceeding the declared `viewBox` width was hard-clipped by the browser. Added `overflow:visible` to the rule. SKILL.md's "Theming `visualSvg`" section gained a new "Sizing `visualSvg`" note explaining the real fix (size the `viewBox` to the label) versus what the CSS change catches (the worst case). Ported from `toast-ai-os-standalone-skills` (KTLO `standalone-skills-ktlo` Phase 3, issue #10).
+- SVG text clipping in the Visual format tab: `.visual svg` scaled diagrams down with `max-width:100%` but never set `overflow:visible`, so text reaching or exceeding the declared `viewBox` width was hard-clipped by the browser. Added `overflow:visible` to the rule. SKILL.md's "Theming `visualSvg`" section gained a new "Sizing `visualSvg`" note explaining the real fix (size the `viewBox` to the label) versus what the CSS change catches (the worst case). Ported from an earlier internal copy of this plugin.
 
 ## [1.6.2] - 2026-08-05
 
@@ -61,7 +66,7 @@ All notable changes to the enablement-html-renderer plugin.
   naming the 5 structural features a rendered artifact should have (format selector, interleaved
   images, dark-mode toggle + `normalizeSvg`, URL auto-linking, theme-variable accent palette) with
   a detection rule per feature. Feeds the KTLO B-01 drift checker being built in `ai-os-personal`
-  (`toast-plugin-validator`, tracked in `ai-os-personal-ktlo--2026-07-28`) so already-shipped
+  (tracked in `ai-os-personal-ktlo--2026-07-28`) so already-shipped
   enablement artifacts can be checked against the current template without hand-auditing each one.
 - `scripts/tests/test_structure_contract.py` - self-consistency test proving every detection rule
   in the new manifest actually matches the current template (pytest, stdlib-only).
@@ -140,7 +145,7 @@ All notable changes to the enablement-html-renderer plugin.
 - AskUserQuestion option order: ANYONE first (recommended), DOMAIN second
 - Added note about Google Workspace domain policy blocking ANYONE - clasp error message is misleading; check `clasp deployments` for actual result
 
-Port-back from `toast-ai-os-standalone-skills` v1.1.0. Standalone-skills retains `DOMAIN` default for internal Toast use.
+Port-back from an earlier internal copy of this plugin (v1.1.0). That copy keeps a `DOMAIN` default for its own internal use.
 
 ## [1.2.3] - 2026-06-19
 
