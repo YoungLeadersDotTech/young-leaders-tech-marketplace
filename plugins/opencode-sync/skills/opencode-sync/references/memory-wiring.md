@@ -11,7 +11,7 @@ Memory-os currently splits the read path across two Claude hooks:
 
 `session-start-init-memory-prompt.sh` fires once per session when
 `~/.claude/memory/` is absent or empty. It emits a consent banner explaining what
-`/toast-memory-os:init-memory` would create.
+`/memory-os:init-memory` would create.
 
 What it does:
 
