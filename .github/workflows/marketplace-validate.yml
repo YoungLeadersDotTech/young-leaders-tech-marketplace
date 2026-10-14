@@ -1,0 +1,32 @@
+name: marketplace validate
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "plugins/**"
+      - ".claude-plugin/**"
+      - "README.md"
+      - "scripts/validate_marketplace.py"
+      - ".github/workflows/marketplace-validate.yml"
+  pull_request:
+    paths:
+      - "plugins/**"
+      - ".claude-plugin/**"
+      - "README.md"
+      - "scripts/validate_marketplace.py"
+      - ".github/workflows/marketplace-validate.yml"
+
+jobs:
+  consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check JSON, versions and descriptions across all plugins
+        run: python3 scripts/validate_marketplace.py
