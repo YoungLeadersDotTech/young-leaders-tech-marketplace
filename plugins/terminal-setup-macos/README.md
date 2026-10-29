@@ -1,6 +1,6 @@
 # terminal-setup-macos
 
-Current version: `1.5.0`
+Current version: `1.5.1`
 
 Idempotent installer for a kitted macOS terminal: Ghostty, Oh My Zsh, Powerlevel10k,
 Glow, MesloLGS Nerd Font, plus an optional markdown-preview kit (MacDown 3000, grip,

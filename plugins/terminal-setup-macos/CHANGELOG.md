@@ -2,6 +2,11 @@
 
 All notable changes to `terminal-setup-macos` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2026-10-25
+
+### Fixed
+- **Invalid Ghostty key names in the split-navigation keybinds.** `ghostty-config-tweaks.md` wrote `super+ctrl+bracketright=goto_split:next` and `super+ctrl+bracketleft=goto_split:previous`, but Ghostty names those keys `right_bracket` and `left_bracket`. Every config built from the reference loaded with two `keybind: unknown error error.InvalidFormat` warnings and a "Configuration Errors" dialog on each launch, and the two split-navigation bindings never worked. Verified with `ghostty +validate-config` on Ghostty 1.3.1. Existing installs: change the two key names in `~/.config/ghostty/config`.
+
 ## [1.5.0] - 2026-09-16
 
 ### Added
