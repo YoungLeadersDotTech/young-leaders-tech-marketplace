@@ -14,7 +14,7 @@ sys.path.insert(0, str(SCRIPTS))
 
 import build_coach as bc  # noqa: E402
 
-TEMPLATE = SCRIPTS.parent / "templates" / "rehearsal-coach.html"
+TEMPLATE = SCRIPTS.parent / "templates" / "no-notes-coach.html"
 PRESET = SCRIPTS.parent / "reference" / "site-bar-youngleaders.json"
 
 

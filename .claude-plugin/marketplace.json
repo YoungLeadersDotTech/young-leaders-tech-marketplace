@@ -50,8 +50,8 @@
       "description": "Deterministic offline auditor for skills, agents, and prompts. Runs static checks against a directory of SKILL.md, AGENTS.md, or CLAUDE.md files and prints findings, critical then major then minor."
     },
     {
-      "name": "talk-rehearsal-coach",
-      "source": "./plugins/talk-rehearsal-coach",
+      "name": "no-notes-talk-coach",
+      "source": "./plugins/no-notes-talk-coach",
       "version": "1.0.0",
       "description": "Learn a talk off without notes: turns a deck or script into a rehearsal pack and an offline HTML coach with a chapter map, cue words, a timed drill, a self-quiz and a two-day plan. Tailored for ADHD, useful for all."
     }

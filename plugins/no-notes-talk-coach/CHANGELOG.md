@@ -1,13 +1,13 @@
 # Changelog
 
-All notable changes to the talk-rehearsal-coach plugin.
+All notable changes to the no-notes-talk-coach plugin.
 
 ## [1.0.0] - 2026-10-31
 
 ### Added
-- **`talk-rehearsal-coach` skill**: five phases (intake, shape, rehearsal pack, HTML coach, optional
+- **`no-notes-talk-coach` skill**: five phases (intake, shape, rehearsal pack, HTML coach, optional
   in-chat drill) with per-phase task tracking chained by `addBlockedBy`.
-- **`templates/rehearsal-coach.html`**: one self-contained, offline page with seven tabs (Start
+- **`templates/no-notes-coach.html`**: one self-contained, offline page with seven tabs (Start
   here, Method, Map, Cue cards, Script, Drill, Your talk), light and dark themes, print styles, and
   a paste box that rebuilds the whole page from any script in the browser. Opens on the plan with
   the next step highlighted and a button per step to the right tab. The drill runs at real, fast or

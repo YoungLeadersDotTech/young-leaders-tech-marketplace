@@ -1,5 +1,5 @@
 {
-  "name": "talk-rehearsal-coach",
+  "name": "no-notes-talk-coach",
   "description": "Learn a talk off without notes. Turns a deck or script into a rehearsal pack and an offline HTML coach: chapter map, one cue word per slide, script with anchors and pauses, a timed drill, a self-quiz and a tonight and tomorrow plan. Tailored for ADHD, useful for all.",
   "author": {
     "name": "Young Leaders Tech",
@@ -8,6 +8,6 @@
   "homepage": "https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace",
   "version": "1.0.0",
   "skills": [
-    "./skills/talk-rehearsal-coach"
+    "./skills/no-notes-talk-coach"
   ]
 }

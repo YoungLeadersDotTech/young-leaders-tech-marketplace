@@ -1,4 +1,4 @@
-# talk-rehearsal-coach
+# no-notes-talk-coach
 
 **Version**: 1.0.0
 
@@ -54,7 +54,7 @@ Ask in plain words, for example:
 To build a page yourself from a talk JSON file:
 
 ```bash
-python3 skills/talk-rehearsal-coach/scripts/build_coach.py --data talk.json --out coach.html
+python3 skills/no-notes-talk-coach/scripts/build_coach.py --data talk.json --out coach.html
 ```
 
 Options: `--no-em-dashes` replaces em dashes with " - "; `--site-bar <preset.json>` adds a branded
@@ -66,12 +66,12 @@ a one-line credit). The JSON shape is in
 
 | Path | What it is |
 |---|---|
-| `skills/talk-rehearsal-coach/SKILL.md` | The skill |
-| `skills/talk-rehearsal-coach/templates/rehearsal-coach.html` | The HTML coach template |
-| `skills/talk-rehearsal-coach/scripts/build_coach.py` | Validates talk JSON and builds the page |
-| `skills/talk-rehearsal-coach/scripts/tests/` | 44 pytest cases for the build script |
-| `skills/talk-rehearsal-coach/reference/method.md` | The six techniques, recall chain, plan and pacing |
-| `skills/talk-rehearsal-coach/reference/site-bar-youngleaders.json` | Opt-in branded header preset |
+| `skills/no-notes-talk-coach/SKILL.md` | The skill |
+| `skills/no-notes-talk-coach/templates/no-notes-coach.html` | The HTML coach template |
+| `skills/no-notes-talk-coach/scripts/build_coach.py` | Validates talk JSON and builds the page |
+| `skills/no-notes-talk-coach/scripts/tests/` | 44 pytest cases for the build script |
+| `skills/no-notes-talk-coach/reference/method.md` | The six techniques, recall chain, plan and pacing |
+| `skills/no-notes-talk-coach/reference/site-bar-youngleaders.json` | Opt-in branded header preset |
 
 Self-contained: no dependencies on other plugins. The build script needs only Python 3 (stdlib).
 In a session without Python, the skill gives you the JSON and the two-step manual paste instead.
@@ -79,5 +79,5 @@ In a session without Python, the skill gives you the JSON and the two-step manua
 ## Testing
 
 ```bash
-cd plugins/talk-rehearsal-coach && python3 -m pytest -q
+cd plugins/no-notes-talk-coach && python3 -m pytest -q
 ```

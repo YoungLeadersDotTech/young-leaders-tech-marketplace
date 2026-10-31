@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Talk Rehearsal Coach</title>
+<title>No-Notes Talk Coach</title>
 <script>
 // Applied before first paint so a saved manual theme choice never flashes the OS default first.
 try{
@@ -159,8 +159,8 @@ try{
 <div id="sitebar"></div>
 <div class="wrap">
   <header class="top">
-    <div class="kicker">Talk rehearsal coach</div>
-    <h1 id="title">Talk Rehearsal Coach</h1>
+    <div class="kicker">No-notes talk coach</div>
+    <h1 id="title">No-Notes Talk Coach</h1>
     <p class="coreidea" id="coreidea"></p>
     <p class="intro" id="intro"></p>
     <div class="example-banner" id="exampleBanner" role="region" aria-label="Example content" hidden></div>
@@ -191,8 +191,8 @@ try{
 </div>
 
 <script>
-// DATA is injected by the talk-rehearsal-coach skill (scripts/build_coach.py). Strict JSON.
-const DATA = /*__DATA_START__*/{"title": "Talk Rehearsal Coach", "talkTitle": "Write It Down", "intro": "A short sample talk, loaded so you can see how the coach works. Nothing here is yours yet.", "secondsPerSlide": 20, "chapters": [{"name": "The problem", "tone": "calm, a bit wry", "slides": [1, 2]}, {"name": "The fix", "tone": "practical, upbeat", "slides": [3, 4]}, {"name": "The close", "tone": "warm, slower", "slides": [5, 6]}], "slides": [{"title": "The lost decision", "cue": "Lost", "lines": "Last spring my team made a great decision in a meeting. Two weeks later, nobody could remember what it was.", "anchor": "Stand still, hands open.", "pause": "After 'nobody could remember'."}, {"title": "The cost", "cue": "Rework", "lines": "We rebuilt the same argument three times. That is three meetings of rework for one decision.", "anchor": "Hold up three fingers.", "pause": ""}, {"title": "The one-line log", "cue": "Log", "lines": "So we started a one-line decision log. Date, decision, who, why. Nothing else.", "anchor": "Step forward.", "pause": ""}, {"title": "What changed", "cue": "Search", "lines": "New joiners stopped asking why. They searched the log instead.", "anchor": "", "pause": "After 'searched the log'."}, {"title": "Start small", "cue": "Tomorrow", "lines": "You do not need a tool. Start tomorrow with a shared doc and one line per decision.", "anchor": "Point to the audience.", "pause": ""}, {"title": "The callback", "cue": "Remember", "lines": "Because the best decision is the one your team can still remember. Thank you.", "anchor": "Step back, smile, nod.", "pause": "Before 'Thank you'."}], "example": true}/*__DATA_END__*/;
+// DATA is injected by the no-notes-talk-coach skill (scripts/build_coach.py). Strict JSON.
+const DATA = /*__DATA_START__*/{"title": "No-Notes Talk Coach", "talkTitle": "Write It Down", "intro": "A short sample talk, loaded so you can see how the coach works. Nothing here is yours yet.", "secondsPerSlide": 20, "chapters": [{"name": "The problem", "tone": "calm, a bit wry", "slides": [1, 2]}, {"name": "The fix", "tone": "practical, upbeat", "slides": [3, 4]}, {"name": "The close", "tone": "warm, slower", "slides": [5, 6]}], "slides": [{"title": "The lost decision", "cue": "Lost", "lines": "Last spring my team made a great decision in a meeting. Two weeks later, nobody could remember what it was.", "anchor": "Stand still, hands open.", "pause": "After 'nobody could remember'."}, {"title": "The cost", "cue": "Rework", "lines": "We rebuilt the same argument three times. That is three meetings of rework for one decision.", "anchor": "Hold up three fingers.", "pause": ""}, {"title": "The one-line log", "cue": "Log", "lines": "So we started a one-line decision log. Date, decision, who, why. Nothing else.", "anchor": "Step forward.", "pause": ""}, {"title": "What changed", "cue": "Search", "lines": "New joiners stopped asking why. They searched the log instead.", "anchor": "", "pause": "After 'searched the log'."}, {"title": "Start small", "cue": "Tomorrow", "lines": "You do not need a tool. Start tomorrow with a shared doc and one line per decision.", "anchor": "Point to the audience.", "pause": ""}, {"title": "The callback", "cue": "Remember", "lines": "Because the best decision is the one your team can still remember. Thank you.", "anchor": "Step back, smile, nod.", "pause": "Before 'Thank you'."}], "example": true}/*__DATA_END__*/;
 
 // ---------- helpers ----------
 // esc(): every DATA field and every pasted field is untrusted plain text, escaped before it touches the DOM.
@@ -256,7 +256,7 @@ function defaultPlan(d){
     ]}]};
 }
 function normalise(src){
-  const d = {title:str(src.title)||"Talk Rehearsal Coach", talkTitle:str(src.talkTitle)||"Your talk", intro:str(src.intro), example:src.example===true, slides:[], chapters:[], plan:null};
+  const d = {title:str(src.title)||"No-Notes Talk Coach", talkTitle:str(src.talkTitle)||"Your talk", intro:str(src.intro), example:src.example===true, slides:[], chapters:[], plan:null};
   const sps = parseInt(src.secondsPerSlide,10);
   d.secondsPerSlide = (sps>=3 && sps<=600) ? sps : 15;
   const lim = parseInt(src.timeLimit,10);
@@ -669,7 +669,7 @@ renderSiteBar();
 
 document.getElementById("foot").innerHTML =
   "Learn the shape, not the sentences. The words follow the cues." +
-  '<span class="credit">Created using <a href="https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace/tree/master/plugins/talk-rehearsal-coach" rel="noopener noreferrer">talk-rehearsal-coach</a> from <a href="https://www.youngleaders.tech/" rel="noopener noreferrer">youngleaders.tech</a></span>';
+  '<span class="credit">Created using <a href="https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace/tree/master/plugins/no-notes-talk-coach" rel="noopener noreferrer">no-notes-talk-coach</a> from <a href="https://www.youngleaders.tech/" rel="noopener noreferrer">youngleaders.tech</a></span>';
 
 drill.secs = D.secondsPerSlide; drillReset();
 header();

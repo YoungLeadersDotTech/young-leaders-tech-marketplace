@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Build a self-contained Talk Rehearsal Coach HTML page from a talk JSON file.
+"""Build a self-contained No-Notes Talk Coach HTML page from a talk JSON file.
 
-Reads templates/rehearsal-coach.html, validates the talk data, and replaces the
+Reads templates/no-notes-coach.html, validates the talk data, and replaces the
 bundle between /*__DATA_START__*/ and /*__DATA_END__*/ with the new data as
 strict JSON. Stdlib only.
 
@@ -42,7 +42,7 @@ import sys
 from pathlib import Path
 
 SKILL_DIR = Path(__file__).resolve().parent.parent
-TEMPLATE = SKILL_DIR / "templates" / "rehearsal-coach.html"
+TEMPLATE = SKILL_DIR / "templates" / "no-notes-coach.html"
 DATA_RE = re.compile(r"/\*__DATA_START__\*/.*?/\*__DATA_END__\*/", re.S)
 SLIDE_FIELDS = ("title", "cue", "lines", "anchor", "pause")
 MAX_SLIDES = 200
@@ -114,7 +114,7 @@ def validate(data: object) -> dict:
         clean_slides.append(cleaned)
 
     out: dict = {
-        "title": _text(data.get("title")) or "Talk Rehearsal Coach",
+        "title": _text(data.get("title")) or "No-Notes Talk Coach",
         "talkTitle": _text(data.get("talkTitle")) or "Your talk",
         "intro": _text(data.get("intro")),
         # Only the shipped demo talks set this: it shows the "This is an example" banner.

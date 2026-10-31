@@ -1,5 +1,5 @@
 ---
-name: talk-rehearsal-coach
+name: no-notes-talk-coach
 description: Use when someone needs to learn a talk off without notes. Turns a deck or script plus seconds per slide into a rehearsal pack and an offline HTML coach - chapter map, one cue word per slide, script with anchors, timed drill, self-quiz and a day-by-day plan. Tailored for ADHD, useful for all.
 when_to_use: Use when someone has a talk, presentation or demo to give and wants to learn it off without notes, rehearse to slide timing, or drill it. Triggers on "help me learn my talk", "rehearse my presentation", "I'm speaking at", "cue words for my slides". Skip for writing or designing the talk itself.
 allowed-tools:
@@ -13,7 +13,7 @@ allowed-tools:
   - TaskList
 ---
 
-# Talk Rehearsal Coach
+# No-Notes Talk Coach
 
 Helps someone learn a talk off by heart in a day or two, without speaker notes. It works from the
 talk they already have. It does not write or redesign the talk.
@@ -107,7 +107,7 @@ techniques: "tailored for ADHD, useful for all".
 Write the shaped talk to a JSON file, then build the page:
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT}/skills/talk-rehearsal-coach/scripts/build_coach.py" \
+python3 "${CLAUDE_PLUGIN_ROOT}/skills/no-notes-talk-coach/scripts/build_coach.py" \
   --data talk.json --out <talk-slug>-coach.html
 ```
 
@@ -146,7 +146,7 @@ script to rebuild the page). It has light and dark themes and prints cleanly.
   `reference/site-bar-youngleaders.json`; only use it when the user asks for that branding.
 
 If Python is not available (for example in a restricted Cowork session), say so, then give the user
-the JSON and these manual steps: open `templates/rehearsal-coach.html`, replace everything between
+the JSON and these manual steps: open `templates/no-notes-coach.html`, replace everything between
 `/*__DATA_START__*/` and `/*__DATA_END__*/` with the JSON, and save. Never say the page was built
 when it was not.
 
