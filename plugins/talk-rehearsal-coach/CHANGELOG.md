@@ -13,7 +13,8 @@ All notable changes to the talk-rehearsal-coach plugin.
   the next step highlighted and a button per step to the right tab. The drill runs at real, fast or
   slow pace, the quiz can shuffle and remembers misses between visits, and the cue cards warn when
   two cues start with the same word. The ADHD tag sits on the four ADHD-specific techniques only and is
-  explained once, in the Method intro. Keyboard shortcuts can be switched off, focus is kept on every
+  explained once, in the Method intro. A demo talk (`"example": true`) opens with a
+  "This is an example" banner and a "Use my own talk" button. Keyboard shortcuts can be switched off, focus is kept on every
   re-render, and the slide is announced once in a single live region.
 - **`scripts/build_coach.py`**: validates talk JSON and injects it into the template as strict JSON
   that is safe inside a script element. Optional `--site-bar` preset (off by default) and

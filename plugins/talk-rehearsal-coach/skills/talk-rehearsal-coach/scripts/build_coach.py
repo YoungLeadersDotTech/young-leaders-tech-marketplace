@@ -25,7 +25,9 @@ Talk JSON shape (only "slides" is required):
     }
 
 "seconds" on a slide overrides secondsPerSlide for that slide (free-paced talks).
-"timeLimit" is the total allowed, in seconds. "plan" also accepts the older
+"timeLimit" is the total allowed, in seconds. "example": true marks a demo talk
+(the page then says so up front, with a button to start your own); never set it
+for a user's own talk. "plan" also accepts the older
 {"tonight": [...], "tomorrow": [...]} shape.
 
 Exit codes: 0 written, 1 invalid data, 2 bad arguments or unreadable files.
@@ -115,6 +117,8 @@ def validate(data: object) -> dict:
         "title": _text(data.get("title")) or "Talk Rehearsal Coach",
         "talkTitle": _text(data.get("talkTitle")) or "Your talk",
         "intro": _text(data.get("intro")),
+        # Only the shipped demo talks set this: it shows the "This is an example" banner.
+        "example": data.get("example") is True,
         "slides": clean_slides,
     }
 

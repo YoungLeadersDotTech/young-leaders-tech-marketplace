@@ -227,3 +227,13 @@ def test_malformed_preset_is_rejected(tmp_path, bar):
     f.write_text(json.dumps(bar))
     with pytest.raises(bc.CoachDataError):
         bc.load_site_bar(f)
+
+
+def test_example_flag_only_when_explicitly_true():
+    assert bc.validate(talk(example=True))["example"] is True
+    assert bc.validate(talk())["example"] is False
+    assert bc.validate(talk(example="yes"))["example"] is False
+
+
+def test_shipped_sample_is_marked_as_example():
+    assert embedded(TEMPLATE.read_text(encoding="utf-8"))["example"] is True

@@ -32,6 +32,8 @@ try{
   h1{font-size:1.7rem;margin:.35em 0 .15em;line-height:1.25}
   .coreidea{color:var(--muted);font-size:1.05rem;margin:.5em 0 0;line-height:1.55}
   .intro{margin:.8em 0 0;font-size:.95rem}
+  .example-banner{border:2px solid var(--accent);background:var(--soft);color:var(--ink);border-radius:12px;padding:12px 14px;margin:.9em 0 0;font-size:.95rem}
+  .example-banner .row{margin-top:10px}
   /* ADHD tag: a small superscript, explained once in the Method intro. Hover shows ADHD_TIP. */
   .adhd{font-size:.6em;font-weight:700;letter-spacing:.04em;color:var(--accent);margin-left:4px;vertical-align:super;line-height:1;white-space:nowrap;cursor:help}
   .why-note{font-size:.9rem;color:var(--muted);border-left:3px solid var(--accent);padding:2px 10px;margin:.6em 0 0}
@@ -161,6 +163,7 @@ try{
     <h1 id="title">Talk Rehearsal Coach</h1>
     <p class="coreidea" id="coreidea"></p>
     <p class="intro" id="intro"></p>
+    <div class="example-banner" id="exampleBanner" role="region" aria-label="Example content" hidden></div>
   </header>
 
   <nav class="selbar" aria-label="Views">
@@ -189,7 +192,7 @@ try{
 
 <script>
 // DATA is injected by the talk-rehearsal-coach skill (scripts/build_coach.py). Strict JSON.
-const DATA = /*__DATA_START__*/{"title": "Talk Rehearsal Coach", "talkTitle": "Write It Down", "intro": "Loaded with a short sample talk. Paste your own script in the Your talk tab.", "secondsPerSlide": 20, "chapters": [{"name": "The problem", "tone": "calm, a bit wry", "slides": [1, 2]}, {"name": "The fix", "tone": "practical, upbeat", "slides": [3, 4]}, {"name": "The close", "tone": "warm, slower", "slides": [5, 6]}], "slides": [{"title": "The lost decision", "cue": "Lost", "lines": "Last spring my team made a great decision in a meeting. Two weeks later, nobody could remember what it was.", "anchor": "Stand still, hands open.", "pause": "After 'nobody could remember'."}, {"title": "The cost", "cue": "Rework", "lines": "We rebuilt the same argument three times. That is three meetings of rework for one decision.", "anchor": "Hold up three fingers.", "pause": ""}, {"title": "The one-line log", "cue": "Log", "lines": "So we started a one-line decision log. Date, decision, who, why. Nothing else.", "anchor": "Step forward.", "pause": ""}, {"title": "What changed", "cue": "Search", "lines": "New joiners stopped asking why. They searched the log instead.", "anchor": "", "pause": "After 'searched the log'."}, {"title": "Start small", "cue": "Tomorrow", "lines": "You do not need a tool. Start tomorrow with a shared doc and one line per decision.", "anchor": "Point to the audience.", "pause": ""}, {"title": "The callback", "cue": "Remember", "lines": "Because the best decision is the one your team can still remember. Thank you.", "anchor": "Step back, smile, nod.", "pause": "Before 'Thank you'."}]}/*__DATA_END__*/;
+const DATA = /*__DATA_START__*/{"title": "Talk Rehearsal Coach", "talkTitle": "Write It Down", "intro": "A short sample talk, loaded so you can see how the coach works. Nothing here is yours yet.", "secondsPerSlide": 20, "chapters": [{"name": "The problem", "tone": "calm, a bit wry", "slides": [1, 2]}, {"name": "The fix", "tone": "practical, upbeat", "slides": [3, 4]}, {"name": "The close", "tone": "warm, slower", "slides": [5, 6]}], "slides": [{"title": "The lost decision", "cue": "Lost", "lines": "Last spring my team made a great decision in a meeting. Two weeks later, nobody could remember what it was.", "anchor": "Stand still, hands open.", "pause": "After 'nobody could remember'."}, {"title": "The cost", "cue": "Rework", "lines": "We rebuilt the same argument three times. That is three meetings of rework for one decision.", "anchor": "Hold up three fingers.", "pause": ""}, {"title": "The one-line log", "cue": "Log", "lines": "So we started a one-line decision log. Date, decision, who, why. Nothing else.", "anchor": "Step forward.", "pause": ""}, {"title": "What changed", "cue": "Search", "lines": "New joiners stopped asking why. They searched the log instead.", "anchor": "", "pause": "After 'searched the log'."}, {"title": "Start small", "cue": "Tomorrow", "lines": "You do not need a tool. Start tomorrow with a shared doc and one line per decision.", "anchor": "Point to the audience.", "pause": ""}, {"title": "The callback", "cue": "Remember", "lines": "Because the best decision is the one your team can still remember. Thank you.", "anchor": "Step back, smile, nod.", "pause": "Before 'Thank you'."}], "example": true}/*__DATA_END__*/;
 
 // ---------- helpers ----------
 // esc(): every DATA field and every pasted field is untrusted plain text, escaped before it touches the DOM.
@@ -253,7 +256,7 @@ function defaultPlan(d){
     ]}]};
 }
 function normalise(src){
-  const d = {title:str(src.title)||"Talk Rehearsal Coach", talkTitle:str(src.talkTitle)||"Your talk", intro:str(src.intro), slides:[], chapters:[], plan:null};
+  const d = {title:str(src.title)||"Talk Rehearsal Coach", talkTitle:str(src.talkTitle)||"Your talk", intro:str(src.intro), example:src.example===true, slides:[], chapters:[], plan:null};
   const sps = parseInt(src.secondsPerSlide,10);
   d.secondsPerSlide = (sps>=3 && sps<=600) ? sps : 15;
   const lim = parseInt(src.timeLimit,10);
@@ -337,7 +340,19 @@ function header(){
   document.title = D.talkTitle+" - "+D.title;
   document.getElementById("title").textContent = D.talkTitle;
   document.getElementById("coreidea").textContent = D.slides.length+" slides"+(even?", "+D.secondsPerSlide+" seconds each":"")+", "+mmss(total)+" in total"+(D.timeLimit?" (limit "+mmss(D.timeLimit)+(total>D.timeLimit?", over by "+mmss(total-D.timeLimit):"")+")":"")+". Learn it off without notes.";
-  document.getElementById("intro").textContent = D.intro;
+  // Example content says so up front, on every tab, with a way to start your own.
+  const banner = document.getElementById("exampleBanner"), intro = document.getElementById("intro");
+  let dismissed = false; try{ dismissed = sessionStorage.getItem("talk-coach-example-ok")==="1"; }catch(e){}
+  if(D.example && !dismissed){
+    intro.textContent = ""; intro.hidden = true; banner.hidden = false;
+    banner.innerHTML = "<b>This is an example.</b> "+esc(D.intro || "A sample talk, loaded so you can see how the coach works.")
+      + "<div class='row'><button type='button' class='primary' id='useOwn'>Use my own talk</button><button type='button' id='keepExample'>Keep exploring the example</button></div>";
+    banner.querySelector("#useOwn").addEventListener("click",()=>{ setTab("yours", true); const ta=document.getElementById("yText"); if(ta){ ta.scrollIntoView({block:"center"}); ta.focus(); } });
+    banner.querySelector("#keepExample").addEventListener("click",()=>{ try{ sessionStorage.setItem("talk-coach-example-ok","1"); }catch(e){} header(); const h=document.getElementById("title"); h.setAttribute("tabindex","-1"); h.focus(); });
+  } else {
+    banner.hidden = true; banner.innerHTML = "";
+    intro.hidden = !(D.intro && !D.example); intro.textContent = D.example ? "" : D.intro;
+  }
 }
 function renderMethod(c){
   const s = el("section","block");
@@ -573,7 +588,7 @@ function renderYours(c){
   ta.addEventListener("input",()=>store("talk-coach-draft", ta.value));
   s.querySelector("#clearDraft").addEventListener("click",()=>{ if(ta.value.trim() && !confirm("Clear your saved script from this browser? This cannot be undone.")) return; try{ localStorage.removeItem("talk-coach-draft"); }catch(e){} ta.value=""; st.className="status ok"; st.textContent="Saved draft cleared from this browser."; });
   s.querySelector("#example").addEventListener("click",()=>{ if(ta.value.trim() && !confirm("Replace what is in the box with the example format?")) return; ta.value = EXAMPLE; store("talk-coach-draft", ta.value); ta.focus(); });
-  s.querySelector("#reset").addEventListener("click",()=>{ D = normalise(DATA); drill.secs = D.secondsPerSlide; drillReset(); header(); st.className="status ok"; st.textContent="Example talk loaded."; });
+  s.querySelector("#reset").addEventListener("click",()=>{ try{ sessionStorage.removeItem("talk-coach-example-ok"); }catch(e){} D = normalise(DATA); drill.secs = D.secondsPerSlide; drillReset(); header(); st.className="status ok"; st.textContent="Example talk loaded."; });
   s.querySelector("#build").addEventListener("click",()=>{
     const parsed = parseTalk(ta.value);
     if(!parsed.slides.length){ st.className="status err"; st.textContent="No slides found. Paste some text first, with a blank line between slides."; return; }

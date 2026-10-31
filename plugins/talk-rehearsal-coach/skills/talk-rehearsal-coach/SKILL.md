@@ -127,6 +127,7 @@ reason if anything is wrong):
 }
 ```
 
+Never set `example` for the user's own talk: it marks a demo and shows a "This is an example" banner.
 `seconds` on a slide overrides `secondsPerSlide` (free-paced talks); `timeLimit` is the total
 allowed in seconds; `plan.days` holds 1 to 14 days of steps (the older `tonight`/`tomorrow` lists
 still work).

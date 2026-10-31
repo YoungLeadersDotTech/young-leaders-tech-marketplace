@@ -12,7 +12,7 @@ good memory practice for anyone and is left untagged.
 
 Try it without installing anything: the same page runs on
 [tools.youngleaders.tech](https://tools.youngleaders.tech/), loaded with a real 20-slide example.
-Paste your own script into its Your talk tab.
+The example says so up front, with a "Use my own talk" button that takes you to the Your talk tab.
 
 ## What you get
 
