@@ -32,12 +32,10 @@ try{
   h1{font-size:1.7rem;margin:.35em 0 .15em;line-height:1.25}
   .coreidea{color:var(--muted);font-size:1.05rem;margin:.5em 0 0;line-height:1.55}
   .intro{margin:.8em 0 0;font-size:.95rem}
-  .legend{margin:.8em 0 0;font-size:.88rem;color:var(--muted)}
-  /* ADHD annotation: a small superscript tag. Tap or hover for the full meaning. */
-  .adhd{font-size:.6em;font-weight:700;letter-spacing:.04em;color:var(--accent);border:1px solid var(--accent);
-    border-radius:4px;padding:0 4px;margin-left:5px;vertical-align:super;line-height:1;white-space:nowrap}
-  .adhd-note{font-size:.9rem;color:var(--muted);border-left:3px solid var(--accent);padding:2px 10px;margin:.6em 0 0}
-  .adhd-note b{color:var(--ink)}
+  /* ADHD tag: a small superscript, explained once in the Method intro. Hover shows ADHD_TIP. */
+  .adhd{font-size:.6em;font-weight:700;letter-spacing:.04em;color:var(--accent);margin-left:4px;vertical-align:super;line-height:1;white-space:nowrap;cursor:help}
+  .why-note{font-size:.9rem;color:var(--muted);border-left:3px solid var(--accent);padding:2px 10px;margin:.6em 0 0}
+  .why-note b{color:var(--ink)}
   .selbar{position:sticky;top:0;z-index:10;background:var(--bg);padding:12px 0 8px;border-bottom:1px solid var(--line)}
   .selbar .row1{display:flex;align-items:center;gap:8px;justify-content:space-between}
   .selbar .lbl{font-size:13px;color:var(--muted)}
@@ -163,7 +161,6 @@ try{
     <h1 id="title">Talk Rehearsal Coach</h1>
     <p class="coreidea" id="coreidea"></p>
     <p class="intro" id="intro"></p>
-    <p class="legend"><span class="adhd" aria-hidden="true">ADHD</span> marks a technique tailored for ADHD brains. Useful for everyone.</p>
   </header>
 
   <nav class="selbar" aria-label="Views">
@@ -205,7 +202,7 @@ function mmss(sec){ sec=Math.max(0,Math.round(sec)); return Math.floor(sec/60)+"
 function paras(text){ return str(text).split(/\n\s*\n/).map(p=>"<p>"+esc(p).replace(/\n/g,"<br>")+"</p>").join(""); }
 function words(text){ const m=str(text).match(/[A-Za-z0-9À-ɏ%€$£'-]+/g); return m ? m.length : 0; }
 const ADHD_TIP = "Tailored for ADHD, useful for all";
-function adhd(){ return " <span class='adhd'>ADHD<span class='sr'> technique, tailored for ADHD, useful for all</span></span>"; }
+function adhd(){ return " <span class='adhd' title='"+ADHD_TIP+"'>ADHD</span>"; }
 const WPS = 2.5; // speaking pace: about 150 words a minute
 
 const STOP = new Set("a an and are as at be been but by can do for from had has have he her his how i if in into is it its just let me my no not of on or our out so than that the their them then there these they this to too up us was we were what when where which who why will with you your yours ive im its youre weve dont cant thats heres whats really very about also even every much many some more most only one all any".split(" "));
@@ -344,8 +341,8 @@ function header(){
 }
 function renderMethod(c){
   const s = el("section","block");
-  s.innerHTML = "<h2>The method</h2><p>Six techniques for getting a talk off by heart in a day or two. Every other tab on this page puts one of them to work. The first two are good memory practice for anyone; the four tagged ADHD are the ones that matter most when focus is the bottleneck.</p>"
-    + METHOD.map((m,i)=>"<div class='card'><h3>"+(i+1)+". "+esc(m.h)+(m.adhd?adhd():"")+"</h3><p>"+esc(m.body)+"</p><p class='adhd-note'><b>"+(m.adhd?"Why it helps with ADHD:":"Why it works:")+"</b> "+esc(m.why)+"</p></div>").join("")
+  s.innerHTML = "<h2>The method</h2><p>Six techniques for getting a talk off by heart in a day or two. Every other tab on this page puts one of them to work. The first two are good memory practice for anyone. The four marked <span class='adhd'>ADHD</span> matter most when focus is the bottleneck: tailored for ADHD, useful for all.</p>"
+    + METHOD.map((m,i)=>"<div class='card'><h3>"+(i+1)+". "+esc(m.h)+(m.adhd?adhd():"")+"</h3><p>"+esc(m.body)+"</p><p class='why-note'><b>"+"Why it works:"+"</b> "+esc(m.why)+"</p></div>").join("")
     + "<div class='card'><h3>How to use this page</h3><ol><li><b>Start here</b>: the plan, one step at a time, each with a button to the right tab.</li><li><b>Map</b>: see the chapters and the recall chain.</li><li><b>Cue cards</b>: one word per slide, tap to check the lines.</li><li><b>Script</b>: the full words, with anchors and pauses.</li><li><b>Drill</b>: a timer that moves the slides on like the real thing, plus a self-quiz.</li><li><b>Your talk</b>: paste your own script and the whole page rebuilds around it.</li></ol></div>";
   c.appendChild(s);
 }
@@ -353,7 +350,7 @@ function renderMap(c){
   const s = el("section","block");
   let html = "<h2>The map</h2><p class='muted'>"+D.chapters.length+" chapters, "+D.slides.length+" slides, "+mmss(totalBudget())+" in total.</p>";
   html += "<div class='mapbar' role='list' aria-label='Chapters by length'>"+D.chapters.map(ch=>"<div class='mapseg' role='listitem' style='flex:"+ch.slides.length+" 1 0'><b>"+esc(ch.name)+"</b><span>"+ch.slides.length+" slides, "+mmss(chapterBudget(ch))+"</span></div>").join("")+"</div>";
-  html += "<div class='card'><h3>Recall chain</h3><p class='chain'>"+D.chapters.map(ch=>esc((D.slides[ch.slides[0]-1]||{}).cue)).join("<span class='sep' aria-hidden='true'>&rarr;</span>")+"</p><p class='adhd-note'><b>How to use it:</b> the first cue of each chapter, in order. Picture this chain before bed and again before you walk on. If you blank mid-talk, find your place on the chain.</p></div>";
+  html += "<div class='card'><h3>Recall chain</h3><p class='chain'>"+D.chapters.map(ch=>esc((D.slides[ch.slides[0]-1]||{}).cue)).join("<span class='sep' aria-hidden='true'>&rarr;</span>")+"</p><p class='why-note'><b>How to use it:</b> the first cue of each chapter, in order. Picture this chain before bed and again before you walk on. If you blank mid-talk, find your place on the chain.</p></div>";
   D.chapters.forEach((ch,ci)=>{
     html += "<div class='card'><h3>"+(ci+1)+". "+esc(ch.name)+"</h3>"+(ch.tone?"<p class='muted'>Tone: "+esc(ch.tone)+"</p>":"")
       + "<div class='chips'>"+ch.slides.map(n=>"<span class='chip'><i>"+n+"</i>"+esc(D.slides[n-1].cue)+"</span>").join("")+"</div>"
@@ -438,8 +435,8 @@ function paintBars(){
 }
 function renderDrill(c){
   const s = el("section","block");
-  s.innerHTML = "<h2>Drill"+adhd()+"</h2>"
-    + "<p class='muted'><b>Timer</b> moves the slides on like the real thing, showing only the cue word. Switch the pace to fast or slow for a change of rhythm. <b>Quiz</b> shows a cue, you say the slide out loud, then you check and mark it; shuffle it once you know the order. Short passes beat one long cram.</p>"
+  s.innerHTML = "<h2>Drill</h2>"
+    + "<p class='muted'><b>Timer</b> moves the slides on like the real thing, showing only the cue word. Switch the pace to fast or slow to change the rhythm (technique 5). <b>Quiz</b> shows a cue, you say the slide out loud, then you check and mark it; shuffle it once you know the order. Short passes beat one long cram.</p>"
     + "<div class='row'><div class='modes' role='group' aria-label='Drill mode'><button type='button' data-mode='timer'>Timer</button><button type='button' data-mode='quiz'>Quiz</button></div>"
     + "<label class='inl'>Seconds per slide <input type='number' id='drillSecs' min='3' max='600' value='"+drill.secs+"'></label>"
     + "<label class='inl'>Pace <select id='pace'><option value='1'>Real pace</option><option value='0.75'>Fast (x0.75)</option><option value='1.5'>Slow (x1.5)</option></select></label>"
@@ -551,7 +548,7 @@ function renderPlan(c){
   const list = (name, items) => "<div class='card'><h3>"+esc(name)+"</h3>"+items.map((t,i)=>{ const k=name+i, on=!!ticks[k], go=planTarget(t);
     return "<div class='plan-item"+(k===nextK?" next":"")+"'><label class='check"+(on?" done":"")+"'><input type='checkbox' data-k='"+esc(k)+"'"+(on?" checked":"")+"><span>"+(k===nextK?"<b>Next: </b>":"")+esc(t)+"</span></label>"
       + (go?"<button type='button' class='go' data-go='"+go.tab+"' data-gomode='"+(go.mode||"")+"'>"+go.label+"</button>":"")+"</div>"; }).join("")+"</div>";
-  s.innerHTML = "<h2>Start here: the plan</h2><p class='adhd-note'><b>Why it works:</b> short, varied passes spread over more than one sitting beat one long cram. Sleep does part of the work for you. Tick each step as you go; the next one is highlighted.</p>"
+  s.innerHTML = "<h2>Start here: the plan</h2><p class='why-note'><b>Why it works:</b> short, varied passes spread over more than one sitting beat one long cram. Sleep does part of the work for you. Tick each step as you go; the next one is highlighted.</p>"
     + D.plan.days.map(dy=>list(dy.name, dy.steps)).join("")
     + "<div class='row noprint'><button type='button' id='resetTicks'>Clear ticks</button></div>";
   c.appendChild(s);

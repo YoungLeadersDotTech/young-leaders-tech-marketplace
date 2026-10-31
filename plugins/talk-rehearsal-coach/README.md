@@ -6,9 +6,9 @@ Learn a talk off without notes in a day or two. Give it the talk you already hav
 script or slide notes) and the seconds per slide, and it gives you back a rehearsal pack and a
 single offline HTML page to drill with.
 
-The method is tailored for ADHD and useful for everyone. The four techniques that matter most when
-focus is the bottleneck, and the timed drill, carry a small superscript **ADHD** tag, with a line
-on why each one helps. The rest is good memory practice for anyone and is left untagged.
+Tailored for ADHD, useful for all. The four techniques that matter most when focus is the
+bottleneck carry a small superscript **ADHD** tag, explained once on the Method tab. The rest is
+good memory practice for anyone and is left untagged.
 
 Try it without installing anything: the same page runs on
 [tools.youngleaders.tech](https://tools.youngleaders.tech/), loaded with a real 20-slide example.

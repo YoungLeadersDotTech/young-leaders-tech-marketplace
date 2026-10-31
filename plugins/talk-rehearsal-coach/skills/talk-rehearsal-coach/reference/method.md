@@ -2,8 +2,9 @@
 
 Six techniques for learning a talk off by heart in a day or two, without speaker notes. The first
 two are good memory practice for anyone. The last four are the ones that matter most when focus is
-the bottleneck: mark only those four (and the timed drill) with the superscript ADHD tag, with the
-legend "ADHD = tailored for ADHD, useful for all". Tagging everything makes the tag meaningless.
+the bottleneck: mark only those four with the superscript ADHD tag, explained once above the first
+one, as "tailored for ADHD, useful for all". Tagging or explaining everything makes the tag
+meaningless.
 
 The method came from rehearsing a 20-slide, 15-seconds-per-slide talk in 48 hours.
 
@@ -30,7 +31,7 @@ your mind blanks, the cue comes back first.
 Reading silently feels like rehearsal but it isn't. Speak it while pacing the room, record one
 natural take on your phone and listen back on a walk or while doing chores.
 
-**Why it helps with ADHD:** movement plus audio keeps you engaged long enough to actually get the
+**Why it works:** movement plus audio keeps you engaged long enough to actually get the
 repetitions in.
 
 ## 4. Anchor it to your body (ADHD)
@@ -38,7 +39,7 @@ repetitions in.
 Tie each chapter to a spot on the stage or a gesture: left side for the opening story, centre for
 the big claim, a downward hand for "below the surface".
 
-**Why it helps with ADHD:** a physical anchor gives memory a second way in that doesn't depend on
+**Why it works:** a physical anchor gives memory a second way in that doesn't depend on
 focus.
 
 ## 5. Change the rhythm (ADHD)
@@ -46,7 +47,7 @@ focus.
 Run it at normal speed, then fast, then slow, then as if you're telling a friend over coffee. Each
 pass shakes loose the bits you only know as a block.
 
-**Why it helps with ADHD:** a bit of novelty every pass stops rehearsal going stale, so you keep
+**Why it works:** a bit of novelty every pass stops rehearsal going stale, so you keep
 doing it.
 
 ## 6. Lock the edges (ADHD)
@@ -54,7 +55,7 @@ doing it.
 Learn the first and last line of every chapter word for word. The middle can flex; the transitions
 can't.
 
-**Why it helps with ADHD:** transitions are where attention drifts. Fixed edges pull you back on
+**Why it works:** transitions are where attention drifts. Fixed edges pull you back on
 track.
 
 ## The recall chain

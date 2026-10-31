@@ -18,11 +18,12 @@ allowed-tools:
 Helps someone learn a talk off by heart in a day or two, without speaker notes. It works from the
 talk they already have. It does not write or redesign the talk.
 
-Outputs mark the techniques that are tailored for ADHD with a small superscript **ADHD** tag,
-meaning "tailored for ADHD, useful for all". Only the four techniques that matter most when focus is
-the bottleneck, and the timed drill, carry it (see `reference/method.md`); tagging everything makes
-the tag meaningless. Keep the framing: built for ADHD brains, works for everyone, never presented
-as a special mode or a lesser version. Don't claim more than the "why it works" lines say.
+Outputs mark the four techniques that matter most when focus is the bottleneck with a small
+superscript **ADHD** tag, meaning "tailored for ADHD, useful for all" (see `reference/method.md`).
+Tag techniques only, never tabs or tools, and explain the tag once, directly above the first one,
+never in a page header; tagging or explaining everything makes the tag meaningless. Keep the
+framing: built for ADHD brains, works for everyone, never presented as a special mode or a lesser
+version. Label every rationale "Why it works:" and don't claim more than those lines say.
 
 The method itself (six techniques, with why each one helps) is in `reference/method.md`. Read it
 before Phase 2.
@@ -96,8 +97,8 @@ twice. By default, show:
 
 Offer the full pack (script by chapter with anchors and pauses, the method applied to this talk,
 the day-by-day plan) as a markdown file for anyone who wants it on paper. When it is written, mark
-only the ADHD-tagged techniques with `<sup>ADHD</sup>` and add the legend once at the top:
-"ADHD = tailored for ADHD, useful for all".
+only the ADHD-tagged techniques with `<sup>ADHD</sup>` and explain the tag once, directly above the
+techniques: "tailored for ADHD, useful for all".
 
 ## Phase 4: Build the HTML coach
 
