@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talk Rehearsal Coach</title>
+<script>
+// Applied before first paint so a saved manual theme choice never flashes the OS default first.
+try{
+  var __t = localStorage.getItem("talk-coach-theme");
+  if(__t === "dark" || __t === "light") document.documentElement.setAttribute("data-theme", __t);
+}catch(e){}
+</script>
+<style>
+  :root{
+    --bg:#fafaf8; --ink:#1a1a1a; --muted:#5a5a52; --line:#e2e0d8; --panel:#fff;
+    --accent:#2f5d50; --accent2:#a8481a; --on-accent:#ffffff; --soft:#eef4f1;
+    --good:#2f6b3a; --bad:#a01b2e;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#16161a;--ink:#ececec;--muted:#a0a0a0;--line:#2c2c33;--panel:#1e1e24;--accent:#7fb3a3;--accent2:#e0915f;--on-accent:#10231e;--soft:#1f2a27;--good:#8fd19e;--bad:#f08a9a;}
+  }
+  /* The manual toggle sets data-theme on <html>, which wins over the OS preference either way. */
+  :root[data-theme="light"]{--bg:#fafaf8;--ink:#1a1a1a;--muted:#5a5a52;--line:#e2e0d8;--panel:#fff;--accent:#2f5d50;--accent2:#a8481a;--on-accent:#ffffff;--soft:#eef4f1;--good:#2f6b3a;--bad:#a01b2e;}
+  :root[data-theme="dark"]{--bg:#16161a;--ink:#ececec;--muted:#a0a0a0;--line:#2c2c33;--panel:#1e1e24;--accent:#7fb3a3;--accent2:#e0915f;--on-accent:#10231e;--soft:#1f2a27;--good:#8fd19e;--bad:#f08a9a;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:820px;margin:0 auto;padding:0 16px 100px}
+  header.top{padding:40px 0 22px;border-bottom:1px solid var(--line)}
+  .kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);font-weight:700}
+  h1{font-size:1.7rem;margin:.35em 0 .15em;line-height:1.25}
+  .coreidea{color:var(--muted);font-size:1.05rem;margin:.5em 0 0;line-height:1.55}
+  .intro{margin:.8em 0 0;font-size:.95rem}
+  .legend{margin:.8em 0 0;font-size:.88rem;color:var(--muted)}
+  /* ADHD annotation: a small superscript tag. Tap or hover for the full meaning. */
+  .adhd{font-size:.6em;font-weight:700;letter-spacing:.04em;color:var(--accent);border:1px solid var(--accent);
+    border-radius:4px;padding:0 4px;margin-left:5px;vertical-align:super;line-height:1;white-space:nowrap}
+  .adhd-note{font-size:.9rem;color:var(--muted);border-left:3px solid var(--accent);padding:2px 10px;margin:.6em 0 0}
+  .adhd-note b{color:var(--ink)}
+  .selbar{position:sticky;top:0;z-index:10;background:var(--bg);padding:12px 0 8px;border-bottom:1px solid var(--line)}
+  .selbar .row1{display:flex;align-items:center;gap:8px;justify-content:space-between}
+  .selbar .lbl{font-size:13px;color:var(--muted)}
+  .selbar .utils{display:flex;gap:6px;flex:none}
+  .selbar .fmts{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0 2px}
+  .selbar .fmts::-webkit-scrollbar{display:none}
+  .selbar .fmts button{flex:0 0 auto;white-space:nowrap}
+  button,.btn{font:inherit;font-size:14px;padding:7px 14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;cursor:pointer}
+  .selbar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+  .selbar .util{border-radius:8px;font-size:13px;padding:6px 11px}
+  button.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600}
+  button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+  @media (max-width:560px){ .selbar .lbl{display:none} .selbar{position:static} }
+  section.block{padding:30px 0;border-bottom:1px solid var(--line)}
+  section.block h2{font-size:1.25rem;margin:0 0 .6em;line-height:1.3}
+  h3{font-size:1.05rem;margin:0 0 .4em}
+  .card{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);padding:18px 20px;margin:14px 0}
+  .muted{color:var(--muted)}
+  .badge{display:inline-block;font-size:12px;padding:1px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);margin-right:6px}
+  .badge.cue{border-color:var(--accent);color:var(--accent);font-weight:700}
+  .badge.over{border-color:var(--accent2);color:var(--accent2);font-weight:700}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  /* Map */
+  .mapbar{display:flex;gap:4px;margin:12px 0 6px;min-height:76px}
+  .mapseg{border:2px solid var(--accent);border-radius:10px;background:var(--soft);color:var(--ink);padding:8px 10px;min-width:0;overflow:hidden}
+  .mapseg b{display:block;font-size:.92rem;line-height:1.25;overflow-wrap:break-word}
+  .mapseg span{font-size:.8rem;color:var(--muted)}
+  @media (max-width:600px){
+    .mapbar{flex-direction:column;min-height:0}
+    .mapseg{flex:none !important;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+    .mapseg span{white-space:nowrap}
+  }
+  .chain{font-weight:700;font-size:1.05rem;line-height:1.8}
+  .chain .sep{color:var(--muted);font-weight:400;margin:0 6px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin:.4em 0 0}
+  .chip{font-size:13px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--panel);color:var(--ink)}
+  .chip i{font-style:normal;color:var(--muted);margin-right:4px}
+  /* Cue cards */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:12px}
+  .cuecard{display:block;width:100%;text-align:left;border-radius:12px;padding:14px;min-height:130px;line-height:1.4}
+  .cuecard .n{font-size:12px;color:var(--muted)}
+  .cuecard .cw{display:block;font-size:1.35rem;font-weight:800;margin:.2em 0 .3em;overflow-wrap:anywhere}
+  .cuecard .first{font-size:.86rem;color:var(--muted)}
+  .cuecard.flipped{border-color:var(--accent)}
+  .cuecard .back{display:none;font-size:.9rem}
+  .cuecard.flipped .back{display:block}
+  .cuecard.flipped .first{display:none}
+  /* Script */
+  .slide{padding:14px 0;border-top:1px dashed var(--line)}
+  .slide h3{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+  .slide .lines p{margin:.45em 0}
+  .callout{border-left:4px solid var(--line);background:var(--soft);color:var(--ink);padding:8px 12px;border-radius:0 8px 8px 0;margin:.6em 0;font-size:.93rem}
+  .callout .lbl{font-weight:700;font-size:12px;letter-spacing:.04em;text-transform:uppercase;margin-right:.4em}
+  .callout.anchor{border-left-color:var(--accent)} .callout.anchor .lbl{color:var(--accent)}
+  .callout.pause{border-left-color:var(--accent2)} .callout.pause .lbl{color:var(--accent2)}
+  /* Drill */
+  .stage{border:2px solid var(--accent);border-radius:16px;background:var(--panel);color:var(--ink);padding:22px 18px;text-align:center;margin:14px 0}
+  .stage .where{font-size:.9rem;color:var(--muted)}
+  .stage .bigcue{font-size:2.6rem;font-weight:800;line-height:1.15;margin:.25em 0;overflow-wrap:anywhere}
+  .stage .ttl{font-size:1rem;color:var(--muted)}
+  .stage .reveal{text-align:left;margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+  .bar{height:8px;border-radius:999px;background:var(--line);overflow:hidden;margin:10px 0 4px}
+  .bar > div{height:100%;width:0;background:var(--accent);transition:width .1s linear}
+  @media (prefers-reduced-motion: reduce){ .bar > div{transition:none} }
+  .bar.overall > div{background:var(--accent2)}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
+  .mark-good{border-color:var(--good);color:var(--good);font-weight:700}
+  .mark-bad{border-color:var(--bad);color:var(--bad);font-weight:700}
+  .modes{display:flex;gap:8px;flex-wrap:wrap}
+  .modes button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+  label.inl{display:inline-flex;gap:6px;align-items:center;font-size:.9rem;color:var(--muted)}
+  input[type=number],input[type=text]{font:inherit;font-size:14px;padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+  input[type=number]{width:5.5em}
+  .kbd{font-size:.82rem;color:var(--muted);margin-top:10px}
+  /* Plan */
+  .check{display:flex;gap:10px;align-items:flex-start;margin:.55em 0;cursor:pointer}
+  .check input{margin-top:.35em;width:18px;height:18px;flex:none}
+  .check.done span{text-decoration:line-through;color:var(--muted)}
+  /* Your talk */
+  textarea{width:100%;min-height:280px;font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink)}
+  .field{display:flex;flex-direction:column;gap:4px;margin:10px 0}
+  .field > span{font-size:.9rem;font-weight:600}
+  pre.example{white-space:pre-wrap;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--soft);color:var(--ink);border-radius:10px;padding:12px;margin:.6em 0}
+  .status{font-size:.92rem;margin-top:8px}
+  .status.err{color:var(--bad)} .status.ok{color:var(--good)}
+  footer.foot{padding-top:32px;color:var(--muted);font-size:.85rem;line-height:1.6}
+  .foot .credit{display:block;margin-top:8px;font-size:.82rem}
+  .foot .credit a{color:var(--accent2);text-decoration:underline}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .plan-item{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+  .plan-item .check{flex:1}
+  .plan-item.next{background:var(--soft);color:var(--ink);border-radius:8px;padding:2px 8px;margin:0 -8px}
+  .plan-item .go{font-size:13px;padding:4px 11px;flex:none;margin-top:.3em}
+  .lastmiss{margin:12px 0 0}
+  /* Optional site bar (rendered only when DATA.siteBar is present) */
+  .sitebar{--sb-brand:#990101;background:var(--bg);border-bottom:1px solid var(--line)}
+  .sitebar .sb-inner{position:relative;max-width:820px;margin:0 auto;padding:9px 16px;display:flex;align-items:center;gap:14px;min-height:54px}
+  .sitebar .sb-left{display:flex;align-items:center;gap:20px;z-index:1}
+  .sitebar .sb-logo img{width:32px;height:32px;border-radius:7px;display:block}
+  .sitebar .sb-nav{display:flex;gap:16px}
+  .sitebar .sb-nav a{color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:600;padding:3px 1px;border-bottom:2px solid transparent}
+  .sitebar .sb-nav a:hover{color:var(--sb-brand)}
+  .sitebar .sb-nav a.active{color:var(--ink);border-bottom-color:var(--sb-brand)}
+  .sitebar .sb-name{position:absolute;left:50%;transform:translateX(-50%);font-weight:700;font-size:1.02rem;color:var(--ink);text-decoration:none;white-space:nowrap}
+  .sitebar .sb-right{margin-left:auto;z-index:1}
+  .sitebar .sb-sub{background:var(--sb-brand);color:#fff;text-decoration:none;font-size:.86rem;font-weight:700;padding:8px 16px;border-radius:999px;white-space:nowrap;border:1px solid var(--sb-brand)}
+  @media(max-width:720px){ .sitebar .sb-name{display:none} .sitebar .sb-inner{flex-wrap:wrap;min-height:0;gap:10px} }
+  @media print{
+    :root{--bg:#fff !important;--ink:#111 !important;--muted:#555 !important;--line:#ccc !important;--panel:#fff !important;--soft:#f4f4f0 !important;--accent:#2f5d50 !important;--accent2:#a8481a !important;}
+    .selbar,.controls,.noprint,#sitebar{display:none !important}
+    .cuecard .back{display:block}
+    .cuecard .first{display:none}
+    .cards{grid-template-columns:repeat(3,1fr)}
+    .cuecard,.slide{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div id="sitebar"></div>
+<div class="wrap">
+  <header class="top">
+    <div class="kicker">Talk rehearsal coach</div>
+    <h1 id="title">Talk Rehearsal Coach</h1>
+    <p class="coreidea" id="coreidea"></p>
+    <p class="intro" id="intro"></p>
+    <p class="legend"><span class="adhd" aria-hidden="true">ADHD</span> marks a technique tailored for ADHD brains. Useful for everyone.</p>
+  </header>
+
+  <nav class="selbar" aria-label="Views">
+    <div class="row1">
+      <span class="lbl">Rehearse with:</span>
+      <div class="utils">
+        <button class="util" id="themeBtn" type="button" aria-pressed="false">Dark</button>
+        <button class="util" id="printBtn" type="button">Print / PDF</button>
+      </div>
+    </div>
+    <div class="fmts" role="group" aria-label="View">
+      <button type="button" data-tab="plan" aria-pressed="true">Start here</button>
+      <button type="button" data-tab="method" aria-pressed="false">Method</button>
+      <button type="button" data-tab="map" aria-pressed="false">Map</button>
+      <button type="button" data-tab="cards" aria-pressed="false">Cue cards</button>
+      <button type="button" data-tab="script" aria-pressed="false">Script</button>
+      <button type="button" data-tab="drill" aria-pressed="false">Drill</button>
+      <button type="button" data-tab="yours" aria-pressed="false">Your talk</button>
+    </div>
+  </nav>
+
+  <main id="content"></main>
+
+  <footer class="foot" id="foot"></footer>
+</div>
+
+<script>
+// DATA is injected by the talk-rehearsal-coach skill (scripts/build_coach.py). Strict JSON.
+const DATA = /*__DATA_START__*/{"title": "Talk Rehearsal Coach", "talkTitle": "Write It Down", "intro": "Loaded with a short sample talk. Paste your own script in the Your talk tab.", "secondsPerSlide": 20, "chapters": [{"name": "The problem", "tone": "calm, a bit wry", "slides": [1, 2]}, {"name": "The fix", "tone": "practical, upbeat", "slides": [3, 4]}, {"name": "The close", "tone": "warm, slower", "slides": [5, 6]}], "slides": [{"title": "The lost decision", "cue": "Lost", "lines": "Last spring my team made a great decision in a meeting. Two weeks later, nobody could remember what it was.", "anchor": "Stand still, hands open.", "pause": "After 'nobody could remember'."}, {"title": "The cost", "cue": "Rework", "lines": "We rebuilt the same argument three times. That is three meetings of rework for one decision.", "anchor": "Hold up three fingers.", "pause": ""}, {"title": "The one-line log", "cue": "Log", "lines": "So we started a one-line decision log. Date, decision, who, why. Nothing else.", "anchor": "Step forward.", "pause": ""}, {"title": "What changed", "cue": "Search", "lines": "New joiners stopped asking why. They searched the log instead.", "anchor": "", "pause": "After 'searched the log'."}, {"title": "Start small", "cue": "Tomorrow", "lines": "You do not need a tool. Start tomorrow with a shared doc and one line per decision.", "anchor": "Point to the audience.", "pause": ""}, {"title": "The callback", "cue": "Remember", "lines": "Because the best decision is the one your team can still remember. Thank you.", "anchor": "Step back, smile, nod.", "pause": "Before 'Thank you'."}]}/*__DATA_END__*/;
+
+// ---------- helpers ----------
+// esc(): every DATA field and every pasted field is untrusted plain text, escaped before it touches the DOM.
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function safeUrl(u){ try{ const p=new URL(u, location.href); return ["http:","https:","mailto:"].includes(p.protocol) ? u : "#"; }catch(e){ return "#"; } }
+function safeImgUrl(u){ u=String(u==null?"":u).trim(); try{ if(/^data:image\/(png|jpe?g|gif|webp);base64,/i.test(u)) return u; const p=new URL(u, location.href); return ["http:","https:"].includes(p.protocol) ? u : ""; }catch(e){ return ""; } }
+function str(v){ return v==null ? "" : String(v).trim(); }
+function store(k, v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k, v); }catch(e){ return null; } return null; }
+function mmss(sec){ sec=Math.max(0,Math.round(sec)); return Math.floor(sec/60)+":"+String(sec%60).padStart(2,"0"); }
+function paras(text){ return str(text).split(/\n\s*\n/).map(p=>"<p>"+esc(p).replace(/\n/g,"<br>")+"</p>").join(""); }
+function words(text){ const m=str(text).match(/[A-Za-z0-9À-ɏ%€$£'-]+/g); return m ? m.length : 0; }
+const ADHD_TIP = "Tailored for ADHD, useful for all";
+function adhd(){ return " <span class='adhd'>ADHD<span class='sr'> technique, tailored for ADHD, useful for all</span></span>"; }
+const WPS = 2.5; // speaking pace: about 150 words a minute
+
+const STOP = new Set("a an and are as at be been but by can do for from had has have he her his how i if in into is it its just let me my no not of on or our out so than that the their them then there these they this to too up us was we were what when where which who why will with you your yours ive im its youre weve dont cant thats heres whats really very about also even every much many some more most only one all any".split(" "));
+function guessCue(text, used){
+  const first = str(text).split(/[.!?\n]/)[0] || str(text);
+  const ws = (first.match(/[A-Za-z0-9À-ɏ%€$£'-]+/g)||[]).map(w=>w.replace(/^'+|'+$/g,"")).filter(w=>w.length>2 && !STOP.has(w.toLowerCase().replace(/'/g,"")));
+  // Prefer a number or a capitalised word (names, products, figures are the stickiest cues),
+  // then the longest word, skipping anything already used as another slide's cue.
+  const cap = w => w.charAt(0).toUpperCase()+w.slice(1);
+  const free = ws.filter(w=>!(used && used.has(w.toLowerCase())));
+  const pool = free.length ? free : ws;
+  const strong = pool.filter((w,i)=>/\d/.test(w) || (i>0 && /^[A-Z]/.test(w)));
+  const pick = (strong.length ? strong : pool).reduce((a,b)=> b.length>a.length ? b : a);
+  return cap(pick);
+}
+
+// ---------- the method (static content, same for every talk) ----------
+const METHOD = [
+  {adhd:false, h:"Scenes, not paragraphs", body:"Split the talk into three or four chapters, each with one job: the problem, the turn, the results, the takeaway. Four scenes are far easier to hold than twenty slides.", why:"Chunking cuts the load on working memory. You only ever carry one scene in your head at a time."},
+  {adhd:false, h:"One cue word per slide", body:"Pick a single word that pulls the whole slide back. Fax. Iceberg. Trace ID. The cue is the hook and the sentences hang off it.", why:"One word is far easier to retrieve under pressure than a sentence. When your mind blanks, the cue comes back first."},
+  {adhd:true, h:"Say it out loud, early and often", body:"Reading silently feels like rehearsal but it isn't. Speak it while pacing the room, record one natural take on your phone and listen back on a walk.", why:"Movement plus audio keeps you engaged long enough to actually get the repetitions in."},
+  {adhd:true, h:"Anchor it to your body", body:"Tie each chapter to a spot on the stage or a gesture: left side for the story, centre for the big claim, a downward hand for 'below the surface'.", why:"A physical anchor gives memory a second way in that doesn't depend on focus."},
+  {adhd:true, h:"Change the rhythm", body:"Run it at normal speed, then fast, then slow, then as if you're telling a friend over coffee. Each pass shakes loose the bits you only know as a block.", why:"A bit of novelty every pass stops rehearsal going stale, so you keep doing it."},
+  {adhd:true, h:"Lock the edges", body:"Learn the first and last line of every chapter word for word. The middle can flex; the transitions can't.", why:"Transitions are where attention drifts. Fixed edges pull you back on track."}
+];
+
+// ---------- data shaping ----------
+function autoChapters(n){
+  const k = n<=3 ? 1 : n<=7 ? 2 : n<=11 ? 3 : 4;
+  const names = {1:["The talk"],2:["Opening","Close"],3:["Opening","Middle","Close"],4:["Opening","Build","Payoff","Close"]}[k];
+  const out=[]; let start=1;
+  for(let i=0;i<k;i++){ const size=Math.round(n*(i+1)/k)-Math.round(n*i/k); const sl=[]; for(let j=0;j<size;j++) sl.push(start+j); start+=size; out.push({name:names[i], tone:"", slides:sl}); }
+  return out;
+}
+function defaultPlan(d){
+  const total = mmss(d.slides.reduce((a,s)=>a+(s.seconds||d.secondsPerSlide),0));
+  return {days:[{name:"Tonight", steps:[
+      "Read the Script tab out loud once while pacing the room (about "+total+").",
+      "Record one full take on your phone. Natural pace, no restarts.",
+      "Listen back once on a walk or while doing chores.",
+      "Drill tab, Quiz mode: one pass, then re-drill only the slides you missed.",
+      "Before bed: picture the recall chain on the Map tab, in order."
+    ]}, {name:"Tomorrow", steps:[
+      "One timed run in the Drill tab with slides moving on every "+d.secondsPerSlide+" seconds.",
+      "One slow run, exaggerating every anchor and pause.",
+      "Read the cue cards once, then put them away.",
+      "Final run with no notes at all. Stop rehearsing after this one."
+    ]}]};
+}
+function normalise(src){
+  const d = {title:str(src.title)||"Talk Rehearsal Coach", talkTitle:str(src.talkTitle)||"Your talk", intro:str(src.intro), slides:[], chapters:[], plan:null};
+  const sps = parseInt(src.secondsPerSlide,10);
+  d.secondsPerSlide = (sps>=3 && sps<=600) ? sps : 15;
+  const lim = parseInt(src.timeLimit,10);
+  d.timeLimit = (lim>=10 && lim<=36000) ? lim : 0;
+  (Array.isArray(src.slides)?src.slides:[]).slice(0,200).forEach((s,i)=>{
+    s = (s && typeof s==="object") ? s : {lines:s};
+    const lines = str(s.lines);
+    const sec = parseInt(s.seconds,10);
+    d.slides.push({n:i+1, title:str(s.title)||("Slide "+(i+1)), cue:str(s.cue), lines:lines, anchor:str(s.anchor), pause:str(s.pause), seconds:(sec>=3 && sec<=600)?sec:0});
+  });
+  const used = new Set(d.slides.map(x=>x.cue.toLowerCase()).filter(Boolean));
+  d.slides.forEach(x=>{ if(x.cue) return; let c = guessCue(x.lines, used) || ("Slide "+x.n); used.add(c.toLowerCase()); x.cue = c; });
+  const n = d.slides.length, seen = new Set();
+  (Array.isArray(src.chapters)?src.chapters:[]).forEach(c=>{
+    if(!c || typeof c!=="object") return;
+    const sl = (Array.isArray(c.slides)?c.slides:[]).map(x=>parseInt(x,10)).filter(x=>x>=1 && x<=n && !seen.has(x));
+    sl.forEach(x=>seen.add(x));
+    if(sl.length) d.chapters.push({name:str(c.name)||"Chapter", tone:str(c.tone), slides:sl});
+  });
+  if(!d.chapters.length) d.chapters = autoChapters(n);
+  else { const rest=[]; for(let i=1;i<=n;i++) if(!seen.has(i)) rest.push(i); if(rest.length) d.chapters.push({name:"Other slides", tone:"", slides:rest}); }
+  const p = src.plan;
+  // A plan is a list of days, each with steps. The older {tonight, tomorrow} shape still works.
+  let days = null;
+  if(p && Array.isArray(p.days)) days = p.days.filter(x=>x && typeof x==="object").map((x,i)=>({name:str(x.name)||("Day "+(i+1)), steps:(Array.isArray(x.steps)?x.steps:[]).map(str).filter(Boolean)})).filter(x=>x.steps.length);
+  else if(p && Array.isArray(p.tonight) && Array.isArray(p.tomorrow)) days = [{name:"Tonight", steps:p.tonight.map(str).filter(Boolean)}, {name:"Tomorrow", steps:p.tomorrow.map(str).filter(Boolean)}];
+  d.plan = (days && days.length) ? {days:days.slice(0,14)} : defaultPlan(d);
+  return d;
+}
+function chapterOf(n){ return D.chapters.find(c=>c.slides.includes(n)) || {name:"", tone:"", slides:[]}; }
+function slideSecs(s){ return words(s.lines)/WPS; }
+function budget(s){ return s.seconds || D.secondsPerSlide; }
+function totalBudget(){ return D.slides.reduce((a,s)=>a+budget(s),0); }
+function chapterBudget(ch){ return ch.slides.reduce((a,n)=>a+budget(D.slides[n-1]),0); }
+// Cues that start with the same word are easy to mix up mid-talk ("Trust" vs "Trust breaks").
+// A deliberate callback ending in "again" is fine.
+function similarCues(){
+  const by = {}; D.slides.forEach(s=>{ const k=s.cue.toLowerCase().split(/\s+/)[0]; if(!k) return; (by[k]=by[k]||[]).push(s); });
+  return Object.values(by).filter(g=>g.length>1 && !g.some(s=>/\bagain$/i.test(s.cue)));
+}
+
+// ---------- paste parser (Your talk) ----------
+const META_RE = /^(cue|anchor|pause)\s*:\s*(.*)$/i;
+function parseTalk(text){
+  const lines = String(text||"").replace(/\r\n?/g,"\n").split("\n");
+  const slides=[], chapters=[]; let cur=null, ch=null;
+  const hasHeadings = lines.some(l=>/^\s*##\s+\S/.test(l));
+  const newSlide = title => { cur={title:title, cue:"", anchor:"", pause:"", body:[]}; slides.push(cur); if(ch) ch.slides.push(slides.length); };
+  let blank = true;
+  for(const raw of lines){
+    const l = raw.trim(); let m;
+    if((m=l.match(/^#\s+(.+)$/))){ ch={name:m[1].trim(), tone:"", slides:[]}; chapters.push(ch); cur=null; blank=true; continue; }
+    if(hasHeadings){
+      if((m=l.match(/^##\s+(.+)$/))){ newSlide(m[1].replace(/^slide\s*\d+\s*[-:.)]?\s*/i,"").trim()); continue; }
+      if(!cur) continue;
+    } else {
+      if(!l){ blank=true; continue; }
+      if(blank || !cur){ newSlide(""); }
+      blank=false;
+    }
+    if((m=l.match(META_RE))){ cur[m[1].toLowerCase()] = m[2].trim(); continue; }
+    cur.body.push(raw.trim());
+  }
+  slides.forEach(s=>{ s.lines = s.body.join("\n").replace(/\n{3,}/g,"\n\n").trim(); delete s.body; });
+  // Keep every slide, even a bare heading: chapters hold slide numbers, so dropping one would shift them.
+  return {slides:slides, chapters:chapters.filter(c=>c.slides.length)};
+}
+const EXAMPLE = "# The problem\n## Slide 1 - The hook\ncue: Fax\nanchor: Left of stage, mime the fax machine\nA customer once photographed an error, printed it and faxed it to us.\npause: After 'faxed it to us'\n\n## Slide 2 - Why it matters\ncue: Trust\nThat is the moment trust breaks.\n\n# The fix\n## Slide 3 - One small change\ncue: Copy button\nEvery error gets an ID and a Copy button.";
+
+// ---------- state ----------
+let D = normalise(DATA);
+const TABS = ["plan","method","map","cards","script","drill","yours"];
+let tab = "plan";
+const drill = {mode:"timer", pace:1, shuffle:false, order:[], i:0, running:false, remaining:0, secs:15, reveal:false, results:{}, timer:null, done:false};
+
+// ---------- renderers ----------
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+function header(){
+  const total = totalBudget();
+  const even = D.slides.every(s=>!s.seconds || s.seconds===D.secondsPerSlide);
+  document.title = D.talkTitle+" - "+D.title;
+  document.getElementById("title").textContent = D.talkTitle;
+  document.getElementById("coreidea").textContent = D.slides.length+" slides"+(even?", "+D.secondsPerSlide+" seconds each":"")+", "+mmss(total)+" in total"+(D.timeLimit?" (limit "+mmss(D.timeLimit)+(total>D.timeLimit?", over by "+mmss(total-D.timeLimit):"")+")":"")+". Learn it off without notes.";
+  document.getElementById("intro").textContent = D.intro;
+}
+function renderMethod(c){
+  const s = el("section","block");
+  s.innerHTML = "<h2>The method</h2><p>Six techniques for getting a talk off by heart in a day or two. Every other tab on this page puts one of them to work. The first two are good memory practice for anyone; the four tagged ADHD are the ones that matter most when focus is the bottleneck.</p>"
+    + METHOD.map((m,i)=>"<div class='card'><h3>"+(i+1)+". "+esc(m.h)+(m.adhd?adhd():"")+"</h3><p>"+esc(m.body)+"</p><p class='adhd-note'><b>"+(m.adhd?"Why it helps with ADHD:":"Why it works:")+"</b> "+esc(m.why)+"</p></div>").join("")
+    + "<div class='card'><h3>How to use this page</h3><ol><li><b>Start here</b>: the plan, one step at a time, each with a button to the right tab.</li><li><b>Map</b>: see the chapters and the recall chain.</li><li><b>Cue cards</b>: one word per slide, tap to check the lines.</li><li><b>Script</b>: the full words, with anchors and pauses.</li><li><b>Drill</b>: a timer that moves the slides on like the real thing, plus a self-quiz.</li><li><b>Your talk</b>: paste your own script and the whole page rebuilds around it.</li></ol></div>";
+  c.appendChild(s);
+}
+function renderMap(c){
+  const s = el("section","block");
+  let html = "<h2>The map</h2><p class='muted'>"+D.chapters.length+" chapters, "+D.slides.length+" slides, "+mmss(totalBudget())+" in total.</p>";
+  html += "<div class='mapbar' role='list' aria-label='Chapters by length'>"+D.chapters.map(ch=>"<div class='mapseg' role='listitem' style='flex:"+ch.slides.length+" 1 0'><b>"+esc(ch.name)+"</b><span>"+ch.slides.length+" slides, "+mmss(chapterBudget(ch))+"</span></div>").join("")+"</div>";
+  html += "<div class='card'><h3>Recall chain</h3><p class='chain'>"+D.chapters.map(ch=>esc((D.slides[ch.slides[0]-1]||{}).cue)).join("<span class='sep' aria-hidden='true'>&rarr;</span>")+"</p><p class='adhd-note'><b>How to use it:</b> the first cue of each chapter, in order. Picture this chain before bed and again before you walk on. If you blank mid-talk, find your place on the chain.</p></div>";
+  D.chapters.forEach((ch,ci)=>{
+    html += "<div class='card'><h3>"+(ci+1)+". "+esc(ch.name)+"</h3>"+(ch.tone?"<p class='muted'>Tone: "+esc(ch.tone)+"</p>":"")
+      + "<div class='chips'>"+ch.slides.map(n=>"<span class='chip'><i>"+n+"</i>"+esc(D.slides[n-1].cue)+"</span>").join("")+"</div>"
+      + "<p class='muted' style='margin:.6em 0 0;font-size:.9rem'>Starts: “"+esc(firstSentence(D.slides[ch.slides[0]-1].lines))+"”</p></div>";
+  });
+  s.innerHTML = html; c.appendChild(s);
+}
+function firstSentence(t){ const m = str(t).match(/^[\s\S]*?[.!?](\s|$)/); const f = m ? m[0].trim() : str(t); return f.length>140 ? f.slice(0,137)+"..." : f; }
+function renderCards(c){
+  const s = el("section","block");
+  const sim = similarCues();
+  s.innerHTML = "<h2>Cue cards</h2>"
+    + (sim.length?"<div class='callout pause'><span class='lbl'>Check</span>These cues start the same way and are easy to mix up: "+sim.map(g=>g.map(x=>x.n+" "+esc(x.cue)).join(" / ")).join("; ")+". Make one of each pair more distinct.</div>":"")
+    + "<p>Say the slide from the cue word alone, then tap the card to check. <span class='muted'>One word is easier to find under pressure than a sentence.</span></p>"
+    + "<div class='row noprint'><button type='button' id='copyCues'>Copy all cue words</button><button type='button' id='flipAll'>Flip all</button></div>"
+    + "<div class='cards'>"+D.slides.map(sl=>"<button type='button' class='cuecard' aria-expanded='false' data-n='"+sl.n+"'><span class='n'>"+sl.n+" &middot; "+esc(chapterOf(sl.n).name)+"</span><span class='cw'>"+esc(sl.cue)+"</span><span class='first'>Tap to check</span><span class='back'>"+esc(sl.lines)+"</span></button>").join("")+"</div>";
+  c.appendChild(s);
+  s.querySelectorAll(".cuecard").forEach(b=>b.addEventListener("click",()=>{ const f=b.classList.toggle("flipped"); b.setAttribute("aria-expanded", f?"true":"false"); }));
+  s.querySelector("#flipAll").addEventListener("click",()=>{ const cards=[...s.querySelectorAll(".cuecard")]; const any=cards.some(x=>!x.classList.contains("flipped")); cards.forEach(x=>{ x.classList.toggle("flipped",any); x.setAttribute("aria-expanded",any?"true":"false"); }); });
+  s.querySelector("#copyCues").addEventListener("click",e=>copyText(D.slides.map(x=>x.n+". "+x.cue).join("\n"), e.currentTarget));
+}
+function renderScript(c){
+  const s = el("section","block");
+  let html = "<h2>Script</h2><p class='muted'>Time estimates assume about 150 words a minute. A slide marked <span class='badge over'>over</span> has more words than its time on the clock allows: trim it, or give it more time.</p>";
+  D.chapters.forEach((ch,ci)=>{
+    const secs = ch.slides.reduce((a,n)=>a+slideSecs(D.slides[n-1]),0);
+    html += "<div class='card'><h3>Chapter "+(ci+1)+": "+esc(ch.name)+"</h3><p class='muted' style='margin:0'>"+(ch.tone?"Tone: "+esc(ch.tone)+". ":"")+"About "+mmss(secs)+" spoken, "+mmss(chapterBudget(ch))+" on the clock.</p>";
+    ch.slides.forEach(n=>{
+      const sl = D.slides[n-1], need = slideSecs(sl), over = need > budget(sl)*1.2;
+      html += "<article class='slide'><h3><span>"+sl.n+". "+esc(sl.title)+"</span><span class='badge cue'>"+esc(sl.cue)+"</span><span class='badge"+(over?" over":"")+"'>"+(over?"over: ":"")+"~"+Math.round(need)+"s of "+budget(sl)+"s</span></h3>"
+        + "<div class='lines'>"+(sl.lines?paras(sl.lines):"<p class='muted'><em>No words yet.</em></p>")+"</div>"
+        + (sl.pause?"<div class='callout pause'><span class='lbl'>Pause</span>"+esc(sl.pause)+"</div>":"")
+        + (sl.anchor?"<div class='callout anchor'><span class='lbl'>Anchor</span>"+esc(sl.anchor)+"</div>":"")
+        + "</article>";
+    });
+    html += "</div>";
+  });
+  s.innerHTML = html; c.appendChild(s);
+}
+
+// ----- drill -----
+function drillReset(order){
+  stopTimer();
+  drill.order = order || D.slides.map(s=>s.n);
+  if(drill.mode==="quiz" && drill.shuffle){ drill.order = drill.order.slice(); for(let i=drill.order.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [drill.order[i],drill.order[j]]=[drill.order[j],drill.order[i]]; } }
+  drill.i = 0; drill.reveal = false; drill.done = false; drill.results = {};
+  drill.remaining = slideTime();
+}
+// Seconds for the current slide: the drill's own setting when the talk is evenly timed, otherwise the
+// slide's own budget, scaled by the chosen pace (fast and slow runs are the "change the rhythm" technique).
+function slideTime(){
+  const n = drill.order[Math.min(drill.i, Math.max(0,drill.order.length-1))]; const sl = n ? D.slides[n-1] : null;
+  const base = (sl && sl.seconds && drill.secs===D.secondsPerSlide) ? sl.seconds : drill.secs;
+  return Math.max(2, base*drill.pace);
+}
+function stopTimer(){ if(drill.timer){ clearInterval(drill.timer); drill.timer=null; } drill.running=false; }
+function startTimer(){
+  if(drill.done) drillReset(drill.order);
+  drill.running = true; let last = Date.now();
+  drill.timer = setInterval(()=>{
+    const now = Date.now(); drill.remaining -= (now-last)/1000; last = now;
+    if(drill.remaining <= 0){
+      if(drill.i >= drill.order.length-1){ stopTimer(); drill.done = true; drill.remaining = 0; paintDrill(); return; }
+      drill.i++; drill.remaining = slideTime(); drill.reveal = false; paintDrill(); return;
+    }
+    paintBars();
+  }, 100);
+  paintDrill();
+}
+function step(delta){
+  const ni = Math.min(drill.order.length-1, Math.max(0, drill.i+delta));
+  drill.i = ni; drill.remaining = slideTime(); drill.reveal = false; drill.done = false; paintDrill();
+}
+function paintBars(){
+  const b1 = document.getElementById("slideBar"), b2 = document.getElementById("allBar"), t = document.getElementById("clock");
+  if(!b1) return;
+  const full = slideTime(); const done = full ? (full-drill.remaining)/full : 0;
+  b1.style.width = Math.max(0,Math.min(100,done*100))+"%";
+  b2.style.width = Math.max(0,Math.min(100,((drill.i+done)/drill.order.length)*100))+"%";
+  const secs = Math.ceil(Math.max(0,drill.remaining));
+  if(t && t.dataset.s !== String(secs)){ t.dataset.s = String(secs); t.textContent = secs+"s left on this slide"; }
+}
+function renderDrill(c){
+  const s = el("section","block");
+  s.innerHTML = "<h2>Drill"+adhd()+"</h2>"
+    + "<p class='muted'><b>Timer</b> moves the slides on like the real thing, showing only the cue word. Switch the pace to fast or slow for a change of rhythm. <b>Quiz</b> shows a cue, you say the slide out loud, then you check and mark it; shuffle it once you know the order. Short passes beat one long cram.</p>"
+    + "<div class='row'><div class='modes' role='group' aria-label='Drill mode'><button type='button' data-mode='timer'>Timer</button><button type='button' data-mode='quiz'>Quiz</button></div>"
+    + "<label class='inl'>Seconds per slide <input type='number' id='drillSecs' min='3' max='600' value='"+drill.secs+"'></label>"
+    + "<label class='inl'>Pace <select id='pace'><option value='1'>Real pace</option><option value='0.75'>Fast (x0.75)</option><option value='1.5'>Slow (x1.5)</option></select></label>"
+    + "<label class='inl'><input type='checkbox' id='shuffle'"+(drill.shuffle?" checked":"")+"> Shuffle quiz</label></div>"
+    + "<label class='inl'><input type='checkbox' id='keysOn'"+(keysOn()?" checked":"")+"> Keyboard shortcuts</label>"
+    + lastMissHTML()
+    + "<p class='sr' id='drillLive' aria-live='polite'></p><div id='drillBody'></div>";
+  c.appendChild(s);
+  s.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{ drill.mode=b.dataset.mode; drillReset(); paintDrill(); }));
+  const pace = s.querySelector("#pace"); pace.value = String(drill.pace);
+  pace.addEventListener("change",()=>{ drill.pace = parseFloat(pace.value)||1; drillReset(); paintDrill(); });
+  s.querySelector("#shuffle").addEventListener("change",e=>{ drill.shuffle = e.target.checked; if(drill.mode==="quiz"){ drillReset(); paintDrill(); } });
+  s.querySelector("#keysOn").addEventListener("change",e=>store("talk-coach-keys", e.target.checked?"on":"off"));
+  const rl = s.querySelector("#redoLast"); if(rl) rl.addEventListener("click",()=>{ drill.mode="quiz"; drillReset(lastMissed()); paintDrill("rev"); });
+  s.querySelector("#drillSecs").addEventListener("change",e=>{ const v=parseInt(e.target.value,10); if(v>=3 && v<=600){ drill.secs=v; if(!drill.running) drill.remaining=slideTime(); else drill.remaining=Math.min(drill.remaining, slideTime()); paintBars(); } else e.target.value=drill.secs; });
+  paintDrill();
+}
+function paintDrillInner(){
+  const host = document.getElementById("drillBody"); if(!host) return;
+  document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-pressed", b.dataset.mode===drill.mode?"true":"false"));
+  if(!drill.order.length){ host.innerHTML = "<p class='muted'>No slides yet. Add your talk in the Your talk tab.</p>"; return; }
+  const n = drill.order[Math.min(drill.i, drill.order.length-1)], sl = D.slides[n-1], ch = chapterOf(n);
+  const where = "Slide "+n+" of "+D.slides.length+(ch.name?" &middot; "+esc(ch.name):"")+(drill.order.length!==D.slides.length?" &middot; card "+(drill.i+1)+" of "+drill.order.length:"");
+  if(drill.mode==="timer"){
+    if(drill.done){
+      host.innerHTML = "<div class='stage'><div class='bigcue'>Done</div><p>That was one full run. Now do it again without looking at the screen at all.</p><div class='controls'><button type='button' class='primary' id='again'>Run it again</button></div></div>";
+      host.querySelector("#again").addEventListener("click",()=>{ drillReset(); startTimer(); });
+      return;
+    }
+    host.innerHTML = "<div class='stage'><div class='where'>"+where+"</div><div class='bigcue'>"+esc(sl.cue)+"</div><div class='ttl'>"+esc(sl.title)+"</div>"
+      + "<div class='bar' aria-hidden='true'><div id='slideBar'></div></div><div class='bar overall' aria-hidden='true'><div id='allBar'></div></div><div class='where' id='clock' aria-hidden='true'></div>"
+      + (drill.reveal?"<div class='reveal'>"+paras(sl.lines)+(sl.anchor?"<div class='callout anchor'><span class='lbl'>Anchor</span>"+esc(sl.anchor)+"</div>":"")+"</div>":"")
+      + "</div><div class='controls'><button type='button' id='back'>Back</button><button type='button' class='primary' id='go'>"+(drill.running?"Pause":"Start")+"</button><button type='button' id='next'>Next</button><button type='button' id='peek' aria-pressed='"+(drill.reveal?"true":"false")+"'>"+(drill.reveal?"Hide lines":"Peek at lines")+"</button><button type='button' id='restart'>Restart</button></div>"
+      + "<p class='kbd'>Keys (when no button is focused): Space start or pause, arrows back and next.</p>";
+    host.querySelector("#go").addEventListener("click",()=>{ drill.running ? (stopTimer(), paintDrill()) : startTimer(); });
+    host.querySelector("#back").addEventListener("click",()=>step(-1));
+    host.querySelector("#next").addEventListener("click",()=>step(1));
+    host.querySelector("#peek").addEventListener("click",()=>{ drill.reveal=!drill.reveal; paintDrill(); });
+    host.querySelector("#restart").addEventListener("click",()=>{ drillReset(); paintDrill(); });
+    paintBars();
+    return;
+  }
+  // quiz
+  if(drill.done){
+    const missed = drill.order.filter(x=>drill.results[x]===false);
+    const got = drill.order.filter(x=>drill.results[x]===true).length;
+    host.innerHTML = "<div class='stage'><div class='bigcue'>"+got+" / "+drill.order.length+"</div><p>"+(missed.length?"Re-drill these, then do one full pass again:":"Clean run. Do one timed pass in Timer mode next.")+"</p>"
+      + (missed.length?"<div class='chips' style='justify-content:center'>"+missed.map(x=>"<span class='chip'><i>"+x+"</i>"+esc(D.slides[x-1].cue)+"</span>").join("")+"</div>":"")
+      + "<div class='controls'>"+(missed.length?"<button type='button' class='primary' id='redo'>Re-drill missed only</button>":"")+"<button type='button' id='full'>Full pass again</button></div></div>";
+    if(missed.length) host.querySelector("#redo").addEventListener("click",()=>{ drillReset(missed); paintDrill(); });
+    host.querySelector("#full").addEventListener("click",()=>{ drillReset(); paintDrill(); });
+    return;
+  }
+  host.innerHTML = "<div class='stage'><div class='where'>"+where+"</div><div class='bigcue'>"+esc(sl.cue)+"</div>"
+    + (drill.reveal
+      ? "<div class='reveal'><p class='ttl'>"+esc(sl.title)+"</p>"+paras(sl.lines)+"</div><div class='controls'><button type='button' class='mark-good' id='got'>Got it</button><button type='button' class='mark-bad' id='miss'>Missed bits</button></div>"
+      : "<p>Say this slide out loud, then check.</p><div class='controls'><button type='button' class='primary' id='rev'>Check</button></div>")
+    + "</div><p class='kbd'>Keys (when no button is focused): Space to check, then G for got it or M for missed.</p>";
+  if(drill.reveal){
+    host.querySelector("#got").addEventListener("click",()=>mark(true));
+    host.querySelector("#miss").addEventListener("click",()=>mark(false));
+  } else host.querySelector("#rev").addEventListener("click",()=>{ drill.reveal=true; paintDrill("got"); });
+}
+function mark(ok){
+  drill.results[drill.order[drill.i]] = ok; drill.reveal = false;
+  if(drill.i >= drill.order.length-1){ drill.done = true; saveMissed(); } else drill.i++;
+  paintDrill(drill.done ? "redo" : "rev");
+}
+// Re-render the drill, then put focus back where the user was (or on the next sensible control),
+// and announce the slide once in the fixed live region instead of re-reading the whole stage.
+let lastAnnounced = "";
+function paintDrill(focusId){
+  const host = document.getElementById("drillBody"); if(!host) return;
+  const prev = (document.activeElement && host.contains(document.activeElement)) ? document.activeElement.id : "";
+  paintDrillInner();
+  for(const id of [focusId, prev, "full", "go", "rev"]){ if(!id) continue; const f=document.getElementById(id); if(f && host.contains(f)){ if(focusId || prev) f.focus({preventScroll:true}); break; } }
+  const live = document.getElementById("drillLive");
+  if(live && drill.order.length){
+    const n = drill.order[Math.min(drill.i, drill.order.length-1)];
+    const msg = drill.done ? "Run finished." : "Slide "+n+" of "+D.slides.length+": "+D.slides[n-1].cue;
+    if(msg !== lastAnnounced){ lastAnnounced = msg; live.textContent = msg; }
+  }
+}
+function missKey(){ return "talk-coach-missed:"+D.talkTitle; }
+function saveMissed(){ store(missKey(), JSON.stringify(drill.order.filter(x=>drill.results[x]===false))); }
+function lastMissed(){ try{ const a = JSON.parse(store(missKey())||"[]"); return Array.isArray(a) ? a.map(x=>parseInt(x,10)).filter(x=>x>=1 && x<=D.slides.length) : []; }catch(e){ return []; } }
+function lastMissHTML(){
+  const m = lastMissed(); if(!m.length) return "";
+  return "<div class='card lastmiss'><b>Missed last time:</b> <span class='chips' style='display:inline-flex'>"+m.map(x=>"<span class='chip'><i>"+x+"</i>"+esc(D.slides[x-1].cue)+"</span>").join("")+"</span> <button type='button' id='redoLast'>Quiz just these</button></div>";
+}
+function keysOn(){ return store("talk-coach-keys") !== "off"; }
+
+// ----- plan -----
+function planTarget(t){
+  if(/quiz/i.test(t)) return {tab:"drill", mode:"quiz", label:"Open quiz"};
+  if(/drill tab|timed run|slides moving on/i.test(t)) return {tab:"drill", mode:"timer", label:"Open timer"};
+  if(/script tab|read the script/i.test(t)) return {tab:"script", label:"Open script"};
+  if(/recall chain|map tab/i.test(t)) return {tab:"map", label:"Open map"};
+  if(/cue cards/i.test(t)) return {tab:"cards", label:"Open cue cards"};
+  return null;
+}
+function planKey(){ return "talk-coach-plan:"+D.talkTitle; }
+function renderPlan(c){
+  let ticks = {}; try{ ticks = JSON.parse(store(planKey())||"{}") || {}; }catch(e){ ticks = {}; }
+  const s = el("section","block");
+  // The first unticked step is highlighted, and steps that name a tab get a button that opens it.
+  const all = [].concat(...D.plan.days.map(dy=>dy.steps.map((t,i)=>dy.name+i)));
+  const nextK = all.find(k=>!ticks[k]);
+  const list = (name, items) => "<div class='card'><h3>"+esc(name)+"</h3>"+items.map((t,i)=>{ const k=name+i, on=!!ticks[k], go=planTarget(t);
+    return "<div class='plan-item"+(k===nextK?" next":"")+"'><label class='check"+(on?" done":"")+"'><input type='checkbox' data-k='"+esc(k)+"'"+(on?" checked":"")+"><span>"+(k===nextK?"<b>Next: </b>":"")+esc(t)+"</span></label>"
+      + (go?"<button type='button' class='go' data-go='"+go.tab+"' data-gomode='"+(go.mode||"")+"'>"+go.label+"</button>":"")+"</div>"; }).join("")+"</div>";
+  s.innerHTML = "<h2>Start here: the plan</h2><p class='adhd-note'><b>Why it works:</b> short, varied passes spread over more than one sitting beat one long cram. Sleep does part of the work for you. Tick each step as you go; the next one is highlighted.</p>"
+    + D.plan.days.map(dy=>list(dy.name, dy.steps)).join("")
+    + "<div class='row noprint'><button type='button' id='resetTicks'>Clear ticks</button></div>";
+  c.appendChild(s);
+  s.querySelectorAll("input[data-k]").forEach(cb=>cb.addEventListener("change",()=>{ ticks[cb.dataset.k]=cb.checked; store(planKey(), JSON.stringify(ticks)); const k=cb.dataset.k; render(); const again=[...document.querySelectorAll("input[data-k]")].find(x=>x.dataset.k===k); if(again) again.focus(); }));
+  s.querySelectorAll("button[data-go]").forEach(b=>b.addEventListener("click",()=>{ if(b.dataset.gomode){ drill.mode=b.dataset.gomode; drillReset(); } setTab(b.dataset.go, true); window.scrollTo(0,0); const h=document.querySelector("#content h2"); if(h){ h.setAttribute("tabindex","-1"); h.focus(); } }));
+  s.querySelector("#resetTicks").addEventListener("click",()=>{ ticks={}; store(planKey(),"{}"); render(); const b=document.getElementById("resetTicks"); if(b) b.focus(); });
+}
+
+// ----- your talk -----
+function renderYours(c){
+  const s = el("section","block");
+  const draft = store("talk-coach-draft") || "";
+  s.innerHTML = "<h2>Your talk</h2><p>Paste your script and the whole page rebuilds around it: map, cue cards, script, drill and plan. Everything stays in this browser. Nothing is uploaded. Your draft is saved in this browser until you clear it.</p>"
+    + "<div class='field'><span><label for='yTitle'>Talk title</label></span><input type='text' id='yTitle' maxlength='120' value='"+esc(D.talkTitle)+"'></div>"
+    + "<div class='field'><span><label for='ySecs'>Seconds per slide</label></span><input type='number' id='ySecs' min='3' max='600' value='"+D.secondsPerSlide+"'></div>"
+    + "<div class='field'><span><label for='yText'>Script</label></span><textarea id='yText' spellcheck='true' placeholder='Paste your script here'>"+esc(draft)+"</textarea></div>"
+    + "<div class='row'><button type='button' class='primary' id='build'>Build my coach</button><button type='button' id='example'>Paste the example format</button><button type='button' id='reset'>Load the example talk</button><button type='button' id='clearDraft'>Clear saved draft</button></div>"
+    + "<p class='status' id='yStatus' role='status'></p>"
+    + "<div class='card'><h3>Format</h3><p>Either paste plain paragraphs, one per slide with a blank line between them, or use headings for more control:</p><ul><li><code>#</code> starts a chapter (optional, otherwise chapters are made for you)</li><li><code>##</code> starts a slide, with its title after it</li><li><code>cue:</code>, <code>anchor:</code> and <code>pause:</code> lines are optional. With no cue, the page picks the longest word in the first sentence. Change it if it doesn't trigger the slide for you.</li></ul><pre class='example'>"+esc(EXAMPLE)+"</pre></div>";
+  c.appendChild(s);
+  const st = s.querySelector("#yStatus"), ta = s.querySelector("#yText");
+  ta.addEventListener("input",()=>store("talk-coach-draft", ta.value));
+  s.querySelector("#clearDraft").addEventListener("click",()=>{ if(ta.value.trim() && !confirm("Clear your saved script from this browser? This cannot be undone.")) return; try{ localStorage.removeItem("talk-coach-draft"); }catch(e){} ta.value=""; st.className="status ok"; st.textContent="Saved draft cleared from this browser."; });
+  s.querySelector("#example").addEventListener("click",()=>{ if(ta.value.trim() && !confirm("Replace what is in the box with the example format?")) return; ta.value = EXAMPLE; store("talk-coach-draft", ta.value); ta.focus(); });
+  s.querySelector("#reset").addEventListener("click",()=>{ D = normalise(DATA); drill.secs = D.secondsPerSlide; drillReset(); header(); st.className="status ok"; st.textContent="Example talk loaded."; });
+  s.querySelector("#build").addEventListener("click",()=>{
+    const parsed = parseTalk(ta.value);
+    if(!parsed.slides.length){ st.className="status err"; st.textContent="No slides found. Paste some text first, with a blank line between slides."; return; }
+    D = normalise({title:DATA.title, talkTitle:s.querySelector("#yTitle").value, secondsPerSlide:s.querySelector("#ySecs").value, intro:"Built from your script in this browser.", slides:parsed.slides, chapters:parsed.chapters});
+    drill.secs = D.secondsPerSlide; drillReset(); header();
+    st.className="status ok"; st.textContent="Built "+D.slides.length+" slides in "+D.chapters.length+" chapters. Opening the map.";
+    setTab("map", true); window.scrollTo(0,0);
+    const h = document.querySelector("#content h2"); if(h){ h.setAttribute("tabindex","-1"); h.focus(); }
+  });
+}
+
+// ---------- shell ----------
+const RENDER = {method:renderMethod, map:renderMap, cards:renderCards, script:renderScript, drill:renderDrill, plan:renderPlan, yours:renderYours};
+function render(){ const c=document.getElementById("content"); c.innerHTML=""; RENDER[tab](c); }
+function setTab(next, push){
+  if(tab==="drill" && next!=="drill"){ stopTimer(); }
+  tab = TABS.includes(next) ? next : "plan";
+  document.querySelectorAll(".selbar button[data-tab]").forEach(b=>b.setAttribute("aria-pressed", b.dataset.tab===tab?"true":"false"));
+  if(push && location.hash.slice(1)!==tab) history.replaceState(null,"","#"+tab);
+  render();
+}
+function copyText(text, btn){
+  const done = ()=>{ const old=btn.textContent; btn.textContent="Copied"; setTimeout(()=>btn.textContent=old,1200); };
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done).catch(done); }
+  else { const ta=document.createElement("textarea"); ta.value=text; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy");}catch(e){} ta.remove(); done(); }
+}
+document.querySelectorAll(".selbar button[data-tab]").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.tab,true)));
+document.getElementById("printBtn").addEventListener("click",()=>window.print());
+document.addEventListener("keydown",e=>{
+  if(tab!=="drill" || e.altKey || e.ctrlKey || e.metaKey) return;
+  const t = e.target && e.target.tagName; if(["INPUT","TEXTAREA","SELECT","BUTTON","A","SUMMARY"].includes(t)) return;
+  if(!keysOn()) return;
+  if(drill.mode==="timer" && !drill.done){
+    if(e.key===" "){ e.preventDefault(); drill.running ? (stopTimer(), paintDrill()) : startTimer(); }
+    else if(e.key==="ArrowRight"){ step(1); } else if(e.key==="ArrowLeft"){ step(-1); }
+  } else if(drill.mode==="quiz" && !drill.done){
+    if(e.key===" " && !drill.reveal){ e.preventDefault(); drill.reveal=true; paintDrill("got"); }
+    else if(drill.reveal && (e.key==="g"||e.key==="G")) mark(true);
+    else if(drill.reveal && (e.key==="m"||e.key==="M")) mark(false);
+  }
+});
+
+// Manual light/dark toggle, remembered per browser. The head script applies it before first paint.
+const THEME_KEY = "talk-coach-theme";
+function systemPrefersDark(){ return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches); }
+function currentTheme(){ return document.documentElement.getAttribute("data-theme") || ""; }
+function effectiveDark(){ const t=currentTheme(); return t==="dark" || (t!=="light" && systemPrefersDark()); }
+function syncThemeBtn(){
+  const btn = document.getElementById("themeBtn"), dark = effectiveDark();
+  btn.textContent = dark ? "Light" : "Dark";
+  btn.setAttribute("aria-pressed", currentTheme() ? "true" : "false");
+  btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+}
+document.getElementById("themeBtn").addEventListener("click",()=>{
+  const next = effectiveDark() ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  try{ localStorage.setItem(THEME_KEY, next); }catch(e){}
+  syncThemeBtn();
+});
+syncThemeBtn();
+
+// Optional branded site bar. Rendered only when DATA.siteBar is present, so a talk built for
+// someone else is never force-branded.
+function renderSiteBar(){
+  let sb = DATA.siteBar; const host = document.getElementById("sitebar");
+  if(sb && sb.siteBar) sb = sb.siteBar;
+  if(!sb || !host) return;
+  const brand = /^#[0-9a-fA-F]{3,8}$/.test(sb.brandColor||"") ? sb.brandColor : "#990101";
+  const logo = sb.logo ? '<a class="sb-logo" href="'+esc(safeUrl(sb.homeUrl||"#"))+'" aria-label="'+esc(sb.name||"Home")+'"><img src="'+esc(safeImgUrl(sb.logo))+'" alt="'+esc(sb.name||"")+'"></a>' : "";
+  const nav = (sb.nav||[]).map(n => '<a href="'+esc(safeUrl(n.url))+'"'+(n.active?' class="active" aria-current="page"':'')+'>'+esc(n.label)+'</a>').join("");
+  const name = sb.name ? '<a class="sb-name" href="'+esc(safeUrl(sb.homeUrl||"#"))+'">'+esc(sb.name)+'</a>' : "";
+  const sub = (sb.subscribe && sb.subscribe.url) ? '<a class="sb-sub" href="'+esc(safeUrl(sb.subscribe.url))+'">'+esc(sb.subscribe.label||"Subscribe")+'</a>' : "";
+  host.className = "sitebar";
+  host.style.setProperty("--sb-brand", brand);
+  host.innerHTML = '<div class="sb-inner"><div class="sb-left">'+logo+'<nav class="sb-nav" aria-label="Site">'+nav+'</nav></div>'+name+'<div class="sb-right">'+sub+'</div></div>';
+}
+renderSiteBar();
+
+document.getElementById("foot").innerHTML =
+  "Learn the shape, not the sentences. The words follow the cues." +
+  '<span class="credit">Created using <a href="https://github.com/YoungLeadersDotTech/young-leaders-tech-marketplace/tree/master/plugins/talk-rehearsal-coach" rel="noopener noreferrer">talk-rehearsal-coach</a> from <a href="https://www.youngleaders.tech/" rel="noopener noreferrer">youngleaders.tech</a></span>';
+
+drill.secs = D.secondsPerSlide; drillReset();
+header();
+window.addEventListener("hashchange",()=>setTab(location.hash.slice(1), false));
+setTab(location.hash.slice(1) || "plan", false);
+</script>
+</body>
+</html>

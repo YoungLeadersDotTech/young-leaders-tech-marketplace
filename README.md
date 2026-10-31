@@ -72,6 +72,7 @@ Verify with `/plugin marketplace list`.
 | [diy-build-companion](./plugins/diy-build-companion/README.md) | 2.0.0 | Plan and run DIY builds with energy-aware work blocks, enforced breaks, and an inline child-safety veto gate. Project state lives in the build repo. |
 | [opencode-sync](./plugins/opencode-sync/README.md) | 1.6.5 | Sync and validate Claude Code assets for OpenCode: ingest marketplaces or repos, generate agents and command wrappers, verify discovery coverage, and route MCP config by scope. |
 | [enablement-html-renderer](./plugins/enablement-html-renderer/README.md) | 1.5.4 | Packages finished enablement content into one self-contained HTML handoff with multiple reader-selectable formats. |
+| [talk-rehearsal-coach](./plugins/talk-rehearsal-coach/README.md) | 1.0.0 | Learn a talk off without notes: a rehearsal pack and an offline HTML coach with a chapter map, cue words, a timed drill, a self-quiz and a two-day plan. Tailored for ADHD, useful for all. |
 
 ## Local development helper
 
