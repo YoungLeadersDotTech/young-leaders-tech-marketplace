@@ -138,9 +138,10 @@ Never set `example` for the user's own talk: it marks a demo and shows a "This i
 allowed in seconds; `plan.days` holds 1 to 14 days of steps (the older `tonight`/`tomorrow` lists
 still work).
 
-The page is one self-contained file that works offline, with seven tabs: Start here (what the page is,
-how it works in three steps, a guide to the tabs, then the plan with the next step highlighted and a
-button to the right tab for each step; while the example is loaded, "paste your own talk" comes first), Method, Map, Cue cards
+The page is one self-contained file that works offline, with seven tabs: Start here (one line saying what
+the page is, a three-step stepper - paste your talk, learn the shape, practise out loud - then the
+plan, with the next step highlighted and a button to the right tab for each step; while the example
+is loaded, "Paste your talk" is the one Next), Method, Map, Cue cards
 (warns when two cues start the same way), Script, Drill (a timer at real, fast or slow pace, plus a
 self-quiz that can shuffle and remembers misses between visits) and Your talk (paste a different
 script to rebuild the page). It has light and dark themes and prints cleanly.

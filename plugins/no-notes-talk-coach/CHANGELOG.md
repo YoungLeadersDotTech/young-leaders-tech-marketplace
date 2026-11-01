@@ -9,10 +9,12 @@ All notable changes to the no-notes-talk-coach plugin.
   in-chat drill) with per-phase task tracking chained by `addBlockedBy`.
 - **`templates/no-notes-coach.html`**: one self-contained, offline page with seven tabs (Start
   here, Method, Map, Cue cards, Script, Drill, Your talk), light and dark themes, print styles, and
-  a paste box that rebuilds the whole page from any script in the browser. Opens on Start here: what
-  the page is, how it works in three steps and a guide to the tabs, then the plan with the next step
-  highlighted and a button per step to the right tab. While the example is loaded, "paste your own
-  talk" comes first, and an Example tag stays by the title. The default plan counts back from talk
+  a paste box that rebuilds the whole page from any script in the browser. Opens on Start here: one
+  line on what the page is, a three-step stepper (paste your talk, learn the shape, practise out
+  loud, with a count of steps done), then the plan with the next step highlighted and a button per
+  step to the right tab. Only one step is ever marked Next: "Paste your talk" while the example is
+  loaded, and an Example tag stays by the title. On a phone the tabs sit on one row you swipe
+  sideways. The default plan counts back from talk
   day (two nights before, the day before, the morning of) and includes a stopwatch timing check, a
   timed run first thing the day before, the first and last lines word for word, and a final run in
   front of one person. Each Method technique names the tab that practises it. The drill runs at real, fast or

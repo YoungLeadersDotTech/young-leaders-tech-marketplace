@@ -38,17 +38,27 @@ try{
   .adhd{font-size:.6em;font-weight:700;letter-spacing:.04em;color:var(--accent);margin-left:4px;vertical-align:super;line-height:1;white-space:nowrap;cursor:help}
   .why-note{font-size:.9rem;color:var(--muted);border-left:3px solid var(--accent);padding:2px 10px;margin:.6em 0 0}
   .why-note b{color:var(--ink)}
-  .lead{font-size:1.05rem;color:var(--ink)}
-  .how{margin:.4em 0 .8em;padding-left:1.4em}
-  .tabguide{margin:.2em 0 1em}
-  .tabguide summary{cursor:pointer;font-weight:700;color:var(--accent)}
+  .lead{font-size:1rem;color:var(--muted);margin:.2em 0 0}
+  /* Start here stepper: three numbered rows joined by a line; each row is one button. */
+  .steps{list-style:none;margin:.8em 0 1.1em;padding:6px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+  .steps li{position:relative}
+  .steps li:not(:last-child)::after{content:"";position:absolute;left:22px;top:42px;bottom:-8px;width:2px;background:var(--line)}
+  .step{display:grid;grid-template-columns:30px 1fr auto;gap:12px;align-items:start;width:100%;text-align:left;border:0;border-radius:9px;background:none;padding:10px 8px;font-size:1rem;line-height:1.35}
+  .step:hover,.step.next{background:var(--soft)}
+  .step .num{position:relative;z-index:1;width:30px;height:30px;border-radius:50%;border:2px solid var(--accent);background:var(--panel);color:var(--accent);font-weight:800;font-size:14px;display:grid;place-items:center}
+  .step.next .num,.step.done .num{background:var(--accent);color:var(--on-accent)}
+  .step .txt b{display:block}
+  .step .sub{display:block;font-size:.88rem;color:var(--muted);margin-top:2px}
+  .step .sub b{display:inline;color:var(--ink)}
+  .step .chev{font-size:1.4rem;line-height:1;color:var(--muted);align-self:center}
+  @media (min-width:640px){.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.steps li::after,.step .chev{display:none}.step{height:100%}}
   .on-tab{font-size:.85rem;color:var(--muted);margin:.4em 0 0}
   h1 .example-tag{font-size:13px;vertical-align:middle;font-weight:700}
   .selbar{position:sticky;top:0;z-index:10;background:var(--bg);padding:12px 0 8px;border-bottom:1px solid var(--line)}
-  .selbar .row1{display:flex;align-items:center;gap:8px;justify-content:space-between}
-  .selbar .lbl{font-size:13px;color:var(--muted)}
-  .selbar .utils{display:flex;gap:6px;flex:none}
-  .selbar .fmts{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0 2px}
+  .selbar{display:grid;grid-template-columns:1fr auto;grid-template-areas:"lbl utils" "fmts fmts";align-items:center;column-gap:8px}
+  .selbar .lbl{grid-area:lbl;font-size:13px;color:var(--muted)}
+  .selbar .utils{grid-area:utils;display:flex;gap:6px;flex:none}
+  .selbar .fmts{grid-area:fmts;display:flex;flex-wrap:wrap;gap:8px;padding:8px 0 2px}
   .selbar .fmts::-webkit-scrollbar{display:none}
   .selbar .fmts button{flex:0 0 auto;white-space:nowrap}
   button,.btn{font:inherit;font-size:14px;padding:7px 14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;cursor:pointer}
@@ -56,7 +66,14 @@ try{
   .selbar .util{border-radius:8px;font-size:13px;padding:6px 11px}
   button.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600}
   button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
-  @media (max-width:560px){ .selbar .lbl{display:none} .selbar{position:static} }
+  @media (max-width:560px){
+    .selbar .lbl{display:none}
+    /* One row you swipe sideways: the tabs first, then Light and Print at the end. */
+    .selbar{position:static;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:10px 0}
+    .selbar::-webkit-scrollbar{display:none}
+    .selbar .fmts{flex-wrap:nowrap;padding:0;flex:none}
+    .selbar .utils{flex:none}
+  }
   section.block{padding:30px 0;border-bottom:1px solid var(--line)}
   section.block h2{font-size:1.25rem;margin:0 0 .6em;line-height:1.3}
   h3{font-size:1.05rem;margin:0 0 .4em}
@@ -154,6 +171,7 @@ try{
   @media print{
     :root{--bg:#fff !important;--ink:#111 !important;--muted:#555 !important;--line:#ccc !important;--panel:#fff !important;--soft:#f4f4f0 !important;--accent:#2f5d50 !important;--accent2:#a8481a !important;}
     .selbar,.controls,.noprint,#sitebar{display:none !important}
+    .steps{border:0;padding:0} .steps li::after,.step .chev{display:none} .step{padding:3px 0}
     .cuecard .back{display:block}
     .cuecard .first{display:none}
     .cards{grid-template-columns:repeat(3,1fr)}
@@ -173,13 +191,7 @@ try{
   </header>
 
   <nav class="selbar" aria-label="Views">
-    <div class="row1">
-      <span class="lbl">Rehearse with:</span>
-      <div class="utils">
-        <button class="util" id="themeBtn" type="button" aria-pressed="false">Dark</button>
-        <button class="util" id="printBtn" type="button">Print / PDF</button>
-      </div>
-    </div>
+    <span class="lbl">Rehearse with:</span>
     <div class="fmts" role="group" aria-label="View">
       <button type="button" data-tab="plan" aria-pressed="true">Start here</button>
       <button type="button" data-tab="method" aria-pressed="false">Method</button>
@@ -188,6 +200,10 @@ try{
       <button type="button" data-tab="script" aria-pressed="false">Script</button>
       <button type="button" data-tab="drill" aria-pressed="false">Drill</button>
       <button type="button" data-tab="yours" aria-pressed="false">Your talk</button>
+    </div>
+    <div class="utils">
+      <button class="util" id="themeBtn" type="button" aria-pressed="false">Dark</button>
+      <button class="util" id="printBtn" type="button">Print / PDF</button>
     </div>
   </nav>
 
@@ -360,7 +376,7 @@ function header(){
     intro.textContent = ""; intro.hidden = true; banner.hidden = false;
     banner.innerHTML = "<b>This is an example.</b> "+esc(D.intro || "A sample talk, loaded so you can see how the coach works.")
       + "<div class='row'><button type='button' class='primary' id='useOwn'>Use my own talk</button><button type='button' id='keepExample'>Keep exploring the example</button></div>";
-    banner.querySelector("#useOwn").addEventListener("click",()=>{ setTab("yours", true); const ta=document.getElementById("yText"); if(ta){ ta.scrollIntoView({block:"center"}); ta.focus(); } });
+    banner.querySelector("#useOwn").addEventListener("click", openPaste);
     banner.querySelector("#keepExample").addEventListener("click",()=>{ try{ sessionStorage.setItem("talk-coach-example-ok","1"); }catch(e){} header(); const h=document.getElementById("title"); h.setAttribute("tabindex","-1"); h.focus(); });
   } else {
     banner.hidden = true; banner.innerHTML = "";
@@ -577,17 +593,26 @@ function renderPlan(c){
   const list = (name, items) => "<div class='card'><h3>"+esc(name)+"</h3>"+items.map((t,i)=>{ const k=name+i, on=!!ticks[k], go=planTarget(t);
     return "<div class='plan-item"+(k===nextK?" next":"")+"'><label class='check"+(on?" done":"")+"'><input type='checkbox' data-k='"+esc(k)+"'"+(on?" checked":"")+"><span>"+(k===nextK?"<b>Next: </b>":"")+esc(t)+"</span></label>"
       + (go?"<button type='button' class='go' data-go='"+go.tab+"' data-gomode='"+(go.mode||"")+"'>"+go.label+"</button>":"")+"</div>"; }).join("")+"</div>";
-  s.innerHTML = "<h2>Start here</h2><p class='lead'>Give your talk without notes. Paste your script and this page turns it into a map, cue cards, a timed drill and a plan to practise it.</p>"
-    + "<ol class='how'><li>Paste your script in <b>Your talk</b>. It stays in this browser.</li><li>Learn the shape: the chapters on the <b>Map</b>, one cue word per slide on the <b>Cue cards</b>.</li><li>Practise out loud, following the plan below.</li></ol>"
-    + "<details class='tabguide noprint'><summary>What each tab does</summary><ul><li><b>Map</b>: the chapters and the recall chain, the shape of your talk.</li><li><b>Cue cards</b>: one word per slide. Tap a card to check the lines.</li><li><b>Script</b>: the full words, with anchors and pauses.</li><li><b>Drill</b>: a timer that moves the slides on like the real thing, plus a self-quiz.</li><li><b>Your talk</b>: paste your own script and the whole page rebuilds around it.</li><li><b>Method</b>: the six techniques behind the plan, and why they work.</li></ul></details>"
-    + (D.example ? "<div class='card'><h3>Before you start</h3><div class='plan-item"+(before?" next":"")+"'><span class='check'>"+(before?"<b>Next: </b>":"")+"Paste your own talk in Your talk (about two minutes). Until you do, the plan below is set up for the example.</span><button type='button' class='go' data-go='yours' data-gomode=''>Open Your talk</button></div></div>" : "")
-    + "<p>Tick each step as you go. The next one is highlighted, and its button opens the right tab.</p>"
+  const done = all.filter(k=>ticks[k]).length, total = all.length, days = D.plan.days.length;
+  const row = (n, cls, title, sub, key) => "<li><button type='button' class='step"+(cls?" "+cls:"")+"' data-step='"+key+"'><span class='num' aria-hidden='true'>"+n+"</span><span class='txt'><b>"+title+"</b><span class='sub'>"+sub+"</span></span><span class='chev' aria-hidden='true'>&rsaquo;</span></button></li>";
+  const step1 = !D.example ? row("&#10003;", "done", "<span class='sr'>Done: </span>Your talk is loaded", "To use a new version, paste it in Your talk.", "paste")
+    : before ? row("1", "next", "Next: Paste your talk", "About two minutes. Until then, the plan below uses the example.", "paste")
+    : row("1", "", "Paste your talk", "About two minutes. The plan below uses the example until you do.", "paste");
+  const step3 = !done ? days+" session"+(days===1?"":"s")+", "+total+" short steps. Tick as you go."
+    : done < total ? done+" of "+total+" done. Tick as you go." : "All "+total+" done. You know it.";
+  s.innerHTML = "<h2>Start here</h2><p class='lead'>This page coaches you to give your talk without notes.</p>"
+    + "<ol class='steps' aria-label='How it works'>" + step1
+    + row("2", "", "Learn the shape", "Chapters on the <b>Map</b>, one word per slide on the <b>Cue cards</b>.", "map")
+    + row("3", "", "Practise out loud", step3, "plan") + "</ol>"
     + D.plan.days.map(dy=>list(dy.name, dy.steps)).join("")
     + "<p class='why-note'><b>Why it works:</b> short, varied passes spread over more than one sitting beat one long cram. Sleep does part of the work for you. The Method tab explains each technique.</p>"
     + "<div class='row noprint'><button type='button' id='resetTicks'>Clear ticks</button></div>";
   c.appendChild(s);
   s.querySelectorAll("input[data-k]").forEach(cb=>cb.addEventListener("change",()=>{ ticks[cb.dataset.k]=cb.checked; store(planKey(), JSON.stringify(ticks)); const k=cb.dataset.k; render(); const again=[...document.querySelectorAll("input[data-k]")].find(x=>x.dataset.k===k); if(again) again.focus(); }));
   s.querySelectorAll("button[data-go]").forEach(b=>b.addEventListener("click",()=>{ if(b.dataset.gomode){ drill.mode=b.dataset.gomode; drillReset(); } setTab(b.dataset.go, true); window.scrollTo(0,0); const h=document.querySelector("#content h2"); if(h){ h.setAttribute("tabindex","-1"); h.focus(); } }));
+  s.querySelector("[data-step='paste']").addEventListener("click", openPaste);
+  s.querySelector("[data-step='map']").addEventListener("click",()=>{ setTab("map", true); window.scrollTo(0,0); const h=document.querySelector("#content h2"); if(h){ h.setAttribute("tabindex","-1"); h.focus(); } });
+  s.querySelector("[data-step='plan']").addEventListener("click",()=>{ const boxes=[...s.querySelectorAll("input[data-k]")]; const cb = boxes.find(x=>x.dataset.k===nextK) || boxes.find(x=>!x.checked) || boxes[0]; if(!cb) return; cb.closest(".card").scrollIntoView({block:"start"}); cb.focus({preventScroll:true}); });
   s.querySelector("#resetTicks").addEventListener("click",()=>{ ticks={}; store(planKey(),"{}"); render(); const b=document.getElementById("resetTicks"); if(b) b.focus(); });
 }
 
@@ -622,10 +647,13 @@ function renderYours(c){
 // ---------- shell ----------
 const RENDER = {method:renderMethod, map:renderMap, cards:renderCards, script:renderScript, drill:renderDrill, plan:renderPlan, yours:renderYours};
 function render(){ const c=document.getElementById("content"); c.innerHTML=""; RENDER[tab](c); }
+function openPaste(){ setTab("yours", true); const ta=document.getElementById("yText"); if(ta){ ta.scrollIntoView({block:"center"}); ta.focus(); } }
 function setTab(next, push){
   if(tab==="drill" && next!=="drill"){ stopTimer(); }
   tab = TABS.includes(next) ? next : "plan";
   document.querySelectorAll(".selbar button[data-tab]").forEach(b=>b.setAttribute("aria-pressed", b.dataset.tab===tab?"true":"false"));
+  const bar = document.querySelector(".selbar"), on = bar && bar.querySelector("button[aria-pressed='true'][data-tab]");
+  if(bar && on && bar.scrollWidth > bar.clientWidth){ const l = on.offsetLeft - bar.offsetLeft; if(l < bar.scrollLeft || l + on.offsetWidth > bar.scrollLeft + bar.clientWidth) bar.scrollLeft = Math.max(0, l - 16); }
   if(push && location.hash.slice(1)!==tab) history.replaceState(null,"","#"+tab);
   render();
 }

@@ -24,8 +24,8 @@ The example says so up front, with a "Use my own talk" button that takes you to 
 - **A drill**: a timer that moves the slides on like the real thing, at real, fast or slow pace, and
   a self-quiz (in order or shuffled) that remembers the slides you missed, even after you close the
   page, so you can re-drill just those.
-- **Start here, as the front page**: says what the page is and how it works in three steps, then
-  the plan. The plan counts back from the talk (two nights before, the day before, the morning of)
+- **Start here, as the front page**: one line on what the page is, a three-step stepper (paste your
+  talk, learn the shape, practise out loud, with a running count of steps done), then the plan. The plan counts back from the talk (two nights before, the day before, the morning of)
   and can spread over more days. The next step is highlighted and each step has a button that opens
   the right tab. While the example talk is loaded, "paste your own talk" comes first.
 - **Free-paced talks too**: give each slide its own time and a total limit, and the timing check
