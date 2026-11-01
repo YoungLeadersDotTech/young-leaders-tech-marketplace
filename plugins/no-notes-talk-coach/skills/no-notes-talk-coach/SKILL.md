@@ -55,9 +55,15 @@ question at a time:
    lightning talks) or a total time limit for a free-paced talk. For a free-paced talk, give each
    slide its own `seconds` in Phase 2, estimated from its words, and record the limit as
    `timeLimit`. Never split a time limit evenly across slides.
-3. **When the talk is.** This sets the plan. Tonight plus tomorrow is the default. With more
-   days, spread the same passes over them as `plan.days` (up to 14) and keep the final no-notes run
-   for the last morning. With only a few hours, use one day of the shortest passes.
+3. **When the talk is.** This sets the plan. Day names count back from the talk ("Two nights
+   before", "The day before", "The morning of"), so they still make sense to someone whose talk is a
+   week away. The default plan, in order: look at the Map first; read the script out loud with a
+   stopwatch and cut anything over the limit straight away; record, listen back and quiz; picture
+   the recall chain before bed. The day before opens with a timed run (it shows what stuck
+   overnight), then a slow run, cue cards once, the first and last lines word for word, and a final
+   no-notes run in front of one person if possible. The morning of is the first and last lines out
+   loud twice and the recall chain once, never a full run. With more days, spread the same passes
+   over them as `plan.days` (up to 14). With only a few hours, use one day of the shortest passes.
 
 Never invent talk content. If a slide has nothing to say yet, keep it with an empty `lines` field
 and flag it in Phase 3.
@@ -123,7 +129,7 @@ reason if anything is wrong):
   "slides": [{"title": "True story", "cue": "Fax", "lines": "What you say.",
               "anchor": "Left of stage", "pause": "After 'faxed it in'", "seconds": 20}],
   "timeLimit": 300,
-  "plan": {"days": [{"name": "Tonight", "steps": ["..."]}, {"name": "Tomorrow", "steps": ["..."]}]}
+  "plan": {"days": [{"name": "Two nights before", "steps": ["..."]}, {"name": "The day before", "steps": ["..."]}, {"name": "The morning of", "steps": ["..."]}]}
 }
 ```
 
@@ -132,8 +138,9 @@ Never set `example` for the user's own talk: it marks a demo and shows a "This i
 allowed in seconds; `plan.days` holds 1 to 14 days of steps (the older `tonight`/`tomorrow` lists
 still work).
 
-The page is one self-contained file that works offline, with seven tabs: Start here (the plan, with
-the next step highlighted and a button to the right tab for each step), Method, Map, Cue cards
+The page is one self-contained file that works offline, with seven tabs: Start here (what the page is,
+how it works in three steps, a guide to the tabs, then the plan with the next step highlighted and a
+button to the right tab for each step; while the example is loaded, "paste your own talk" comes first), Method, Map, Cue cards
 (warns when two cues start the same way), Script, Drill (a timer at real, fast or slow pace, plus a
 self-quiz that can shuffle and remembers misses between visits) and Your talk (paste a different
 script to rebuild the page). It has light and dark themes and prints cleanly.

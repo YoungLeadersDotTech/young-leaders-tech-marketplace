@@ -64,29 +64,39 @@ The first cue word of each chapter, in order (for example: Fax, Evolution, Copy 
 Picture it before bed and again before walking on. If the speaker blanks mid-talk, they find their
 place on the chain and the next cue follows.
 
-## The plan (default: the night before and the morning of)
+## The plan (default: two nights before, the day before and the morning of)
 
-In the HTML coach this is the opening "Start here" tab: the next unticked step is highlighted and
-each step that names a tab has a button that opens it.
+In the HTML coach this is the opening "Start here" tab. It first says what the page is and how it
+works, then lists the plan: the next unticked step is highlighted and each step that names a tab has
+a button that opens it. Day names count back from the talk, so they work however far away it is.
 
-**Tonight**
-- Read the script out loud once while pacing the room.
+**Two nights before**
+- Look at the Map for two minutes: the chapters and the recall chain.
+- Read the script out loud once with a stopwatch. If it runs over your limit, cut it now, not on
+  the last day.
 - Record one full take on your phone. Natural pace, no restarts.
 - Listen back once on a walk or while doing chores.
 - Quiz yourself on the cue words once, then re-drill only the ones you missed.
 - Before bed: picture the recall chain, in order.
 
-**Tomorrow**
-- One timed run with slides moving on automatically at the real pace.
+**The day before**
+- First thing: one timed run with slides moving on at the real pace. It shows what stuck overnight.
 - One slow run, exaggerating every anchor and pause.
 - Read the cue cards once, then put them away.
-- Final run with no notes at all. Stop rehearsing after this one.
+- Learn your first and last lines word for word.
+- Final run with no notes, in front of one person if you can. Stop rehearsing after this one.
 
-**Why it works:** short, varied passes spread over an evening and a morning beat one long
-cram. Sleep does part of the work.
+**The morning of**
+- Say your first and last lines out loud twice.
+- Picture the recall chain once, in order.
+- No full run.
 
-With more than two days, spread the same passes across the extra days and keep the final no-notes
-run for the last morning.
+**Why it works:** short, varied passes spread over more than one sitting beat one long cram. Sleep
+does part of the work. The first and last lines are where nerves hit hardest, so they are the only
+lines learnt word for word.
+
+With more days, spread the same passes across them and keep the final no-notes run for the day
+before.
 
 ## Pacing
 

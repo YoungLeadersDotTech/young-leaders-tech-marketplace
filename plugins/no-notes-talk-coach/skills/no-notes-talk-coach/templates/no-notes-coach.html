@@ -38,6 +38,12 @@ try{
   .adhd{font-size:.6em;font-weight:700;letter-spacing:.04em;color:var(--accent);margin-left:4px;vertical-align:super;line-height:1;white-space:nowrap;cursor:help}
   .why-note{font-size:.9rem;color:var(--muted);border-left:3px solid var(--accent);padding:2px 10px;margin:.6em 0 0}
   .why-note b{color:var(--ink)}
+  .lead{font-size:1.05rem;color:var(--ink)}
+  .how{margin:.4em 0 .8em;padding-left:1.4em}
+  .tabguide{margin:.2em 0 1em}
+  .tabguide summary{cursor:pointer;font-weight:700;color:var(--accent)}
+  .on-tab{font-size:.85rem;color:var(--muted);margin:.4em 0 0}
+  h1 .example-tag{font-size:13px;vertical-align:middle;font-weight:700}
   .selbar{position:sticky;top:0;z-index:10;background:var(--bg);padding:12px 0 8px;border-bottom:1px solid var(--line)}
   .selbar .row1{display:flex;align-items:center;gap:8px;justify-content:space-between}
   .selbar .lbl{font-size:13px;color:var(--muted)}
@@ -224,12 +230,12 @@ function guessCue(text, used){
 
 // ---------- the method (static content, same for every talk) ----------
 const METHOD = [
-  {adhd:false, h:"Scenes, not paragraphs", body:"Split the talk into three or four chapters, each with one job: the problem, the turn, the results, the takeaway. Four scenes are far easier to hold than twenty slides.", why:"Chunking cuts the load on working memory. You only ever carry one scene in your head at a time."},
-  {adhd:false, h:"One cue word per slide", body:"Pick a single word that pulls the whole slide back. Fax. Iceberg. Trace ID. The cue is the hook and the sentences hang off it.", why:"One word is far easier to retrieve under pressure than a sentence. When your mind blanks, the cue comes back first."},
-  {adhd:true, h:"Say it out loud, early and often", body:"Reading silently feels like rehearsal but it isn't. Speak it while pacing the room, record one natural take on your phone and listen back on a walk.", why:"Movement plus audio keeps you engaged long enough to actually get the repetitions in."},
-  {adhd:true, h:"Anchor it to your body", body:"Tie each chapter to a spot on the stage or a gesture: left side for the story, centre for the big claim, a downward hand for 'below the surface'.", why:"A physical anchor gives memory a second way in that doesn't depend on focus."},
-  {adhd:true, h:"Change the rhythm", body:"Run it at normal speed, then fast, then slow, then as if you're telling a friend over coffee. Each pass shakes loose the bits you only know as a block.", why:"A bit of novelty every pass stops rehearsal going stale, so you keep doing it."},
-  {adhd:true, h:"Lock the edges", body:"Learn the first and last line of every chapter word for word. The middle can flex; the transitions can't.", why:"Transitions are where attention drifts. Fixed edges pull you back on track."}
+  {adhd:false, h:"Scenes, not paragraphs", on:"Map", body:"Split the talk into three or four chapters, each with one job: the problem, the turn, the results, the takeaway. Four scenes are far easier to hold than twenty slides.", why:"Chunking cuts the load on working memory. You only ever carry one scene in your head at a time."},
+  {adhd:false, h:"One cue word per slide", on:"Cue cards", body:"Pick a single word that pulls the whole slide back. Fax. Iceberg. Trace ID. The cue is the hook and the sentences hang off it.", why:"One word is far easier to retrieve under pressure than a sentence. When your mind blanks, the cue comes back first."},
+  {adhd:true, h:"Say it out loud, early and often", on:"Script, then Drill", body:"Reading silently feels like rehearsal but it isn't. Speak it while pacing the room, record one natural take on your phone and listen back on a walk.", why:"Movement plus audio keeps you engaged long enough to actually get the repetitions in."},
+  {adhd:true, h:"Anchor it to your body", on:"Script", body:"Tie each chapter to a spot on the stage or a gesture: left side for the story, centre for the big claim, a downward hand for 'below the surface'.", why:"A physical anchor gives memory a second way in that doesn't depend on focus."},
+  {adhd:true, h:"Change the rhythm", on:"Drill", body:"Run it at normal speed, then fast, then slow, then as if you're telling a friend over coffee. Each pass shakes loose the bits you only know as a block.", why:"A bit of novelty every pass stops rehearsal going stale, so you keep doing it."},
+  {adhd:true, h:"Lock the edges", on:"Script", body:"Learn the first and last line of every chapter word for word. The middle can flex; the transitions can't.", why:"Transitions are where attention drifts. Fixed edges pull you back on track."}
 ];
 
 // ---------- data shaping ----------
@@ -242,17 +248,23 @@ function autoChapters(n){
 }
 function defaultPlan(d){
   const total = mmss(d.slides.reduce((a,s)=>a+(s.seconds||d.secondsPerSlide),0));
-  return {days:[{name:"Tonight", steps:[
-      "Read the Script tab out loud once while pacing the room (about "+total+").",
+  return {days:[{name:"Two nights before", steps:[
+      "Look at the Map tab for two minutes: the chapters and the recall chain.",
+      "Read the Script tab out loud once with a stopwatch (about "+total+"). If it runs over your limit, cut it now, not on the last day.",
       "Record one full take on your phone. Natural pace, no restarts.",
       "Listen back once on a walk or while doing chores.",
       "Drill tab, Quiz mode: one pass, then re-drill only the slides you missed.",
       "Before bed: picture the recall chain on the Map tab, in order."
-    ]}, {name:"Tomorrow", steps:[
-      "One timed run in the Drill tab with slides moving on every "+d.secondsPerSlide+" seconds.",
-      "One slow run, exaggerating every anchor and pause.",
+    ]}, {name:"The day before", steps:[
+      "First thing: one timed run in the Drill tab, slides moving on every "+d.secondsPerSlide+" seconds. It shows what stuck overnight.",
+      "One slow run in the Drill tab, exaggerating every anchor and pause.",
       "Read the cue cards once, then put them away.",
-      "Final run with no notes at all. Stop rehearsing after this one."
+      "Learn your first and last lines word for word, from the Script tab.",
+      "Final run with no notes, in front of one person if you can. Stop rehearsing after this one."
+    ]}, {name:"The morning of", steps:[
+      "Say your first and last lines out loud twice.",
+      "Picture the recall chain once, in order.",
+      "No full run. You know it."
     ]}]};
 }
 function normalise(src){
@@ -338,7 +350,8 @@ function header(){
   const total = totalBudget();
   const even = D.slides.every(s=>!s.seconds || s.seconds===D.secondsPerSlide);
   document.title = D.talkTitle+" - "+D.title;
-  document.getElementById("title").textContent = D.talkTitle;
+  const t = document.getElementById("title"); t.textContent = D.talkTitle;
+  if(D.example){ const b = document.createElement("span"); b.className = "badge example-tag"; b.textContent = "Example"; t.appendChild(document.createTextNode(" ")); t.appendChild(b); }
   document.getElementById("coreidea").textContent = D.slides.length+" slides"+(even?", "+D.secondsPerSlide+" seconds each":"")+", "+mmss(total)+" in total"+(D.timeLimit?" (limit "+mmss(D.timeLimit)+(total>D.timeLimit?", over by "+mmss(total-D.timeLimit):"")+")":"")+". Learn it off without notes.";
   // Example content says so up front, on every tab, with a way to start your own.
   const banner = document.getElementById("exampleBanner"), intro = document.getElementById("intro");
@@ -357,8 +370,7 @@ function header(){
 function renderMethod(c){
   const s = el("section","block");
   s.innerHTML = "<h2>The method</h2><p>Six techniques for getting a talk off by heart in a day or two. Every other tab on this page puts one of them to work. The first two are good memory practice for anyone. The four marked <span class='adhd'>ADHD</span> matter most when focus is the bottleneck: tailored for ADHD, useful for all.</p>"
-    + METHOD.map((m,i)=>"<div class='card'><h3>"+(i+1)+". "+esc(m.h)+(m.adhd?adhd():"")+"</h3><p>"+esc(m.body)+"</p><p class='why-note'><b>"+"Why it works:"+"</b> "+esc(m.why)+"</p></div>").join("")
-    + "<div class='card'><h3>How to use this page</h3><ol><li><b>Start here</b>: the plan, one step at a time, each with a button to the right tab.</li><li><b>Map</b>: see the chapters and the recall chain.</li><li><b>Cue cards</b>: one word per slide, tap to check the lines.</li><li><b>Script</b>: the full words, with anchors and pauses.</li><li><b>Drill</b>: a timer that moves the slides on like the real thing, plus a self-quiz.</li><li><b>Your talk</b>: paste your own script and the whole page rebuilds around it.</li></ol></div>";
+    + METHOD.map((m,i)=>"<div class='card'><h3>"+(i+1)+". "+esc(m.h)+(m.adhd?adhd():"")+"</h3><p>"+esc(m.body)+"</p><p class='why-note'><b>"+"Why it works:"+"</b> "+esc(m.why)+"</p>"+(m.on?"<p class='on-tab'>Practise it on: "+esc(m.on)+"</p>":"")+"</div>").join("");
   c.appendChild(s);
 }
 function renderMap(c){
@@ -559,12 +571,19 @@ function renderPlan(c){
   const s = el("section","block");
   // The first unticked step is highlighted, and steps that name a tab get a button that opens it.
   const all = [].concat(...D.plan.days.map(dy=>dy.steps.map((t,i)=>dy.name+i)));
-  const nextK = all.find(k=>!ticks[k]);
+  // While the example is loaded, pasting your own talk comes first, until any step is ticked.
+  const before = D.example && !Object.keys(ticks).some(k=>ticks[k]);
+  const nextK = before ? null : all.find(k=>!ticks[k]);
   const list = (name, items) => "<div class='card'><h3>"+esc(name)+"</h3>"+items.map((t,i)=>{ const k=name+i, on=!!ticks[k], go=planTarget(t);
     return "<div class='plan-item"+(k===nextK?" next":"")+"'><label class='check"+(on?" done":"")+"'><input type='checkbox' data-k='"+esc(k)+"'"+(on?" checked":"")+"><span>"+(k===nextK?"<b>Next: </b>":"")+esc(t)+"</span></label>"
       + (go?"<button type='button' class='go' data-go='"+go.tab+"' data-gomode='"+(go.mode||"")+"'>"+go.label+"</button>":"")+"</div>"; }).join("")+"</div>";
-  s.innerHTML = "<h2>Start here: the plan</h2><p class='why-note'><b>Why it works:</b> short, varied passes spread over more than one sitting beat one long cram. Sleep does part of the work for you. Tick each step as you go; the next one is highlighted.</p>"
+  s.innerHTML = "<h2>Start here</h2><p class='lead'>Give your talk without notes. Paste your script and this page turns it into a map, cue cards, a timed drill and a plan to practise it.</p>"
+    + "<ol class='how'><li>Paste your script in <b>Your talk</b>. It stays in this browser.</li><li>Learn the shape: the chapters on the <b>Map</b>, one cue word per slide on the <b>Cue cards</b>.</li><li>Practise out loud, following the plan below.</li></ol>"
+    + "<details class='tabguide noprint'><summary>What each tab does</summary><ul><li><b>Map</b>: the chapters and the recall chain, the shape of your talk.</li><li><b>Cue cards</b>: one word per slide. Tap a card to check the lines.</li><li><b>Script</b>: the full words, with anchors and pauses.</li><li><b>Drill</b>: a timer that moves the slides on like the real thing, plus a self-quiz.</li><li><b>Your talk</b>: paste your own script and the whole page rebuilds around it.</li><li><b>Method</b>: the six techniques behind the plan, and why they work.</li></ul></details>"
+    + (D.example ? "<div class='card'><h3>Before you start</h3><div class='plan-item"+(before?" next":"")+"'><span class='check'>"+(before?"<b>Next: </b>":"")+"Paste your own talk in Your talk (about two minutes). Until you do, the plan below is set up for the example.</span><button type='button' class='go' data-go='yours' data-gomode=''>Open Your talk</button></div></div>" : "")
+    + "<p>Tick each step as you go. The next one is highlighted, and its button opens the right tab.</p>"
     + D.plan.days.map(dy=>list(dy.name, dy.steps)).join("")
+    + "<p class='why-note'><b>Why it works:</b> short, varied passes spread over more than one sitting beat one long cram. Sleep does part of the work for you. The Method tab explains each technique.</p>"
     + "<div class='row noprint'><button type='button' id='resetTicks'>Clear ticks</button></div>";
   c.appendChild(s);
   s.querySelectorAll("input[data-k]").forEach(cb=>cb.addEventListener("change",()=>{ ticks[cb.dataset.k]=cb.checked; store(planKey(), JSON.stringify(ticks)); const k=cb.dataset.k; render(); const again=[...document.querySelectorAll("input[data-k]")].find(x=>x.dataset.k===k); if(again) again.focus(); }));
@@ -594,8 +613,8 @@ function renderYours(c){
     if(!parsed.slides.length){ st.className="status err"; st.textContent="No slides found. Paste some text first, with a blank line between slides."; return; }
     D = normalise({title:DATA.title, talkTitle:s.querySelector("#yTitle").value, secondsPerSlide:s.querySelector("#ySecs").value, intro:"Built from your script in this browser.", slides:parsed.slides, chapters:parsed.chapters});
     drill.secs = D.secondsPerSlide; drillReset(); header();
-    st.className="status ok"; st.textContent="Built "+D.slides.length+" slides in "+D.chapters.length+" chapters. Opening the map.";
-    setTab("map", true); window.scrollTo(0,0);
+    st.className="status ok"; st.textContent="Built "+D.slides.length+" slides in "+D.chapters.length+" chapters. Opening the plan.";
+    setTab("plan", true); window.scrollTo(0,0);
     const h = document.querySelector("#content h2"); if(h){ h.setAttribute("tabindex","-1"); h.focus(); }
   });
 }
