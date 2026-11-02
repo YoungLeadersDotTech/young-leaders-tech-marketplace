@@ -29,7 +29,8 @@ All notable changes to the no-notes-talk-coach plugin.
   `plan.days` for plans longer than two days. Optional per-slide `image` (`slides/<name>.webp`,
   `.jpg` or `.png` only), shown as Map thumbnails and on the back of each cue card. Optional `video`
   (a YouTube id) for example talks: click-to-load player on the Script tab (youtube-nocookie), with a
-  "See the finished talk" button on Start here; hidden once you build your own talk. 63 tests in
+  "See the finished talk" button on Start here; hidden once you build your own talk. Building from a script whose slide has no usable cue word (e.g. "One.") now falls back to
+  "Slide n" instead of failing silently. 63 tests in
   `scripts/tests/test_build_coach.py`.
 - **`reference/method.md`**: the six techniques (the four that are tailored for ADHD carry the tag),
   the recall chain, the default plan and pacing guidance.

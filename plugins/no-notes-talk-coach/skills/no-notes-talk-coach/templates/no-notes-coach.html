@@ -251,6 +251,7 @@ function guessCue(text, used){
   const cap = w => w.charAt(0).toUpperCase()+w.slice(1);
   const free = ws.filter(w=>!(used && used.has(w.toLowerCase())));
   const pool = free.length ? free : ws;
+  if(!pool.length) return "";  // nothing usable (e.g. "One."): the caller falls back to "Slide n"
   const strong = pool.filter((w,i)=>/\d/.test(w) || (i>0 && /^[A-Z]/.test(w)));
   const pick = (strong.length ? strong : pool).reduce((a,b)=> b.length>a.length ? b : a);
   return cap(pick);
