@@ -250,3 +250,16 @@ def test_slide_image_kept_when_valid():
 def test_rejects_bad_slide_image(bad):
     with pytest.raises(bc.CoachDataError):
         bc.validate(talk(slides=[{"lines": "a", "image": bad}]))
+
+
+def test_video_kept_when_valid():
+    out = bc.validate(talk(video={"youtube": "neG5uoy84ls", "title": "  My talk  "}))
+    assert out["video"] == {"youtube": "neG5uoy84ls", "title": "My talk"}
+    assert "video" not in bc.validate(talk())
+
+
+@pytest.mark.parametrize("bad", [{"youtube": "https://youtu.be/neG5uoy84ls"}, {"youtube": "short"},
+                                 {"youtube": "neG5uoy84l\""}, {"youtube": 5}, "neG5uoy84ls", {"title": "x"}])
+def test_rejects_bad_video(bad):
+    with pytest.raises(bc.CoachDataError):
+        bc.validate(talk(video=bad))

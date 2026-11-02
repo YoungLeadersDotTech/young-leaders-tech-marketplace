@@ -31,6 +31,9 @@ The example says so up front, with a "Use my own talk" button that takes you to 
 - **Your slides, if you have them**: give each slide an image file and it shows as a thumbnail on
   the Map (tap to open its cue card) and on the back of the cue card. The front of the card stays the
   cue word only, so it still tests your memory.
+- **A recording of the example talk**: an example can carry a YouTube recording, shown at the top of
+  the Script tab with a "See the finished talk" button on Start here. Nothing loads from YouTube until
+  you press play, and it disappears once you build your own talk.
 - **Free-paced talks too**: give each slide its own time and a total limit, and the timing check
   works against the limit instead of flagging every dense slide.
 

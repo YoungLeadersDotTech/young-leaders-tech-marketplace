@@ -137,6 +137,8 @@ Never set `example` for the user's own talk: it marks a demo and shows a "This i
 Only when the user gives you pictures of their slides, set `image` on each slide to
 `slides/<name>.webp` (or `.jpg`/`.png`) and ship those files in a `slides/` folder next to the page: they
 show as thumbnails on the Map and on the back of each cue card. Never invent or fetch slide images.
+A recording (`video: {"youtube": "<11-character id>", "title": "..."}`) only shows on an example talk,
+click-to-load at the top of the Script tab; give the id only, never a URL, and only for a recording the user gives you.
 `seconds` on a slide overrides `secondsPerSlide` (free-paced talks); `timeLimit` is the total
 allowed in seconds; `plan.days` holds 1 to 14 days of steps (the older `tonight`/`tomorrow` lists
 still work).

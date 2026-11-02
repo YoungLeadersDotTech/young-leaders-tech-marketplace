@@ -28,6 +28,8 @@ Talk JSON shape (only "slides" is required):
 "image" on a slide (optional) is a picture of the slide, shipped next to the page as
 slides/<name>.webp (or .jpg/.png): it shows as a thumbnail on the Map and on the
 back of the cue card. Only set it when the user supplies slide images.
+"video" (optional) is {"youtube": "<11-character id>", "title": "..."}: a recording of
+the talk, shown click-to-load on the Script tab of an example talk only.
 "timeLimit" is the total allowed, in seconds. "example": true marks a demo talk
 (the page then says so up front, with a button to start your own); never set it
 for a user's own talk. "plan" also accepts the older
@@ -49,6 +51,7 @@ TEMPLATE = SKILL_DIR / "templates" / "no-notes-coach.html"
 DATA_RE = re.compile(r"/\*__DATA_START__\*/.*?/\*__DATA_END__\*/", re.S)
 SLIDE_FIELDS = ("title", "cue", "lines", "anchor", "pause")
 # A slide image is a file shipped next to the page: slides/<name>.webp|jpg|jpeg|png, nothing else.
+YOUTUBE_ID_RE = re.compile(r"[A-Za-z0-9_-]{11}")
 IMAGE_RE = re.compile(r"slides/[A-Za-z0-9_-]{1,64}\.(?:webp|jpe?g|png)")
 MAX_SLIDES = 200
 MAX_PLAN_DAYS = 14
@@ -131,6 +134,12 @@ def validate(data: object) -> dict:
         "example": data.get("example") is True,
         "slides": clean_slides,
     }
+
+    video = data.get("video")
+    if video is not None:
+        if not isinstance(video, dict) or not isinstance(video.get("youtube"), str) or not YOUTUBE_ID_RE.fullmatch(video["youtube"]):
+            raise CoachDataError("'video' must be {\"youtube\": \"<11-character video id>\", \"title\": \"...\"}: the id only, never a URL")
+        out["video"] = {"youtube": video["youtube"], "title": _text(video.get("title"))[:120]}
 
     out["secondsPerSlide"] = _seconds(data.get("secondsPerSlide", 15), "'secondsPerSlide'", 3, 600)
     if data.get("timeLimit") is not None:

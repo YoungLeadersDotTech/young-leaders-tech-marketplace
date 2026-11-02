@@ -38,6 +38,11 @@ try{
   .adhd{font-size:.6em;font-weight:700;letter-spacing:.04em;color:var(--accent);margin-left:4px;vertical-align:super;line-height:1;white-space:nowrap;cursor:help}
   .why-note{font-size:.9rem;color:var(--muted);border-left:3px solid var(--accent);padding:2px 10px;margin:.6em 0 0}
   .why-note b{color:var(--ink)}
+  .video .vbox{aspect-ratio:16/9;width:100%;display:grid;place-items:center;background:var(--soft);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .video .vbox.on{background:#000;border-color:#000}
+  .video .vbox iframe{width:100%;height:100%;border:0}
+  .video .vnote{font-size:.88rem;margin:.6em 0 0}
+  @media print{ .video .vbox{display:none} }
   .lead{font-size:1rem;color:var(--muted);margin:.2em 0 0}
   /* Start here stepper: three numbered rows joined by a line; each row is one button. */
   .steps{list-style:none;margin:.8em 0 1.1em;padding:6px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
@@ -319,6 +324,9 @@ function normalise(src){
   if(p && Array.isArray(p.days)) days = p.days.filter(x=>x && typeof x==="object").map((x,i)=>({name:str(x.name)||("Day "+(i+1)), steps:(Array.isArray(x.steps)?x.steps:[]).map(str).filter(Boolean)})).filter(x=>x.steps.length);
   else if(p && Array.isArray(p.tonight) && Array.isArray(p.tomorrow)) days = [{name:"Tonight", steps:p.tonight.map(str).filter(Boolean)}, {name:"Tomorrow", steps:p.tomorrow.map(str).filter(Boolean)}];
   d.plan = (days && days.length) ? {days:days.slice(0,14)} : defaultPlan(d);
+  // A recording of the example talk: a YouTube id only, never a URL. Only shown while the example is loaded.
+  const v = src.video;
+  d.video = (d.example && v && typeof v==="object" && /^[A-Za-z0-9_-]{11}$/.test(str(v.youtube))) ? {youtube:str(v.youtube), title:str(v.title).slice(0,120)||d.talkTitle} : null;
   return d;
 }
 function chapterOf(n){ return D.chapters.find(c=>c.slides.includes(n)) || {name:"", tone:"", slides:[]}; }
@@ -427,7 +435,9 @@ function renderCards(c){
 }
 function renderScript(c){
   const s = el("section","block");
-  let html = "<h2>Script</h2><p class='muted'>Time estimates assume about 150 words a minute. A slide marked <span class='badge over'>over</span> has more words than its time on the clock allows: trim it, or give it more time.</p>";
+  let html = "<h2>Script</h2>"
+    + (D.video ? "<div class='card video' id='videoCard'><h3>Watch the talk</h3><div class='vbox' id='vbox'><button type='button' class='primary' id='playVideo'>&#9654; Play the talk (YouTube)</button></div><p class='muted vnote'>The YouTube player only loads when you press play. <a href='https://www.youtube.com/watch?v="+esc(D.video.youtube)+"' target='_blank' rel='noopener noreferrer'>Open on YouTube</a></p></div>" : "")
+    + "<p class='muted'>Time estimates assume about 150 words a minute. A slide marked <span class='badge over'>over</span> has more words than its time on the clock allows: trim it, or give it more time.</p>";
   D.chapters.forEach((ch,ci)=>{
     const secs = ch.slides.reduce((a,n)=>a+slideSecs(D.slides[n-1]),0);
     html += "<div class='card'><h3>Chapter "+(ci+1)+": "+esc(ch.name)+"</h3><p class='muted' style='margin:0'>"+(ch.tone?"Tone: "+esc(ch.tone)+". ":"")+"About "+mmss(secs)+" spoken, "+mmss(chapterBudget(ch))+" on the clock.</p>";
@@ -442,6 +452,8 @@ function renderScript(c){
     html += "</div>";
   });
   s.innerHTML = html; c.appendChild(s);
+  const play = s.querySelector("#playVideo");
+  if(play) play.addEventListener("click",()=>{ const f=document.createElement("iframe"); f.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(D.video.youtube)+"?rel=0&autoplay=1"; f.title=D.video.title; f.allow="autoplay; encrypted-media; picture-in-picture; fullscreen"; f.allowFullscreen=true; f.referrerPolicy="strict-origin-when-cross-origin"; const box=s.querySelector("#vbox"); box.innerHTML=""; box.classList.add("on"); box.appendChild(f); f.focus(); });
 }
 
 // ----- drill -----
@@ -614,6 +626,7 @@ function renderPlan(c){
     + "<ol class='steps' aria-label='How it works'>" + step1
     + row("2", "", "Learn the shape", "Chapters on the <b>Map</b>, one word per slide on the <b>Cue cards</b>.", "map")
     + row("3", "", "Practise out loud", step3, "plan") + "</ol>"
+    + (D.video ? "<p class='noprint'><button type='button' id='seeTalk'>&#9654; See the finished talk</button></p>" : "")
     + D.plan.days.map(dy=>list(dy.name, dy.steps)).join("")
     + "<p class='why-note'><b>Why it works:</b> short, varied passes spread over more than one sitting beat one long cram. Sleep does part of the work for you. The Method tab explains each technique.</p>"
     + "<div class='row noprint'><button type='button' id='resetTicks'>Clear ticks</button></div>";
@@ -621,6 +634,8 @@ function renderPlan(c){
   s.querySelectorAll("input[data-k]").forEach(cb=>cb.addEventListener("change",()=>{ ticks[cb.dataset.k]=cb.checked; store(planKey(), JSON.stringify(ticks)); const k=cb.dataset.k; render(); const again=[...document.querySelectorAll("input[data-k]")].find(x=>x.dataset.k===k); if(again) again.focus(); }));
   s.querySelectorAll("button[data-go]").forEach(b=>b.addEventListener("click",()=>{ if(b.dataset.gomode){ drill.mode=b.dataset.gomode; drillReset(); } setTab(b.dataset.go, true); window.scrollTo(0,0); const h=document.querySelector("#content h2"); if(h){ h.setAttribute("tabindex","-1"); h.focus(); } }));
   s.querySelector("[data-step='paste']").addEventListener("click", openPaste);
+  const see = s.querySelector("#seeTalk");
+  if(see) see.addEventListener("click",()=>{ setTab("script", true); const card=document.getElementById("videoCard"), b=document.getElementById("playVideo"); if(card) card.scrollIntoView({block:"start"}); if(b) b.focus({preventScroll:true}); });
   s.querySelector("[data-step='map']").addEventListener("click",()=>{ setTab("map", true); window.scrollTo(0,0); const h=document.querySelector("#content h2"); if(h){ h.setAttribute("tabindex","-1"); h.focus(); } });
   s.querySelector("[data-step='plan']").addEventListener("click",()=>{ const boxes=[...s.querySelectorAll("input[data-k]")]; const cb = boxes.find(x=>x.dataset.k===nextK) || boxes.find(x=>!x.checked) || boxes[0]; if(!cb) return; cb.closest(".card").scrollIntoView({block:"start"}); cb.focus({preventScroll:true}); });
   s.querySelector("#resetTicks").addEventListener("click",()=>{ ticks={}; store(planKey(),"{}"); render(); const b=document.getElementById("resetTicks"); if(b) b.focus(); });
