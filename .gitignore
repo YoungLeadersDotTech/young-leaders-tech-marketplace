@@ -18,3 +18,7 @@ __pycache__/
 # Generated OpenCode sync output - regenerable from canonical sources, not source
 .opencode/
 .opencode-sync/
+
+# skills-toolkit build ledgers and test caches - runtime state, never shipped
+.skills-build/
+.pytest_cache/
