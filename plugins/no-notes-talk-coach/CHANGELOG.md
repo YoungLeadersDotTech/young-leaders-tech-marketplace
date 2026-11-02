@@ -26,7 +26,9 @@ All notable changes to the no-notes-talk-coach plugin.
 - **`scripts/build_coach.py`**: validates talk JSON and injects it into the template as strict JSON
   that is safe inside a script element. Optional `--site-bar` preset (off by default) and
   `--no-em-dashes`. Optional per-slide `seconds`, a `timeLimit` for free-paced talks, and
-  `plan.days` for plans longer than two days. 44 tests in `scripts/tests/test_build_coach.py`.
+  `plan.days` for plans longer than two days. Optional per-slide `image` (`slides/<name>.webp`,
+  `.jpg` or `.png` only), shown as Map thumbnails and on the back of each cue card. 56 tests in
+  `scripts/tests/test_build_coach.py`.
 - **`reference/method.md`**: the six techniques (the four that are tailored for ADHD carry the tag),
   the recall chain, the default plan and pacing guidance.
 - **`reference/site-bar-youngleaders.json`**: opt-in Young Leaders in Tech site-bar preset.

@@ -237,3 +237,16 @@ def test_example_flag_only_when_explicitly_true():
 
 def test_shipped_sample_is_marked_as_example():
     assert embedded(TEMPLATE.read_text(encoding="utf-8"))["example"] is True
+
+
+def test_slide_image_kept_when_valid():
+    out = bc.validate(talk(slides=[{"lines": "a", "image": "slides/01.webp"}, {"lines": "b", "image": ""}]))
+    assert out["slides"][0]["image"] == "slides/01.webp"
+    assert "image" not in out["slides"][1]
+
+
+@pytest.mark.parametrize("bad", ["../x.webp", "slides/../x.png", "https://evil/x.png", "javascript:alert(1)",
+                                 "data:image/png;base64,AAA", "slides/a.svg", "/slides/a.png", "slides/a b.png", 5])
+def test_rejects_bad_slide_image(bad):
+    with pytest.raises(bc.CoachDataError):
+        bc.validate(talk(slides=[{"lines": "a", "image": bad}]))

@@ -28,6 +28,9 @@ The example says so up front, with a "Use my own talk" button that takes you to 
   talk, learn the shape, practise out loud, with a running count of steps done), then the plan. The plan counts back from the talk (two nights before, the day before, the morning of)
   and can spread over more days. The next step is highlighted and each step has a button that opens
   the right tab. While the example talk is loaded, "paste your own talk" comes first.
+- **Your slides, if you have them**: give each slide an image file and it shows as a thumbnail on
+  the Map (tap to open its cue card) and on the back of the cue card. The front of the card stays the
+  cue word only, so it still tests your memory.
 - **Free-paced talks too**: give each slide its own time and a total limit, and the timing check
   works against the limit instead of flagging every dense slide.
 

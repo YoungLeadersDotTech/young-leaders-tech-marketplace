@@ -99,7 +99,7 @@ try{
   .chip{font-size:13px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--panel);color:var(--ink)}
   .chip i{font-style:normal;color:var(--muted);margin-right:4px}
   /* Cue cards */
-  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:12px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:12px;align-items:start}
   .cuecard{display:block;width:100%;text-align:left;border-radius:12px;padding:14px;min-height:130px;line-height:1.4}
   .cuecard .n{font-size:12px;color:var(--muted)}
   .cuecard .cw{display:block;font-size:1.35rem;font-weight:800;margin:.2em 0 .3em;overflow-wrap:anywhere}
@@ -108,6 +108,11 @@ try{
   .cuecard .back{display:none;font-size:.9rem}
   .cuecard.flipped .back{display:block}
   .cuecard.flipped .first{display:none}
+  .cuecard .slideimg{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:var(--soft);border:1px solid var(--line);border-radius:8px;margin:0 0 .6em}
+  .thumbs{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px;margin:.4em 0 .2em;scrollbar-width:thin}
+  .thumb{position:relative;flex:none;padding:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--soft);line-height:0}
+  .thumb img{display:block;height:64px;width:auto;aspect-ratio:16/9;object-fit:cover}
+  .thumb i{position:absolute;left:4px;top:4px;font:700 11px/1 system-ui,sans-serif;font-style:normal;background:var(--panel);color:var(--ink);border-radius:4px;padding:2px 4px}
   /* Script */
   .slide{padding:14px 0;border-top:1px dashed var(--line)}
   .slide h3{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
@@ -221,6 +226,8 @@ const DATA = /*__DATA_START__*/{"title": "No-Notes Talk Coach", "talkTitle": "Wr
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function safeUrl(u){ try{ const p=new URL(u, location.href); return ["http:","https:","mailto:"].includes(p.protocol) ? u : "#"; }catch(e){ return "#"; } }
 function safeImgUrl(u){ u=String(u==null?"":u).trim(); try{ if(/^data:image\/(png|jpe?g|gif|webp);base64,/i.test(u)) return u; const p=new URL(u, location.href); return ["http:","https:"].includes(p.protocol) ? u : ""; }catch(e){ return ""; } }
+// Slide pictures only ever come from a slides/ folder next to the page (checked again in build_coach.py).
+function slideImg(u){ u=str(u); return /^slides\/[A-Za-z0-9_-]{1,64}\.(webp|jpe?g|png)$/i.test(u) ? u : ""; }
 function str(v){ return v==null ? "" : String(v).trim(); }
 function store(k, v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k, v); }catch(e){ return null; } return null; }
 function mmss(sec){ sec=Math.max(0,Math.round(sec)); return Math.floor(sec/60)+":"+String(sec%60).padStart(2,"0"); }
@@ -293,7 +300,7 @@ function normalise(src){
     s = (s && typeof s==="object") ? s : {lines:s};
     const lines = str(s.lines);
     const sec = parseInt(s.seconds,10);
-    d.slides.push({n:i+1, title:str(s.title)||("Slide "+(i+1)), cue:str(s.cue), lines:lines, anchor:str(s.anchor), pause:str(s.pause), seconds:(sec>=3 && sec<=600)?sec:0});
+    d.slides.push({n:i+1, title:str(s.title)||("Slide "+(i+1)), cue:str(s.cue), lines:lines, anchor:str(s.anchor), pause:str(s.pause), seconds:(sec>=3 && sec<=600)?sec:0, image:slideImg(s.image)});
   });
   const used = new Set(d.slides.map(x=>x.cue.toLowerCase()).filter(Boolean));
   d.slides.forEach(x=>{ if(x.cue) return; let c = guessCue(x.lines, used) || ("Slide "+x.n); used.add(c.toLowerCase()); x.cue = c; });
@@ -396,10 +403,13 @@ function renderMap(c){
   html += "<div class='card'><h3>Recall chain</h3><p class='chain'>"+D.chapters.map(ch=>esc((D.slides[ch.slides[0]-1]||{}).cue)).join("<span class='sep' aria-hidden='true'>&rarr;</span>")+"</p><p class='why-note'><b>How to use it:</b> the first cue of each chapter, in order. Picture this chain before bed and again before you walk on. If you blank mid-talk, find your place on the chain.</p></div>";
   D.chapters.forEach((ch,ci)=>{
     html += "<div class='card'><h3>"+(ci+1)+". "+esc(ch.name)+"</h3>"+(ch.tone?"<p class='muted'>Tone: "+esc(ch.tone)+"</p>":"")
+      + (ch.slides.some(n=>D.slides[n-1].image) ? "<div class='thumbs noprint'>"+ch.slides.map(n=>{ const sl=D.slides[n-1]; return sl.image ? "<button type='button' class='thumb' data-n='"+n+"' aria-label='Slide "+n+": "+esc(sl.title)+". Open its cue card'><img src='"+esc(sl.image)+"' alt='' loading='lazy' decoding='async'><i>"+n+"</i></button>" : ""; }).join("")+"</div>" : "")
       + "<div class='chips'>"+ch.slides.map(n=>"<span class='chip'><i>"+n+"</i>"+esc(D.slides[n-1].cue)+"</span>").join("")+"</div>"
       + "<p class='muted' style='margin:.6em 0 0;font-size:.9rem'>Starts: “"+esc(firstSentence(D.slides[ch.slides[0]-1].lines))+"”</p></div>";
   });
   s.innerHTML = html; c.appendChild(s);
+  // A thumbnail opens that slide's cue card, flipped.
+  s.querySelectorAll(".thumb").forEach(b=>b.addEventListener("click",()=>{ const n=b.dataset.n; setTab("cards", true); const card=document.querySelector(".cuecard[data-n='"+n+"']"); if(card){ card.classList.add("flipped"); card.setAttribute("aria-expanded","true"); card.scrollIntoView({block:"center"}); card.focus({preventScroll:true}); } }));
 }
 function firstSentence(t){ const m = str(t).match(/^[\s\S]*?[.!?](\s|$)/); const f = m ? m[0].trim() : str(t); return f.length>140 ? f.slice(0,137)+"..." : f; }
 function renderCards(c){
@@ -409,7 +419,7 @@ function renderCards(c){
     + (sim.length?"<div class='callout pause'><span class='lbl'>Check</span>These cues start the same way and are easy to mix up: "+sim.map(g=>g.map(x=>x.n+" "+esc(x.cue)).join(" / ")).join("; ")+". Make one of each pair more distinct.</div>":"")
     + "<p>Say the slide from the cue word alone, then tap the card to check. <span class='muted'>One word is easier to find under pressure than a sentence.</span></p>"
     + "<div class='row noprint'><button type='button' id='copyCues'>Copy all cue words</button><button type='button' id='flipAll'>Flip all</button></div>"
-    + "<div class='cards'>"+D.slides.map(sl=>"<button type='button' class='cuecard' aria-expanded='false' data-n='"+sl.n+"'><span class='n'>"+sl.n+" &middot; "+esc(chapterOf(sl.n).name)+"</span><span class='cw'>"+esc(sl.cue)+"</span><span class='first'>Tap to check</span><span class='back'>"+esc(sl.lines)+"</span></button>").join("")+"</div>";
+    + "<div class='cards'>"+D.slides.map(sl=>"<button type='button' class='cuecard' aria-expanded='false' data-n='"+sl.n+"'><span class='n'>"+sl.n+" &middot; "+esc(chapterOf(sl.n).name)+"</span><span class='cw'>"+esc(sl.cue)+"</span><span class='first'>Tap to check</span><span class='back'>"+(sl.image?"<img class='slideimg' src='"+esc(sl.image)+"' alt='Slide "+sl.n+": "+esc(sl.title)+"' loading='lazy' decoding='async'>":"")+esc(sl.lines)+"</span></button>").join("")+"</div>";
   c.appendChild(s);
   s.querySelectorAll(".cuecard").forEach(b=>b.addEventListener("click",()=>{ const f=b.classList.toggle("flipped"); b.setAttribute("aria-expanded", f?"true":"false"); }));
   s.querySelector("#flipAll").addEventListener("click",()=>{ const cards=[...s.querySelectorAll(".cuecard")]; const any=cards.some(x=>!x.classList.contains("flipped")); cards.forEach(x=>{ x.classList.toggle("flipped",any); x.setAttribute("aria-expanded",any?"true":"false"); }); });

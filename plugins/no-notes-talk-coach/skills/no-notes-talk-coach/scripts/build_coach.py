@@ -25,6 +25,9 @@ Talk JSON shape (only "slides" is required):
     }
 
 "seconds" on a slide overrides secondsPerSlide for that slide (free-paced talks).
+"image" on a slide (optional) is a picture of the slide, shipped next to the page as
+slides/<name>.webp (or .jpg/.png): it shows as a thumbnail on the Map and on the
+back of the cue card. Only set it when the user supplies slide images.
 "timeLimit" is the total allowed, in seconds. "example": true marks a demo talk
 (the page then says so up front, with a button to start your own); never set it
 for a user's own talk. "plan" also accepts the older
@@ -45,6 +48,8 @@ SKILL_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE = SKILL_DIR / "templates" / "no-notes-coach.html"
 DATA_RE = re.compile(r"/\*__DATA_START__\*/.*?/\*__DATA_END__\*/", re.S)
 SLIDE_FIELDS = ("title", "cue", "lines", "anchor", "pause")
+# A slide image is a file shipped next to the page: slides/<name>.webp|jpg|jpeg|png, nothing else.
+IMAGE_RE = re.compile(r"slides/[A-Za-z0-9_-]{1,64}\.(?:webp|jpe?g|png)")
 MAX_SLIDES = 200
 MAX_PLAN_DAYS = 14
 EM_DASH = chr(0x2014)
@@ -111,6 +116,11 @@ def validate(data: object) -> dict:
             raise CoachDataError(f"slide {i} has neither 'lines' nor 'title'")
         if slide.get("seconds") is not None:
             cleaned["seconds"] = _seconds(slide["seconds"], f"slide {i} 'seconds'", 3, 600)
+        if slide.get("image") not in (None, ""):
+            image = slide["image"]
+            if not (isinstance(image, str) and IMAGE_RE.fullmatch(image)):
+                raise CoachDataError(f"slide {i} 'image' must look like slides/01.webp (webp, jpg or png in a slides/ folder next to the page)")
+            cleaned["image"] = image
         clean_slides.append(cleaned)
 
     out: dict = {
