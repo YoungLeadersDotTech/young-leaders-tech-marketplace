@@ -6,7 +6,7 @@ the bottleneck: mark only those four with the superscript ADHD tag, explained on
 one, as "tailored for ADHD, useful for all". Tagging or explaining everything makes the tag
 meaningless.
 
-The method came from rehearsing a 20-slide, 15-seconds-per-slide talk in 48 hours.
+The method came from learning a 20-slide, 15-seconds-per-slide talk off without notes the night before giving it.
 
 ## 1. Scenes, not paragraphs (untagged)
 
