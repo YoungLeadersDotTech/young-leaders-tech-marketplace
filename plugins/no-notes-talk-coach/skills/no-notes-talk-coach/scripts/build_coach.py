@@ -229,10 +229,11 @@ def to_script_json(data: dict) -> str:
 
 def _brand_marker(kind: str, edge: str) -> str:
     """Regex for one marker line, as a CSS comment or an HTML comment, whole line."""
-    return (r"^[ \t]*(?:/\*|<!--)__BRAND_%s_%s__(?:\*/|-->)[ \t]*\n" % (kind, edge))
+    return (r"^[ \t]*(?:/\*|<!--)__BRAND_%s_%s__(?:\*/|-->)[ \t]*\r?\n" % (kind, edge))
 
 
-ANY_BRAND_MARKER_RE = re.compile(r"^[ \t]*(?:/\*|<!--)__BRAND_(?:ON|OFF)_(?:START|END)__(?:\*/|-->)[ \t]*\n", re.M)
+ANY_BRAND_MARKER_RE = re.compile(
+    r"^[ \t]*(?:/\*|<!--)__BRAND_(?:ON|OFF)_(?:START|END)__(?:\*/|-->)[ \t]*\r?\n", re.M)
 
 
 def select_variant(template_html: str, brand: bool) -> str:

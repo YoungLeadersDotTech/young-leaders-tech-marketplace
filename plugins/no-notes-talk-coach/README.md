@@ -80,7 +80,7 @@ does). The JSON shape is in
 | `skills/no-notes-talk-coach/SKILL.md` | The skill |
 | `skills/no-notes-talk-coach/templates/no-notes-coach.html` | The HTML coach template |
 | `skills/no-notes-talk-coach/scripts/build_coach.py` | Validates talk JSON and builds the page |
-| `skills/no-notes-talk-coach/scripts/tests/` | 69 pytest cases for the build script |
+| `skills/no-notes-talk-coach/scripts/tests/` | 71 pytest cases for the build script |
 | `skills/no-notes-talk-coach/reference/method.md` | The six techniques, recall chain, plan and pacing |
 | `skills/no-notes-talk-coach/reference/site-bar-youngleaders.json` | Opt-in branded header preset |
 

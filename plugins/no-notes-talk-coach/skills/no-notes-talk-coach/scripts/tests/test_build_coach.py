@@ -306,6 +306,23 @@ def test_both_variants_keep_the_data_and_the_script():
         assert html.count("<style>") == 1 and html.count("</style>") == 1
 
 
+def test_both_variants_have_balanced_css_and_no_leftover_markers():
+    for brand in (False, True):
+        html = build_page(brand=brand)
+        style = html[html.index("<style>"):html.index("</style>")]
+        assert style.count("{") == style.count("}")
+        assert style.count("/*") == style.count("*/")
+        assert "__BRAND_" not in html
+
+
+def test_windows_line_endings_in_the_template_still_select_one_variant():
+    crlf = TEMPLATE.read_text(encoding="utf-8").replace("\n", "\r\n")
+    for brand in (False, True):
+        html = bc.build(crlf, bc.validate(talk()), brand=brand)
+        assert "__BRAND_" not in html
+        assert ("/brand.css" in html) is brand
+
+
 def test_talk_text_that_looks_like_a_marker_is_left_alone():
     marker = "/*__BRAND_OFF_START__*/"
     data = bc.validate(talk(talkTitle="x\n" + marker + "\ny"))
