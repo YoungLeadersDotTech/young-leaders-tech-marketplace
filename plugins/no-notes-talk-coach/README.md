@@ -1,6 +1,6 @@
 # no-notes-talk-coach
 
-**Version**: 1.0.0
+**Version**: 1.1.0
 
 Learn a talk off without notes in a day or two. Give it the talk you already have (a deck, a
 script or slide notes) and the seconds per slide, and it gives you back a rehearsal pack and a
@@ -67,7 +67,10 @@ python3 skills/no-notes-talk-coach/scripts/build_coach.py --data talk.json --out
 
 Options: `--no-em-dashes` replaces em dashes with " - "; `--site-bar <preset.json>` adds a branded
 header (off by default, so a coach built for someone else gets no site bar; the footer always has
-a one-line credit). The JSON shape is in
+a one-line credit); `--brand` uses the site's `/brand.css` and `/fonts/` instead of the built-in
+palette (off by default: the page stays one self-contained offline file, and with `--brand` it
+only looks right when served from a site that provides those files, as tools.youngleaders.tech
+does). The JSON shape is in
 `SKILL.md`, Phase 4.
 
 ## Contents
@@ -77,7 +80,7 @@ a one-line credit). The JSON shape is in
 | `skills/no-notes-talk-coach/SKILL.md` | The skill |
 | `skills/no-notes-talk-coach/templates/no-notes-coach.html` | The HTML coach template |
 | `skills/no-notes-talk-coach/scripts/build_coach.py` | Validates talk JSON and builds the page |
-| `skills/no-notes-talk-coach/scripts/tests/` | 44 pytest cases for the build script |
+| `skills/no-notes-talk-coach/scripts/tests/` | 69 pytest cases for the build script |
 | `skills/no-notes-talk-coach/reference/method.md` | The six techniques, recall chain, plan and pacing |
 | `skills/no-notes-talk-coach/reference/site-bar-youngleaders.json` | Opt-in branded header preset |
 

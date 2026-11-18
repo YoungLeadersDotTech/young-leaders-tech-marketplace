@@ -263,3 +263,58 @@ def test_video_kept_when_valid():
 def test_rejects_bad_video(bad):
     with pytest.raises(bc.CoachDataError):
         bc.validate(talk(video=bad))
+
+
+def build_page(**kw):
+    return bc.build(TEMPLATE.read_text(encoding="utf-8"), bc.validate(talk()), **kw)
+
+
+def test_default_build_stays_self_contained():
+    """Without --brand the page carries its own palette and system fonts and needs no site files."""
+    html = build_page()
+    assert "/brand.css" not in html and "/fonts/" not in html
+    assert "--accent:#2f5d50" in html and "-apple-system" in html
+    assert "__BRAND_" not in html
+
+
+def test_brand_build_takes_colours_and_fonts_from_the_site_files():
+    html = build_page(brand=True)
+    assert '<link rel="stylesheet" href="/brand.css">' in html
+    assert '<link rel="preload" href="/fonts/league-spartan-latin-700.woff2"' in html
+    assert '<link rel="preload" href="/fonts/inter-latin-400.woff2"' in html
+    assert ":root{--soft:var(--accent-soft);--good:var(--ok);}" in html
+    # the built-in green palette and the system font stack are gone
+    assert "--accent:#2f5d50" not in html and "-apple-system" not in html
+    assert "__BRAND_" not in html
+
+
+def test_brand_build_uses_the_display_font_only_on_big_headings():
+    """League Spartan 700 is for large type only; small bold labels use Inter 600."""
+    html = build_page(brand=True)
+    for sel in (".cuecard .cw{", ".stage .bigcue{"):
+        rule = html[html.index(sel):html.index("}", html.index(sel))]
+        assert "font-family:var(--font-display)" in rule and "font-weight:700" in rule
+    for sel in (".adhd{", "h1 .example-tag{"):
+        rule = html[html.index(sel):html.index("}", html.index(sel))]
+        assert "font-family:var(--font-body)" in rule and "font-weight:600" in rule
+
+
+def test_both_variants_keep_the_data_and_the_script():
+    for brand in (False, True):
+        html = build_page(brand=brand)
+        assert embedded(html)["slides"]
+        assert html.count("<style>") == 1 and html.count("</style>") == 1
+
+
+def test_talk_text_that_looks_like_a_marker_is_left_alone():
+    marker = "/*__BRAND_OFF_START__*/"
+    data = bc.validate(talk(talkTitle="x\n" + marker + "\ny"))
+    html = bc.build(TEMPLATE.read_text(encoding="utf-8"), data, brand=True)
+    assert embedded(html)["talkTitle"].count("__BRAND_OFF_START__") == 1
+
+
+def test_cli_brand_flag(tmp_path):
+    code, out = run_cli(tmp_path, talk(), "--brand")
+    assert code == 0 and "/brand.css" in out.read_text(encoding="utf-8")
+    code, out = run_cli(tmp_path, talk())
+    assert code == 0 and "/brand.css" not in out.read_text(encoding="utf-8")

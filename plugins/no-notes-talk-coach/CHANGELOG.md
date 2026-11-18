@@ -2,6 +2,26 @@
 
 All notable changes to the no-notes-talk-coach plugin.
 
+## [1.1.0] - 2026-11-18
+
+### Added
+- **`--brand` build option**: the page takes its colours and fonts from `/brand.css` and
+  `/fonts/` on the site that serves it (the Young Leaders in Tech brand: maroon accent, League
+  Spartan 700 on large headings, Inter for body text) instead of its built-in palette. The cue
+  word and the big drill cue use League Spartan; small bold labels use Inter 600. Print uses the
+  brand's white-paper block.
+- Six tests: the default build is unchanged and still self-contained, the brand build uses the
+  site files and drops the built-in palette, the display font stays on large type only, talk text
+  that looks like a template marker is left alone, and the CLI flag works.
+
+### Notes
+- **Off by default.** Without `--brand` the output is byte-for-byte what 1.0.0 produced, so a coach
+  built for someone else is still one offline file. With `--brand` and no site files, the page has no
+  colours or fonts, so use it only for a page deployed next to `/brand.css`.
+- The template wraps each line the brand changes in `__BRAND_OFF__` and `__BRAND_ON__` marker
+  lines; the build keeps one variant and removes the markers. The variant is chosen before the talk
+  is inserted.
+
 ## [1.0.0] - 2026-10-31
 
 ### Added

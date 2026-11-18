@@ -11,7 +11,13 @@ try{
   if(__t === "dark" || __t === "light") document.documentElement.setAttribute("data-theme", __t);
 }catch(e){}
 </script>
+<!--__BRAND_ON_START__-->
+<link rel="preload" href="/fonts/league-spartan-latin-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/brand.css">
+<!--__BRAND_ON_END__-->
 <style>
+/*__BRAND_OFF_START__*/
   :root{
     --bg:#fafaf8; --ink:#1a1a1a; --muted:#5a5a52; --line:#e2e0d8; --panel:#fff;
     --accent:#2f5d50; --accent2:#a8481a; --on-accent:#ffffff; --soft:#eef4f1;
@@ -23,9 +29,19 @@ try{
   /* The manual toggle sets data-theme on <html>, which wins over the OS preference either way. */
   :root[data-theme="light"]{--bg:#fafaf8;--ink:#1a1a1a;--muted:#5a5a52;--line:#e2e0d8;--panel:#fff;--accent:#2f5d50;--accent2:#a8481a;--on-accent:#ffffff;--soft:#eef4f1;--good:#2f6b3a;--bad:#a01b2e;}
   :root[data-theme="dark"]{--bg:#16161a;--ink:#ececec;--muted:#a0a0a0;--line:#2c2c33;--panel:#1e1e24;--accent:#7fb3a3;--accent2:#e0915f;--on-accent:#10231e;--soft:#1f2a27;--good:#8fd19e;--bad:#f08a9a;}
+/*__BRAND_OFF_END__*/
+/*__BRAND_ON_START__*/
+  /* Colours, fonts and print come from ../../brand.css; these names alias the brand tokens. */
+  :root{--soft:var(--accent-soft);--good:var(--ok);}
+/*__BRAND_ON_END__*/
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);
+/*__BRAND_OFF_START__*/
     font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+/*__BRAND_OFF_END__*/
+/*__BRAND_ON_START__*/
+    font:16px/1.6 var(--font-body);}
+/*__BRAND_ON_END__*/
   .wrap{max-width:820px;margin:0 auto;padding:0 16px 100px}
   header.top{padding:40px 0 22px;border-bottom:1px solid var(--line)}
   .kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);font-weight:700}
@@ -35,7 +51,12 @@ try{
   .example-banner{border:2px solid var(--accent);background:var(--soft);color:var(--ink);border-radius:12px;padding:12px 14px;margin:.9em 0 0;font-size:.95rem}
   .example-banner .row{margin-top:10px}
   /* ADHD tag: a small superscript, explained once in the Method intro. Hover shows ADHD_TIP. */
+/*__BRAND_OFF_START__*/
   .adhd{font-size:.6em;font-weight:700;letter-spacing:.04em;color:var(--accent);margin-left:4px;vertical-align:super;line-height:1;white-space:nowrap;cursor:help}
+/*__BRAND_OFF_END__*/
+/*__BRAND_ON_START__*/
+  .adhd{font-size:.6em;font-weight:600;font-family:var(--font-body);letter-spacing:.04em;color:var(--accent);margin-left:4px;vertical-align:super;line-height:1;white-space:nowrap;cursor:help}
+/*__BRAND_ON_END__*/
   .why-note{font-size:.9rem;color:var(--muted);border-left:3px solid var(--accent);padding:2px 10px;margin:.6em 0 0}
   .why-note b{color:var(--ink)}
   .video .vbox{aspect-ratio:16/9;width:100%;display:grid;place-items:center;background:var(--soft);border:1px solid var(--line);border-radius:10px;overflow:hidden}
@@ -58,7 +79,12 @@ try{
   .step .chev{font-size:1.4rem;line-height:1;color:var(--muted);align-self:center}
   @media (min-width:640px){.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.steps li::after,.step .chev{display:none}.step{height:100%}}
   .on-tab{font-size:.85rem;color:var(--muted);margin:.4em 0 0}
+/*__BRAND_OFF_START__*/
   h1 .example-tag{font-size:13px;vertical-align:middle;font-weight:700}
+/*__BRAND_OFF_END__*/
+/*__BRAND_ON_START__*/
+  h1 .example-tag{font-size:13px;vertical-align:middle;font-weight:600;font-family:var(--font-body)}
+/*__BRAND_ON_END__*/
   .selbar{position:sticky;top:0;z-index:10;background:var(--bg);padding:12px 0 8px;border-bottom:1px solid var(--line)}
   .selbar{display:grid;grid-template-columns:1fr auto;grid-template-areas:"lbl utils" "fmts fmts";align-items:center;column-gap:8px}
   .selbar .lbl{grid-area:lbl;font-size:13px;color:var(--muted)}
@@ -107,7 +133,12 @@ try{
   .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:12px;align-items:start}
   .cuecard{display:block;width:100%;text-align:left;border-radius:12px;padding:14px;min-height:130px;line-height:1.4}
   .cuecard .n{font-size:12px;color:var(--muted)}
+/*__BRAND_OFF_START__*/
   .cuecard .cw{display:block;font-size:1.35rem;font-weight:800;margin:.2em 0 .3em;overflow-wrap:anywhere}
+/*__BRAND_OFF_END__*/
+/*__BRAND_ON_START__*/
+  .cuecard .cw{display:block;font-size:1.35rem;font-weight:700;font-family:var(--font-display);margin:.2em 0 .3em;overflow-wrap:anywhere}
+/*__BRAND_ON_END__*/
   .cuecard .first{font-size:.86rem;color:var(--muted)}
   .cuecard.flipped{border-color:var(--accent)}
   .cuecard .back{display:none;font-size:.9rem}
@@ -129,7 +160,12 @@ try{
   /* Drill */
   .stage{border:2px solid var(--accent);border-radius:16px;background:var(--panel);color:var(--ink);padding:22px 18px;text-align:center;margin:14px 0}
   .stage .where{font-size:.9rem;color:var(--muted)}
+/*__BRAND_OFF_START__*/
   .stage .bigcue{font-size:2.6rem;font-weight:800;line-height:1.15;margin:.25em 0;overflow-wrap:anywhere}
+/*__BRAND_OFF_END__*/
+/*__BRAND_ON_START__*/
+  .stage .bigcue{font-size:2.6rem;font-weight:700;font-family:var(--font-display);line-height:1.15;margin:.25em 0;overflow-wrap:anywhere}
+/*__BRAND_ON_END__*/
   .stage .ttl{font-size:1rem;color:var(--muted)}
   .stage .reveal{text-align:left;margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
   .bar{height:8px;border-radius:999px;background:var(--line);overflow:hidden;margin:10px 0 4px}
@@ -179,7 +215,12 @@ try{
   .sitebar .sb-sub{background:var(--sb-brand);color:#fff;text-decoration:none;font-size:.86rem;font-weight:700;padding:8px 16px;border-radius:999px;white-space:nowrap;border:1px solid var(--sb-brand)}
   @media(max-width:720px){ .sitebar .sb-name{display:none} .sitebar .sb-inner{flex-wrap:wrap;min-height:0;gap:10px} }
   @media print{
+/*__BRAND_OFF_START__*/
     :root{--bg:#fff !important;--ink:#111 !important;--muted:#555 !important;--line:#ccc !important;--panel:#fff !important;--soft:#f4f4f0 !important;--accent:#2f5d50 !important;--accent2:#a8481a !important;}
+/*__BRAND_OFF_END__*/
+/*__BRAND_ON_START__*/
+    :root,:root[data-theme="dark"]{--soft:#ffffff !important;--good:#2c6a35 !important;}
+/*__BRAND_ON_END__*/
     .selbar,.controls,.noprint,#sitebar{display:none !important}
     .steps{border:0;padding:0} .steps li::after,.step .chev{display:none} .step{padding:3px 0}
     .cuecard .back{display:block}
