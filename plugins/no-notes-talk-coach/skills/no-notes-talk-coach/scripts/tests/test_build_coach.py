@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -328,6 +329,31 @@ def test_talk_text_that_looks_like_a_marker_is_left_alone():
     data = bc.validate(talk(talkTitle="x\n" + marker + "\ny"))
     html = bc.build(TEMPLATE.read_text(encoding="utf-8"), data, brand=True)
     assert embedded(html)["talkTitle"].count("__BRAND_OFF_START__") == 1
+
+
+def test_brand_build_has_no_sitebar_rules_the_site_component_styles_the_bar():
+    """The Young Leaders site bar is one component in /brand.css; a --brand page must not carry its own."""
+    html = build_page(brand=True)
+    assert ".sitebar" not in html and ".sb-" not in html and "--sb-brand" not in html
+    assert 'setProperty("--sb' not in html
+    assert 'class="sb-sub"' in html, "the script still renders the bar markup"
+
+
+def test_self_contained_build_keeps_its_own_sitebar_rules():
+    html = build_page(brand=False)
+    assert ".sitebar .sb-sub{" in html and "--sb-brand" in html
+
+
+# Point NO_NOTES_GALLERY_TILE at tool-gallery/public/prototypes/no-notes-talk-coach in an ai-os-personal checkout.
+GALLERY_PAGE = Path(os.environ.get("NO_NOTES_GALLERY_TILE", "/nonexistent"))
+
+
+@pytest.mark.skipif(not (GALLERY_PAGE / "index.html").exists(), reason="set NO_NOTES_GALLERY_TILE to the gallery tile folder to run this")
+def test_generator_output_matches_the_gallery_page_byte_for_byte():
+    """The gallery tile is generated; a hand edit that the generator does not make would be lost on the next rebuild."""
+    data = json.loads((GALLERY_PAGE / "data.json").read_text(encoding="utf-8"))
+    page = bc.build(TEMPLATE.read_text(encoding="utf-8"), bc.strip_em_dashes(bc.validate(data)) | {"siteBar": bc.load_site_bar(PRESET)}, brand=True)
+    assert page == (GALLERY_PAGE / "index.html").read_text(encoding="utf-8")
 
 
 def test_cli_brand_flag(tmp_path):

@@ -4,6 +4,9 @@ All notable changes to the no-notes-talk-coach plugin.
 
 ## [1.1.0] - 2026-11-18
 
+### Changed
+- **`--brand` pages no longer carry their own site bar rules.** The Young Leaders site bar (logo, nav, Subscribe) is one component in `/brand.css`, so the brand variant drops the template's `.sitebar` and `.sb-*` rules and the script line that set `--sb-brand`. The self-contained build keeps them. The template wraps them in `BRAND_OFF` blocks. A test checks the brand variant has none, and (with `NO_NOTES_GALLERY_TILE` set to the gallery tile folder) that the generator output equals the gallery page byte for byte.
+
 ### Added
 - **`--brand` build option**: the page takes its colours and fonts from `/brand.css` and
   `/fonts/` on the site that serves it (the Young Leaders in Tech brand: maroon accent, League
