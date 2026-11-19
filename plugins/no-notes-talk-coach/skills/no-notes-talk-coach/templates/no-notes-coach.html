@@ -230,9 +230,16 @@ try{
     .cards{grid-template-columns:repeat(3,1fr)}
     .cuecard,.slide{break-inside:avoid}
   }
+/*__BRAND_ON_START__*/
+  /* a11y: 44px tap targets */
+  button,.btn,.go{min-height:44px}label.check{min-height:44px}label.inl{display:inline-flex;align-items:center;min-height:44px}
+/*__BRAND_ON_END__*/
 </style>
 </head>
 <body>
+<!--__BRAND_ON_START__-->
+<a class="sb-skip" href="#content">Skip to content</a>
+<!--__BRAND_ON_END__-->
 <div id="sitebar"></div>
 <div class="wrap">
   <header class="top">

@@ -344,6 +344,28 @@ def test_self_contained_build_keeps_its_own_sitebar_rules():
     assert ".sitebar .sb-sub{" in html and "--sb-brand" in html
 
 
+def test_brand_build_starts_with_a_skip_link_that_lands_on_the_main_area():
+    """Keyboard users reach the content without tabbing through the bar (the /brand.css `.sb-skip` rule styles it)."""
+    html = build_page(brand=True)
+    body = html[html.index("<body>"):]
+    first = re.search(r"<a\b[^>]*>", body)
+    assert 'class="sb-skip" href="#content"' in first.group(0)
+    assert first.start() < body.index('id="sitebar"')
+    assert '<main id="content"' in html
+
+
+def test_brand_build_has_44px_tap_targets_for_buttons_and_tick_labels():
+    html = build_page(brand=True)
+    assert "button,.btn,.go{min-height:44px}" in html
+    assert "label.check{min-height:44px}" in html and "label.inl{display:inline-flex" in html
+
+
+def test_default_build_is_unchanged_by_the_accessibility_additions():
+    """The self-contained build stays what 1.0.0 produced: no skip link, no extra tap-target block."""
+    html = build_page(brand=False)
+    assert "sb-skip" not in html and "a11y: 44px" not in html
+
+
 # Point NO_NOTES_GALLERY_TILE at tool-gallery/public/prototypes/no-notes-talk-coach in an ai-os-personal checkout.
 GALLERY_PAGE = Path(os.environ.get("NO_NOTES_GALLERY_TILE", "/nonexistent"))
 

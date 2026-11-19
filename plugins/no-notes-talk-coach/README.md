@@ -70,7 +70,7 @@ header (off by default, so a coach built for someone else gets no site bar; the 
 a one-line credit); `--brand` uses the site's `/brand.css` and `/fonts/` instead of the built-in
 palette (off by default: the page stays one self-contained offline file, and with `--brand` it
 only looks right when served from a site that provides those files, as tools.youngleaders.tech
-does; the site bar then takes its styling from `/brand.css` too). The JSON shape is in
+does; the site bar and a skip link then take their styling from `/brand.css` too). The JSON shape is in
 `SKILL.md`, Phase 4.
 
 ## Contents
