@@ -14,7 +14,7 @@ All notable changes to the no-notes-talk-coach plugin.
   Spartan 700 on large headings, Inter for body text) instead of its built-in palette. The cue
   word and the big drill cue use League Spartan; small bold labels use Inter 600. Print uses the
   brand's white-paper block.
-- Eight tests: the default build is unchanged and still self-contained, the brand build uses the
+- Fourteen tests across the brand build changes (63 before, 77 now): the default build is unchanged and still self-contained, the brand build uses the
   site files and drops the built-in palette, the display font stays on large type only, both
   variants have balanced CSS and no leftover markers, Windows line endings in a template string
   still select one variant, talk text that looks like a template marker is left alone, and the CLI

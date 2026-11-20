@@ -80,7 +80,7 @@ does; the site bar and a skip link then take their styling from `/brand.css` too
 | `skills/no-notes-talk-coach/SKILL.md` | The skill |
 | `skills/no-notes-talk-coach/templates/no-notes-coach.html` | The HTML coach template |
 | `skills/no-notes-talk-coach/scripts/build_coach.py` | Validates talk JSON and builds the page |
-| `skills/no-notes-talk-coach/scripts/tests/` | 71 pytest cases for the build script |
+| `skills/no-notes-talk-coach/scripts/tests/` | 77 pytest cases for the build script (one is skipped unless `NO_NOTES_GALLERY_TILE` names the gallery tile folder) |
 | `skills/no-notes-talk-coach/reference/method.md` | The six techniques, recall chain, plan and pacing |
 | `skills/no-notes-talk-coach/reference/site-bar-youngleaders.json` | Opt-in branded header preset |
 
