@@ -2,6 +2,11 @@
 
 All notable changes to the opencode-sync skill.
 
+## [1.7.2] - 2026-10-05
+
+### Changed
+- `references/memory-wiring.md`: the example init command now reads `/memory-os:init-memory` (the name used in this marketplace) instead of the internal `toast-` prefixed name. No behaviour change.
+
 ## [1.7.1] - 2026-07-12
 
 ### Fixed

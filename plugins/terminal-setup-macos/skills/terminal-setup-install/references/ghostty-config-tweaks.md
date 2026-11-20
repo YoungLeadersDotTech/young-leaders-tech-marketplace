@@ -61,8 +61,8 @@ unfocused-split-opacity = 0.7
 unfocused-split-fill = <hex>
 keybind = super+ctrl+shift+up=resize_split:up,10
 keybind = super+ctrl+shift+equal=equalize_splits
-keybind = super+ctrl+bracketright=goto_split:next
-keybind = super+ctrl+bracketleft=goto_split:previous
+keybind = super+ctrl+right_bracket=goto_split:next
+keybind = super+ctrl+left_bracket=goto_split:previous
 
 # --- Appearance: Theme & colour overrides ---
 theme = light:<light-theme>,dark:<dark-theme>

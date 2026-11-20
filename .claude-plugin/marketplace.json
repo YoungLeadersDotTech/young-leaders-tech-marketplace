@@ -1,6 +1,6 @@
 {
   "name": "young-leaders-tech-marketplace",
-  "version": "1.5.28",
+  "version": "1.5.32",
   "description": "Personal Claude Code plugin marketplace",
   "owner": {
     "name": "Young Leaders Tech",
@@ -16,7 +16,7 @@
     {
       "name": "terminal-setup-macos",
       "source": "./plugins/terminal-setup-macos",
-      "version": "1.5.0",
+      "version": "1.5.1",
       "description": "Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown preview and clickable-path extras."
     },
     {
@@ -40,13 +40,13 @@
     {
       "name": "opencode-sync",
       "source": "./plugins/opencode-sync",
-      "version": "1.7.1",
+      "version": "1.7.2",
       "description": "Keep one canonical agent ecosystem usable on both Claude Code and OpenCode: generate OpenCode agents/commands/MCP from Claude sources, validate both runtimes' rules, detect drift, and ingest marketplaces or repos for OpenCode."
     },
     {
       "name": "enablement-html-renderer",
       "source": "./plugins/enablement-html-renderer",
-      "version": "1.6.3",
+      "version": "1.6.4",
       "description": "Packages finished enablement material into one self-contained HTML file where the reader toggles format: bullets, prose, visual diagram, comic, or cheat sheet. Theme-aware diagrams, a manual light/dark toggle, interleaved images, URL auto-linking, and an AI-ism voice gate."
     },
     {
@@ -54,6 +54,12 @@
       "source": "./plugins/prompt-auditor",
       "version": "0.1.0",
       "description": "Deterministic offline auditor for skills, agents, and prompts. Runs static checks against a directory of SKILL.md, AGENTS.md, or CLAUDE.md files and prints findings, critical then major then minor."
+    },
+    {
+      "name": "no-notes-talk-coach",
+      "source": "./plugins/no-notes-talk-coach",
+      "version": "1.0.0",
+      "description": "Learn a talk off without notes: turns a deck or script into a rehearsal pack and an offline HTML coach with a chapter map, cue words, a timed drill, a self-quiz and a plan that counts back from talk day. Tailored for ADHD, useful for all."
     }
   ]
 }
