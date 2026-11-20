@@ -2,6 +2,32 @@
 
 All notable changes to the no-notes-talk-coach plugin.
 
+## [1.1.0] - 2026-11-18
+
+### Changed
+- **`--brand` pages get a skip link and 44px tap targets** (brand build only; the default build is unchanged). A `Skip to content` link is the first element in the page, styled by the site's `.sb-skip` rule in `/brand.css`; buttons and tick-box labels are at least 44px tall. Output still matches the gallery page byte for byte.
+- **`--brand` pages no longer carry their own site bar rules.** The Young Leaders site bar (logo, nav, Subscribe) is one component in `/brand.css`, so the brand variant drops the template's `.sitebar` and `.sb-*` rules and the script line that set `--sb-brand`. The self-contained build keeps them. The template wraps them in `BRAND_OFF` blocks. A test checks the brand variant has none, and (with `NO_NOTES_GALLERY_TILE` set to the gallery tile folder) that the generator output equals the gallery page byte for byte.
+
+### Added
+- **`--brand` build option**: the page takes its colours and fonts from `/brand.css` and
+  `/fonts/` on the site that serves it (the Young Leaders in Tech brand: maroon accent, League
+  Spartan 700 on large headings, Inter for body text) instead of its built-in palette. The cue
+  word and the big drill cue use League Spartan; small bold labels use Inter 600. Print uses the
+  brand's white-paper block.
+- Fourteen tests across the brand build changes (63 before, 77 now): the default build is unchanged and still self-contained, the brand build uses the
+  site files and drops the built-in palette, the display font stays on large type only, both
+  variants have balanced CSS and no leftover markers, Windows line endings in a template string
+  still select one variant, talk text that looks like a template marker is left alone, and the CLI
+  flag works.
+
+### Notes
+- **Off by default.** Without `--brand` the output is byte-for-byte what 1.0.0 produced, so a coach
+  built for someone else is still one offline file. With `--brand` and no site files, the page has no
+  colours or fonts, so use it only for a page deployed next to `/brand.css`.
+- The template wraps each line the brand changes in `__BRAND_OFF__` and `__BRAND_ON__` marker
+  lines; the build keeps one variant and removes the markers. The variant is chosen before the talk
+  is inserted.
+
 ## [1.0.0] - 2026-10-31
 
 ### Added

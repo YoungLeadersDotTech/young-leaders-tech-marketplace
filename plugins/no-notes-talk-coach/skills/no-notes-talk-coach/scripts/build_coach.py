@@ -8,6 +8,7 @@ strict JSON. Stdlib only.
 Usage:
     python3 build_coach.py --data talk.json --out coach.html
         [--site-bar reference/site-bar-youngleaders.json]
+        [--brand]
         [--no-em-dashes]
 
 Talk JSON shape (only "slides" is required):
@@ -226,11 +227,33 @@ def to_script_json(data: dict) -> str:
                 .replace(chr(0x2029), "\\u2029"))
 
 
-def build(template_html: str, data: dict) -> str:
+def _brand_marker(kind: str, edge: str) -> str:
+    """Regex for one marker line, as a CSS comment or an HTML comment, whole line."""
+    return (r"^[ \t]*(?:/\*|<!--)__BRAND_%s_%s__(?:\*/|-->)[ \t]*\r?\n" % (kind, edge))
+
+
+ANY_BRAND_MARKER_RE = re.compile(
+    r"^[ \t]*(?:/\*|<!--)__BRAND_(?:ON|OFF)_(?:START|END)__(?:\*/|-->)[ \t]*\r?\n", re.M)
+
+
+def select_variant(template_html: str, brand: bool) -> str:
+    """Keep the brand blocks (brand=True) or the self-contained blocks (brand=False).
+
+    The template wraps every line the brand changes in a BRAND_OFF block (the original,
+    self-contained line) and a BRAND_ON block (the line that uses /brand.css). The blocks
+    and their marker lines are whole lines, so the result has no trace of the markers.
+    """
+    drop = "OFF" if brand else "ON"
+    dropped = re.compile(_brand_marker(drop, "START") + r".*?" + _brand_marker(drop, "END"), re.S | re.M)
+    return ANY_BRAND_MARKER_RE.sub("", dropped.sub("", template_html))
+
+
+def build(template_html: str, data: dict, brand: bool = False) -> str:
     if not DATA_RE.search(template_html):
         raise CoachDataError("template has no /*__DATA_START__*/ ... /*__DATA_END__*/ markers")
     bundle = "/*__DATA_START__*/" + to_script_json(data) + "/*__DATA_END__*/"
-    return DATA_RE.sub(lambda _m: bundle, template_html, count=1)
+    # Choose the variant first, so nothing in the talk text can ever be read as a marker.
+    return DATA_RE.sub(lambda _m: bundle, select_variant(template_html, brand), count=1)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -239,6 +262,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", required=True, type=Path, help="where to write the HTML page")
     ap.add_argument("--template", type=Path, default=TEMPLATE)
     ap.add_argument("--site-bar", type=Path, help="optional branded site-bar preset JSON")
+    ap.add_argument("--brand", action="store_true",
+                    help="use the site's /brand.css and /fonts/ instead of the built-in palette "
+                         "(only for a page served from a site that provides them)")
     ap.add_argument("--no-em-dashes", action="store_true",
                     help="replace em dashes with ' - ' in every text field")
     args = ap.parse_args(argv)
@@ -256,7 +282,7 @@ def main(argv: list[str] | None = None) -> int:
             data["siteBar"] = load_site_bar(args.site_bar)
         if args.no_em_dashes:
             data = strip_em_dashes(data)
-        html = build(template_html, data)
+        html = build(template_html, data, brand=args.brand)
     except (CoachDataError, OSError, ValueError) as exc:
         print(f"invalid: {exc}", file=sys.stderr)
         return 1
