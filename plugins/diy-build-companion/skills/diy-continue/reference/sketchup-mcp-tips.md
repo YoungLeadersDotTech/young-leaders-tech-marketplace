@@ -9,20 +9,41 @@ through SketchUp rather than sketches or a CAD file.
 
 Community project `github.com/mhyrr/sketchup-mcp` (SketchupMCP) is the one that actually works
 from Claude Code - the official Trimble "SketchUp Connector for Claude" is claude.ai-only
-(web/desktop), not usable from Claude Code, and generation-only even there. Pin `mcp[cli]<2` when
-installing (`uv tool install --with "mcp[cli]<2" .` from a clone) - the published PyPI package's
+(web/desktop), not usable from Claude Code, and generation-only even there.
+
+**Recommended: install the `diy-sketchup-mcp` plugin.** It registers this MCP server for you
+(pinned `sketchup-mcp==0.1.17` and `mcp[cli]<2`, registered only while that plugin is enabled).
+Its README covers prerequisites, the `.rbz` install, a verify step and the `eval_ruby` trust
+guidance. If you previously registered the server by hand, `claude mcp remove sketchup` first.
+
+**Fallback, manual install**: from a clone, `uv tool install --with "mcp[cli]<2" .`, then
+register it with `claude mcp add`. Always pin `mcp[cli]<2` - the published PyPI package's
 unpinned `mcp[cli]>=1.3.0` dependency resolves to a breaking mcp 2.x by default.
 
-First connection of a session throws one spurious `-32601 Method not found` on the client's
-initial `ping` health-check, which this Ruby extension doesn't handle - expect exactly one of
-these per fresh session/reconnect, then it's stable. Just retry once, don't debug it.
+First call of a session can throw one `-32601 Method not found`: the server opens a connection at
+session start and sends nothing, SketchUp's main thread blocks waiting on it, and the first tool
+call sends a `ping` the Ruby extension doesn't handle. Expect at most one per fresh
+session/reconnect; retry once. It also means SketchUp was frozen until that first call, and any
+other Claude Code session with the plugin enabled holds SketchUp the same way - model in one
+session at a time.
+
+Root cause of the flakiness below, from reading upstream code (`su_mcp/main.rb`,
+`sketchup_mcp/server.py` 0.1.17): SketchUp serves one request per connection and then closes it,
+while the Python server reuses its socket. A "Connection closed before receiving any data" failure
+therefore never reached SketchUp and is safe to retry; a 15-second timeout may have executed, so
+check-read before retrying that one.
+
+Managing multiple email addresses for test/trial accounts on any tool (not SketchUp-specific): see
+[this post on Gmail plus-addressing](https://www.youngleaders.tech/p/johns-tips-2024w4-use-plus-addressing-to-get-unlimited-email-addresses-a3a90968db2d) -
+one mailbox, unlimited addresses.
 
 ## Connection flakiness - the actual triage order
 
 **Quantified from one real build's audited session log: 42.2% of all `eval_ruby` calls (156 of
 370) failed with "Connection closed before receiving any data."** This is a genuine external
-MCP-bridge reliability problem, not a usage mistake - budget for it accordingly rather than
-treating repeated failures as something to debug. Every one of those failures was an isolated
+MCP-bridge reliability problem (see the connection-lifetime root cause above), not a usage
+mistake - budget for isolated single failures rather than debugging each one, but treat the same
+call failing 3+ times in a row as a real signal (see below). Every one of those failures was an isolated
 single retry (never two in a row) because a verification read was interleaved before each retry -
 that discipline is what keeps a baseline failure rate this high from turning into compounding
 confusion about what state the model is actually in.

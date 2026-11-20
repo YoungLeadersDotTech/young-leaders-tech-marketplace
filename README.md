@@ -66,13 +66,15 @@ Verify with `/plugin marketplace list`.
 
 | Plugin | Version | What it does |
 |---|---|---|
-| [skills-toolkit](./plugins/skills-toolkit/README.md) | 2.0.7 | Toolkit for authoring and validating Claude Code skills and agents. Ships `agent-author`, `agent-validator`, reusable templates, validator references, and installable commands for common authoring flows. |
-| [terminal-setup-macos](./plugins/terminal-setup-macos/README.md) | 1.2.2 | Idempotent macOS terminal installer covering Ghostty, Oh My Zsh, Powerlevel10k, Glow, and MesloLGS Nerd Font, plus optional markdown-preview and clickable-path extras. |
-| [update-readme](./plugins/update-readme/README.md) | 1.1.0 | Type-driven README updater. Detects repo family, confirms it with the user, asks for style, audience, and depth, then generates a matched README preview before writing. |
-| [diy-build-companion](./plugins/diy-build-companion/README.md) | 2.0.0 | Plan and run DIY builds with energy-aware work blocks, enforced breaks, and an inline child-safety veto gate. Project state lives in the build repo. |
-| [opencode-sync](./plugins/opencode-sync/README.md) | 1.6.5 | Sync and validate Claude Code assets for OpenCode: ingest marketplaces or repos, generate agents and command wrappers, verify discovery coverage, and route MCP config by scope. |
-| [enablement-html-renderer](./plugins/enablement-html-renderer/README.md) | 1.5.4 | Packages finished enablement content into one self-contained HTML handoff with multiple reader-selectable formats. |
-| [no-notes-talk-coach](./plugins/no-notes-talk-coach/README.md) | 1.0.0 | Learn a talk off without notes: a rehearsal pack and an offline HTML coach with a chapter map, cue words, a timed drill, a self-quiz and a two-day plan. Tailored for ADHD, useful for all. |
+| [skills-toolkit](./plugins/skills-toolkit/README.md) | 3.1.1 | Toolkit for authoring and validating Claude Code skills and agents. Ships `agent-author`, `agent-validator`, reusable templates, validator references, and installable commands for common authoring flows. |
+| [terminal-setup-macos](./plugins/terminal-setup-macos/README.md) | 1.5.1 | Idempotent macOS terminal installer covering Ghostty, Oh My Zsh, Powerlevel10k, Glow, and MesloLGS Nerd Font, plus optional markdown-preview and clickable-path extras. |
+| [update-readme](./plugins/update-readme/README.md) | 1.2.1 | Type-driven README updater. Detects repo family, confirms it with the user, asks for style, audience, and depth, then generates a matched README preview before writing. |
+| [diy-build-companion](./plugins/diy-build-companion/README.md) | 2.1.1 | Plan and run DIY builds with energy-aware work blocks, enforced breaks, and an inline child-safety veto gate. Project state lives in the build repo. |
+| [diy-sketchup-mcp](./plugins/diy-sketchup-mcp/README.md) | 0.1.0 | Opt-in registration of the community SketchUp MCP server so Claude Code can drive SketchUp desktop. Includes `eval_ruby` (arbitrary Ruby); read its trust guidance first. |
+| [opencode-sync](./plugins/opencode-sync/README.md) | 1.7.2 | Sync and validate Claude Code assets for OpenCode: ingest marketplaces or repos, generate agents and command wrappers, verify discovery coverage, and route MCP config by scope. |
+| [enablement-html-renderer](./plugins/enablement-html-renderer/README.md) | 1.6.4 | Packages finished enablement content into one self-contained HTML handoff with multiple reader-selectable formats. |
+| [prompt-auditor](./plugins/prompt-auditor/README.md) | 0.1.0 | Deterministic offline auditor for skills, agents, and prompts. Runs static checks against SKILL.md, AGENTS.md, or CLAUDE.md files and prints findings by severity. |
+| [no-notes-talk-coach](./plugins/no-notes-talk-coach/README.md) | 1.1.0 | Learn a talk off without notes: a rehearsal pack and an offline HTML coach with a chapter map, cue words, a timed drill, a self-quiz and a two-day plan. Tailored for ADHD, useful for all. |
 
 ## Local development helper
 
@@ -125,9 +127,15 @@ above instead.
    The `~/.claude/skills/{personal, projects, shared}/` three-scope convention is
    user-side only; do not mirror it in plugin source.
 
-4. Register the plugin in `.claude-plugin/marketplace.json` at the repo root.
+4. Register the plugin in `.claude-plugin/marketplace.json` at the repo root, and add a row to
+   the Available plugins table above.
 
-5. Open a PR. Once merged, run `/reload-plugins` to pick up the changes.
+5. Run `python3 scripts/validate_marketplace.py`. It fails on unparseable JSON (including
+   `.mcp.json`) or a version mismatch between `VERSION`, `plugin.json` and `marketplace.json`,
+   and warns on description-rule and README-table drift. CI runs the same check on every PR that
+   touches `plugins/` or `.claude-plugin/`.
+
+6. Open a PR. Once merged, run `/reload-plugins` to pick up the changes.
 
 For the full authoring + validation workflow with description quality scoring and PII
 checks, install `skills-toolkit` and use `/create-skill` or the `skill-creator-agent` workflow.
