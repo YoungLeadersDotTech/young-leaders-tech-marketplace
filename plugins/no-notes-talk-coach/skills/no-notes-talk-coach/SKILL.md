@@ -157,6 +157,11 @@ script to rebuild the page). It has light and dark themes and prints cleanly.
   for someone else gets no site bar. The page footer always carries a one-line credit linking to
   the plugin. A Young Leaders in Tech preset ships at
   `reference/site-bar-youngleaders.json`; only use it when the user asks for that branding.
+- `--brand` makes the page take its colours and fonts from `/brand.css` and `/fonts/` on the
+  site that serves it (tools.youngleaders.tech) instead of its built-in palette. It is **off by
+  default**, because the page is otherwise one self-contained file that works offline. Opened
+  as a plain file with `--brand`, the page has no colours or fonts, so only use it for a page
+  deployed to a site that provides those files.
 
 If Python is not available (for example in a restricted Cowork session), say so, then give the user
 the JSON and these manual steps: open `templates/no-notes-coach.html`, replace everything between

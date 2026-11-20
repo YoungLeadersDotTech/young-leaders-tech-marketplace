@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -263,3 +264,122 @@ def test_video_kept_when_valid():
 def test_rejects_bad_video(bad):
     with pytest.raises(bc.CoachDataError):
         bc.validate(talk(video=bad))
+
+
+def build_page(**kw):
+    return bc.build(TEMPLATE.read_text(encoding="utf-8"), bc.validate(talk()), **kw)
+
+
+def test_default_build_stays_self_contained():
+    """Without --brand the page carries its own palette and system fonts and needs no site files."""
+    html = build_page()
+    assert "/brand.css" not in html and "/fonts/" not in html
+    assert "--accent:#2f5d50" in html and "-apple-system" in html
+    assert "__BRAND_" not in html
+
+
+def test_brand_build_takes_colours_and_fonts_from_the_site_files():
+    html = build_page(brand=True)
+    assert '<link rel="stylesheet" href="/brand.css">' in html
+    assert '<link rel="preload" href="/fonts/league-spartan-latin-700.woff2"' in html
+    assert '<link rel="preload" href="/fonts/inter-latin-400.woff2"' in html
+    assert ":root{--soft:var(--accent-soft);--good:var(--ok);}" in html
+    # the built-in green palette and the system font stack are gone
+    assert "--accent:#2f5d50" not in html and "-apple-system" not in html
+    assert "__BRAND_" not in html
+
+
+def test_brand_build_uses_the_display_font_only_on_big_headings():
+    """League Spartan 700 is for large type only; small bold labels use Inter 600."""
+    html = build_page(brand=True)
+    for sel in (".cuecard .cw{", ".stage .bigcue{"):
+        rule = html[html.index(sel):html.index("}", html.index(sel))]
+        assert "font-family:var(--font-display)" in rule and "font-weight:700" in rule
+    for sel in (".adhd{", "h1 .example-tag{"):
+        rule = html[html.index(sel):html.index("}", html.index(sel))]
+        assert "font-family:var(--font-body)" in rule and "font-weight:600" in rule
+
+
+def test_both_variants_keep_the_data_and_the_script():
+    for brand in (False, True):
+        html = build_page(brand=brand)
+        assert embedded(html)["slides"]
+        assert html.count("<style>") == 1 and html.count("</style>") == 1
+
+
+def test_both_variants_have_balanced_css_and_no_leftover_markers():
+    for brand in (False, True):
+        html = build_page(brand=brand)
+        style = html[html.index("<style>"):html.index("</style>")]
+        assert style.count("{") == style.count("}")
+        assert style.count("/*") == style.count("*/")
+        assert "__BRAND_" not in html
+
+
+def test_windows_line_endings_in_the_template_still_select_one_variant():
+    crlf = TEMPLATE.read_text(encoding="utf-8").replace("\n", "\r\n")
+    for brand in (False, True):
+        html = bc.build(crlf, bc.validate(talk()), brand=brand)
+        assert "__BRAND_" not in html
+        assert ("/brand.css" in html) is brand
+
+
+def test_talk_text_that_looks_like_a_marker_is_left_alone():
+    marker = "/*__BRAND_OFF_START__*/"
+    data = bc.validate(talk(talkTitle="x\n" + marker + "\ny"))
+    html = bc.build(TEMPLATE.read_text(encoding="utf-8"), data, brand=True)
+    assert embedded(html)["talkTitle"].count("__BRAND_OFF_START__") == 1
+
+
+def test_brand_build_has_no_sitebar_rules_the_site_component_styles_the_bar():
+    """The Young Leaders site bar is one component in /brand.css; a --brand page must not carry its own."""
+    html = build_page(brand=True)
+    assert ".sitebar" not in html and ".sb-" not in html and "--sb-brand" not in html
+    assert 'setProperty("--sb' not in html
+    assert 'class="sb-sub"' in html, "the script still renders the bar markup"
+
+
+def test_self_contained_build_keeps_its_own_sitebar_rules():
+    html = build_page(brand=False)
+    assert ".sitebar .sb-sub{" in html and "--sb-brand" in html
+
+
+def test_brand_build_starts_with_a_skip_link_that_lands_on_the_main_area():
+    """Keyboard users reach the content without tabbing through the bar (the /brand.css `.sb-skip` rule styles it)."""
+    html = build_page(brand=True)
+    body = html[html.index("<body>"):]
+    first = re.search(r"<a\b[^>]*>", body)
+    assert 'class="sb-skip" href="#content"' in first.group(0)
+    assert first.start() < body.index('id="sitebar"')
+    assert '<main id="content"' in html
+
+
+def test_brand_build_has_44px_tap_targets_for_buttons_and_tick_labels():
+    html = build_page(brand=True)
+    assert "button,.btn,.go{min-height:44px}" in html
+    assert "label.check{min-height:44px}" in html and "label.inl{display:inline-flex" in html
+
+
+def test_default_build_is_unchanged_by_the_accessibility_additions():
+    """The self-contained build stays what 1.0.0 produced: no skip link, no extra tap-target block."""
+    html = build_page(brand=False)
+    assert "sb-skip" not in html and "a11y: 44px" not in html
+
+
+# Point NO_NOTES_GALLERY_TILE at tool-gallery/public/prototypes/no-notes-talk-coach in an ai-os-personal checkout.
+GALLERY_PAGE = Path(os.environ.get("NO_NOTES_GALLERY_TILE", "/nonexistent"))
+
+
+@pytest.mark.skipif(not (GALLERY_PAGE / "index.html").exists(), reason="set NO_NOTES_GALLERY_TILE to the gallery tile folder to run this")
+def test_generator_output_matches_the_gallery_page_byte_for_byte():
+    """The gallery tile is generated; a hand edit that the generator does not make would be lost on the next rebuild."""
+    data = json.loads((GALLERY_PAGE / "data.json").read_text(encoding="utf-8"))
+    page = bc.build(TEMPLATE.read_text(encoding="utf-8"), bc.strip_em_dashes(bc.validate(data)) | {"siteBar": bc.load_site_bar(PRESET)}, brand=True)
+    assert page == (GALLERY_PAGE / "index.html").read_text(encoding="utf-8")
+
+
+def test_cli_brand_flag(tmp_path):
+    code, out = run_cli(tmp_path, talk(), "--brand")
+    assert code == 0 and "/brand.css" in out.read_text(encoding="utf-8")
+    code, out = run_cli(tmp_path, talk())
+    assert code == 0 and "/brand.css" not in out.read_text(encoding="utf-8")

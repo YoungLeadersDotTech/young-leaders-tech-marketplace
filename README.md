@@ -74,7 +74,7 @@ Verify with `/plugin marketplace list`.
 | [opencode-sync](./plugins/opencode-sync/README.md) | 1.7.2 | Sync and validate Claude Code assets for OpenCode: ingest marketplaces or repos, generate agents and command wrappers, verify discovery coverage, and route MCP config by scope. |
 | [enablement-html-renderer](./plugins/enablement-html-renderer/README.md) | 1.6.4 | Packages finished enablement content into one self-contained HTML handoff with multiple reader-selectable formats. |
 | [prompt-auditor](./plugins/prompt-auditor/README.md) | 0.1.0 | Deterministic offline auditor for skills, agents, and prompts. Runs static checks against SKILL.md, AGENTS.md, or CLAUDE.md files and prints findings by severity. |
-| [no-notes-talk-coach](./plugins/no-notes-talk-coach/README.md) | 1.0.0 | Learn a talk off without notes: a rehearsal pack and an offline HTML coach with a chapter map, cue words, a timed drill, a self-quiz and a two-day plan. Tailored for ADHD, useful for all. |
+| [no-notes-talk-coach](./plugins/no-notes-talk-coach/README.md) | 1.1.0 | Learn a talk off without notes: a rehearsal pack and an offline HTML coach with a chapter map, cue words, a timed drill, a self-quiz and a two-day plan. Tailored for ADHD, useful for all. |
 
 ## Local development helper
 
