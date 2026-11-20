@@ -62,7 +62,7 @@ SketchUp via `eval_ruby`. The server is scoped to this plugin: it is registered 
 
    ```bash
    git clone https://github.com/mhyrr/sketchup-mcp && cd sketchup-mcp
-   git checkout aa096f0          # extension 0.1.0, checked with sketchup-mcp 0.1.17
+   git checkout aa096f04d3d7b22a70860368f2b576343feac405          # extension 0.1.0, checked with sketchup-mcp 0.1.17
    cd su_mcp && zip -r ../su_mcp.rbz su_mcp.rb su_mcp && cd ..
    unzip -l su_mcp.rbz           # must list su_mcp.rb and su_mcp/main.rb at the top level
    ```

@@ -7,10 +7,13 @@ Errors (exit 1):
   - a marketplace entry points at a missing plugin directory, or a plugin directory has no entry
   - .mcp.json has no top-level "mcpServers" object
 
+  - a duplicate or nameless marketplace entry
+
 Warnings (printed as GitHub annotations, never fail the run - several existing plugins
 predate these rules):
   - description over 250 chars, or containing a forward slash or an em dash
   - root README "Available plugins" table missing a plugin or showing a stale version
+  - a plugin README `**Version**:` header that differs from VERSION
 
 Usage: python3 scripts/validate_marketplace.py [repo_root]
 """
@@ -58,7 +61,15 @@ def main(root):
     market = load_json(market_path)
     if market is None:
         return
-    entries = {p.get("name"): p for p in market.get("plugins", [])}
+    entries = {}
+    for p in market.get("plugins", []):
+        pname = p.get("name")
+        if not isinstance(pname, str) or not pname:
+            err(f"marketplace.json: an entry has no name: {p!r}")
+        elif pname in entries:
+            err(f"marketplace.json: duplicate entry for '{pname}'")
+        else:
+            entries[pname] = p
     plugin_dirs = {d.name: d for d in (root / "plugins").iterdir() if d.is_dir()}
 
     for name in sorted(set(plugin_dirs) - set(entries)):
@@ -87,6 +98,11 @@ def main(root):
             check_description(f"plugins/{name}/.claude-plugin/plugin.json", pjson.get("description"))
         if len(set(versions.values())) > 1:
             err(f"plugins/{name}: version mismatch {versions}")
+        plugin_readme = pdir / "README.md"
+        if plugin_readme.exists():
+            header = re.search(r"^\*\*Version\*\*:\s*(\S+)", plugin_readme.read_text(encoding="utf-8"), re.M)
+            if header and header.group(1) != versions.get("VERSION"):
+                warn(f"plugins/{name}/README.md: Version header {header.group(1)}, VERSION is {versions.get('VERSION')}")
 
         mcp = pdir / ".mcp.json"
         if mcp.exists():

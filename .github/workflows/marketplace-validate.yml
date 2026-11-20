@@ -17,6 +17,9 @@ on:
       - "scripts/validate_marketplace.py"
       - ".github/workflows/marketplace-validate.yml"
 
+permissions:
+  contents: read
+
 jobs:
   consistency:
     runs-on: ubuntu-latest
