@@ -37,9 +37,9 @@ below.
      to fill in) - tmux-style pane/tab navigation `keybind` entries. No defaults ship because a
      tmux-style prefix such as `ctrl+b` set in Ghostty would never reach tmux.
 
-- **Question 4 - "Performance tweaks"** (header "Performance"), up to 3 options (no bundling
-  needed - fits the 4-option cap directly): `window-vsync`, `scrollback-limit` (raised to 100 MB
-  of history, ten times Ghostty's 10 MB default), `resize-overlay: never`.
+- **Question 4 - "Performance tweaks"** (header "Performance"), 2 options: `window-vsync`,
+  `resize-overlay: never`. Scrollback is not offered: Ghostty's 10 MB default is sensible, and
+  raising it costs memory per pane, the opposite of a performance tweak.
 
 If `AskUserQuestion` is unavailable, fall back to the same plain-text lettered-list pattern the
 skill already uses elsewhere (see SKILL.md "What this skill does").
@@ -54,9 +54,15 @@ selected - do not write the whole block unconditionally. Every line below has a 
 key Step 6 already wrote. Never write a `<placeholder>` onto an active line: Ghostty rejects it
 and shows a "Configuration Errors" dialog on every launch.
 
-After appending, run `"$GHOSTTY_BIN" +validate-config` (resolved in SKILL.md Step 1:
-`/Applications` or `~/Applications`). It must print nothing. If it names a line, fix or comment out that line and run it again before
-moving on.
+After appending, run this one line. It finds Ghostty itself (`/Applications` or
+`~/Applications`) and needs no variable from an earlier step:
+
+```bash
+G=/Applications/Ghostty.app/Contents/MacOS/ghostty; [ -x "$G" ] || G="$HOME/Applications/Ghostty.app/Contents/MacOS/ghostty"; [ -x "$G" ] || { echo "ghostty MISSING"; false; } && "$G" +validate-config
+```
+
+It must print nothing. `ghostty MISSING` means the app is not installed, not a bad line. Any
+other output names a config line: fix or comment out that line and run it again before moving on.
 
 ```
 # --- Issue fixes: Pane divider visibility + resize keybinds ---
@@ -93,6 +99,5 @@ quick-terminal-size = 40%
 
 # --- Performance ---
 window-vsync = true
-scrollback-limit = 100000000
 resize-overlay = never
 ```
