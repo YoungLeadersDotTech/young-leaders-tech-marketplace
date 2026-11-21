@@ -2,10 +2,10 @@
 name: terminal-setup-install
 description: Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown preview and clickable-path extras.
 allowed-tools: [Bash, Read, Write, Edit, AskUserQuestion, TaskCreate, TaskUpdate, TaskGet, TaskList]
-version: 1.5.0
+version: 1.5.2
 category: Setup
 tags: [terminal, macos, ghostty, ohmyzsh, powerlevel10k, glow, markdown, tmux]
-last-updated: 2026-09-16
+last-updated: 2026-11-21
 ---
 
 # terminal-setup-install
@@ -111,7 +111,11 @@ classification, not from re-checking state ad hoc in later steps.
 
 ```bash
 brew --version >/dev/null 2>&1 || { echo "Homebrew not installed; install it first: https://brew.sh"; exit 1; }
-[ -d /Applications/Ghostty.app ] && GHOSTTY_INSTALLED=yes || GHOSTTY_INSTALLED=no
+# Ghostty may live in /Applications or ~/Applications. Nothing carries over between Bash calls,
+# so Step 10b and Step 11 resolve the path again in their own one-line commands.
+G=/Applications/Ghostty.app/Contents/MacOS/ghostty
+[ -x "$G" ] || G="$HOME/Applications/Ghostty.app/Contents/MacOS/ghostty"
+[ -x "$G" ] && GHOSTTY_INSTALLED=yes || GHOSTTY_INSTALLED=no
 [ -d "$HOME/.oh-my-zsh" ] && OMZ_INSTALLED=yes || OMZ_INSTALLED=no
 [ -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ] && P10K_INSTALLED=yes || P10K_INSTALLED=no
 which glow >/dev/null 2>&1 && GLOW_INSTALLED=yes || GLOW_INSTALLED=no
@@ -200,7 +204,9 @@ Before this step, use `AskUserQuestion` (header "Working dir"; recommended optio
 from Phase 1 research, offered as opt-in additions to `~/.config/ghostty/config` - none of these
 are applied by default. Fire 4 questions (Issue fixes / Appearance / Behaviour / Performance) in
 a single `AskUserQuestion` call (multiSelect); full question text and every config key is in
-`references/ghostty-config-tweaks.md`. Then append the config lines for every selected bundle to
+`references/ghostty-config-tweaks.md`. Every question has 2 to 4 options, which AskUserQuestion
+requires. Appearance has two options, Cursor and Window chrome, because Step 6 already sets the
+theme, background and font. Then append the config lines for every selected bundle to
 `~/.config/ghostty/config` in Step 10b (same reference file has the exact lines to apply).
 
 If `AskUserQuestion` is unavailable, fall back to the same plain-text lettered-list pattern the
@@ -451,8 +457,18 @@ For every bundle selected in Step 6b, append the matching config lines to
 `~/.config/ghostty/config` (use Edit, not a heredoc, to avoid clobbering earlier Step 6 content).
 The exact config block for every bundle - Issue fixes, Appearance, Behaviour, Performance - is in
 `references/ghostty-config-tweaks.md` under "Applying selected bundles". Only append the lines
-for bundles the user actually selected; comment out or omit any line needing a user-specific
-value (theme names, shader path) and ask via free text if the user wants it filled in now.
+for bundles the user actually selected; none of them repeats a key Step 6 already wrote. Then run
+this one line, which finds Ghostty itself (`/Applications` or `~/Applications`) and needs nothing
+from an earlier step:
+
+```bash
+G=/Applications/Ghostty.app/Contents/MacOS/ghostty; [ -x "$G" ] || G="$HOME/Applications/Ghostty.app/Contents/MacOS/ghostty"; [ -x "$G" ] || { echo "ghostty MISSING"; false; } && "$G" +validate-config
+```
+
+It must print nothing. `ghostty MISSING` means the app is not installed, not that the config is
+wrong: go back to Step 3. Any other output names a config line: fix or comment out that line and
+run it again (Step 11 repeats this check as a sanity test). Never leave a `<placeholder>` on an
+active line.
 
 ### Step 11 - Sanity tests
 
@@ -460,6 +476,7 @@ value (theme names, shader path) and ask via free text if the user wants it fill
 zsh -i -c 'echo OK'
 zsh -i -c 'type p10k >/dev/null && echo "p10k OK" || echo "p10k MISSING"'
 zsh -i -c 'glow --version'
+G=/Applications/Ghostty.app/Contents/MacOS/ghostty; [ -x "$G" ] || G="$HOME/Applications/Ghostty.app/Contents/MacOS/ghostty"; if [ ! -x "$G" ]; then echo "ghostty MISSING"; elif "$G" +validate-config; then echo "ghostty config OK"; else echo "ghostty config INVALID"; fi
 # If user has SDKMAN:
 [ -d "$HOME/.sdkman" ] && zsh -i -c 'type sdk >/dev/null && echo "sdk OK" || echo "sdk MISSING"'
 ```

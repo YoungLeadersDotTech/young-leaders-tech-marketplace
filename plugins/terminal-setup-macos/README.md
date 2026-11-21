@@ -1,6 +1,6 @@
 # terminal-setup-macos
 
-Current version: `1.5.1`
+Current version: `1.5.2`
 
 Idempotent installer for a kitted macOS terminal: Ghostty, Oh My Zsh, Powerlevel10k,
 Glow, MesloLGS Nerd Font, plus an optional markdown-preview kit (MacDown 3000, grip,
@@ -86,9 +86,11 @@ and a community config survey. None of these are applied by default. Full detail
 | Category | What you get |
 |-------|-------------|
 | Issue fixes | Pane divider visibility + resize keybinds (`split-divider-color`, `unfocused-split-opacity`, `resize_split`/`equalize_splits`/`goto_split` keybinds); tmux-resurrect session persistence (Ghostty has no native split-layout restore) - the installer explains what tmux's "prefix" key is and offers to remap it from the default `Ctrl-b` to `Ctrl-a` |
-| Appearance | Theme & colour overrides, background effects (opacity/blur/shader), font tuning, cursor & window chrome |
-| Behaviour | Shell integration & cwd, mouse & selection, window/session behaviour, custom keybinds |
-| Performance | `window-vsync`, `scrollback-limit`, `resize-overlay` |
+| Appearance | Cursor (block, blinking) and Window chrome (hidden title bar, window theme follows the system), offered as two options. Theme, background and font are already set by the core install, so they are not offered again |
+| Behaviour | Shell integration & cwd, mouse & selection, window/session behaviour, custom keybinds (comment-only: a heading for your own lines) |
+| Performance | `window-vsync`, `resize-overlay` |
+
+After writing the config, the installer runs Ghostty's own check (`ghostty +validate-config`), which must come back clean, so a bad line never reaches your next launch.
 
 **Known limitations investigated, not fixable at config level**: Claude Code statusline
 truncation on narrow terminals (confirmed Claude Code issue, closed "not planned" upstream - not
