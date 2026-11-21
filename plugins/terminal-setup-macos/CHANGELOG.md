@@ -2,6 +2,14 @@
 
 All notable changes to `terminal-setup-macos` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.2] - 2026-11-21
+
+### Fixed
+- **Placeholder values written into the Ghostty config.** The tweak bundles in `ghostty-config-tweaks.md` carried `split-divider-color = <hex-or-named-colour>`, `unfocused-split-fill = <hex>` and `theme = light:<light-theme>,dark:<dark-theme>` on active lines. Written as-is, Ghostty showed three errors in a "Configuration Errors" dialog on every launch. They now carry working Dracula values (`#6272a4`, `#282a36`, `theme = dracula`), and the light and dark theme pair is a commented example. Verified with `ghostty +validate-config` on Ghostty 1.3.1. Existing installs: replace those three lines in `~/.config/ghostty/config`.
+
+### Added
+- **Config check after writing.** Step 10b and the Step 11 sanity tests run `ghostty +validate-config`, which must print nothing, so a bad line is caught before the hand-off instead of on the user's next launch.
+
 ## [1.5.1] - 2026-10-25
 
 ### Fixed

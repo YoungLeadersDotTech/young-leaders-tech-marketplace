@@ -451,8 +451,10 @@ For every bundle selected in Step 6b, append the matching config lines to
 `~/.config/ghostty/config` (use Edit, not a heredoc, to avoid clobbering earlier Step 6 content).
 The exact config block for every bundle - Issue fixes, Appearance, Behaviour, Performance - is in
 `references/ghostty-config-tweaks.md` under "Applying selected bundles". Only append the lines
-for bundles the user actually selected; comment out or omit any line needing a user-specific
-value (theme names, shader path) and ask via free text if the user wants it filled in now.
+for bundles the user actually selected; lines needing a user-specific value (a light theme name,
+a shader path) stay commented out, and you ask via free text if the user wants one filled in now.
+Then run `/Applications/Ghostty.app/Contents/MacOS/ghostty +validate-config`: it must print nothing. Fix or comment out any line it
+names and run it again. Never leave a `<placeholder>` on an active line.
 
 ### Step 11 - Sanity tests
 
@@ -460,6 +462,7 @@ value (theme names, shader path) and ask via free text if the user wants it fill
 zsh -i -c 'echo OK'
 zsh -i -c 'type p10k >/dev/null && echo "p10k OK" || echo "p10k MISSING"'
 zsh -i -c 'glow --version'
+/Applications/Ghostty.app/Contents/MacOS/ghostty +validate-config && echo "ghostty config OK"
 # If user has SDKMAN:
 [ -d "$HOME/.sdkman" ] && zsh -i -c 'type sdk >/dev/null && echo "sdk OK" || echo "sdk MISSING"'
 ```

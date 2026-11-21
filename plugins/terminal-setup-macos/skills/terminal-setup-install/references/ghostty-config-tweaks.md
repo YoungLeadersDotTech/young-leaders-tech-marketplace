@@ -50,22 +50,28 @@ skill already uses elsewhere (see SKILL.md "What this skill does").
 For every bundle selected in Question 1's divider/resize option and Questions 2-4, append the
 matching config lines below to `~/.config/ghostty/config` (use Edit, not a heredoc, to avoid
 clobbering earlier Step 6 content). Only append the specific lines for bundles the user actually
-selected - do not write the whole block unconditionally. Comment out or omit any line whose value
-needs a user-specific choice (theme names, shader path) and ask via free text if the user wants
-it filled in now.
+selected - do not write the whole block unconditionally. Every active line below has a working value (Dracula colours, to match the Step 6 theme). Lines
+that need a user-specific choice (a light theme name, a shader path) stay commented out; ask via
+free text if the user wants one filled in now. Never write a `<placeholder>` onto an active line:
+Ghostty rejects it and shows a "Configuration Errors" dialog on every launch.
+
+After appending, run `/Applications/Ghostty.app/Contents/MacOS/ghostty +validate-config`. It must print nothing. If it names a line,
+fix or comment out that line and run it again before moving on.
 
 ```
 # --- Issue fixes: Pane divider visibility + resize keybinds ---
-split-divider-color = <hex-or-named-colour>
+split-divider-color = #6272a4
 unfocused-split-opacity = 0.7
-unfocused-split-fill = <hex>
+unfocused-split-fill = #282a36
 keybind = super+ctrl+shift+up=resize_split:up,10
 keybind = super+ctrl+shift+equal=equalize_splits
 keybind = super+ctrl+right_bracket=goto_split:next
 keybind = super+ctrl+left_bracket=goto_split:previous
 
 # --- Appearance: Theme & colour overrides ---
-theme = light:<light-theme>,dark:<dark-theme>
+theme = dracula
+# Light and dark pair instead (names from `ghostty +list-themes`):
+# theme = light:<light theme>,dark:dracula
 # background = #hex
 # foreground = #hex
 
