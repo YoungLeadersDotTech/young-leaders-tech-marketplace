@@ -200,8 +200,10 @@ Before this step, use `AskUserQuestion` (header "Working dir"; recommended optio
 from Phase 1 research, offered as opt-in additions to `~/.config/ghostty/config` - none of these
 are applied by default. Fire 4 questions (Issue fixes / Appearance / Behaviour / Performance) in
 a single `AskUserQuestion` call (multiSelect); full question text and every config key is in
-`references/ghostty-config-tweaks.md`. Then append the config lines for every selected bundle to
-`~/.config/ghostty/config` in Step 10b (same reference file has the exact lines to apply).
+`references/ghostty-config-tweaks.md`. If Theme, Background effects or Font tuning is ticked,
+ask its one free-text follow-up (each states a default; an empty answer takes it). Then append the
+config lines for every selected bundle to `~/.config/ghostty/config` in Step 10b (same reference
+file has the exact lines to apply).
 
 If `AskUserQuestion` is unavailable, fall back to the same plain-text lettered-list pattern the
 skill already uses elsewhere (see "What this skill does" above).
@@ -451,12 +453,12 @@ For every bundle selected in Step 6b, append the matching config lines to
 `~/.config/ghostty/config` (use Edit, not a heredoc, to avoid clobbering earlier Step 6 content).
 The exact config block for every bundle - Issue fixes, Appearance, Behaviour, Performance - is in
 `references/ghostty-config-tweaks.md` under "Applying selected bundles". Only append the lines
-for bundles the user actually selected; lines needing a user-specific value (a light theme name,
-a shader path) stay commented out, and you ask via free text if the user wants one filled in now.
-A bundle line never changes a value Step 6 already wrote (for example `font-size` or
-`background-opacity`): it carries the Step 6 value. Then run
+for bundles the user actually selected. Lines marked `# answer:` take the Step 6b follow-up answer
+or its default; a shader path stays commented out. A ticked bundle must change something, so never
+write a Step 6 key back with its Step 6 value. Then run
 `/Applications/Ghostty.app/Contents/MacOS/ghostty +validate-config`: it must print nothing. Fix or
-comment out any line it names and run it again. Never leave a `<placeholder>` on an active line.
+comment out any line it names and run it again (Step 11 repeats this check as a sanity test).
+Never leave a `<placeholder>` on an active line.
 
 ### Step 11 - Sanity tests
 
@@ -464,7 +466,7 @@ comment out any line it names and run it again. Never leave a `<placeholder>` on
 zsh -i -c 'echo OK'
 zsh -i -c 'type p10k >/dev/null && echo "p10k OK" || echo "p10k MISSING"'
 zsh -i -c 'glow --version'
-/Applications/Ghostty.app/Contents/MacOS/ghostty +validate-config && echo "ghostty config OK"
+/Applications/Ghostty.app/Contents/MacOS/ghostty +validate-config && echo "ghostty config OK" || echo "ghostty config INVALID"
 # If user has SDKMAN:
 [ -d "$HOME/.sdkman" ] && zsh -i -c 'type sdk >/dev/null && echo "sdk OK" || echo "sdk MISSING"'
 ```
