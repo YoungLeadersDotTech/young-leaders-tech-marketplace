@@ -37,7 +37,9 @@ below.
   2. **Mouse & selection** - `mouse-hide-while-typing`, `copy-on-select: clipboard`, `macos-option-as-alt: left`.
   3. **Window/session behaviour** - `confirm-close-surface: false`, `quick-terminal-size` (Ghostty
      1.2+), `command` (launch straight into tmux).
-  4. **Custom keybinds** - tmux-style pane/tab navigation `keybind` entries.
+  4. **Custom keybinds** (comment-only: adds a commented heading and no active lines, for you
+     to fill in) - tmux-style pane/tab navigation `keybind` entries. No defaults ship because a
+     tmux-style prefix such as `ctrl+b` set in Ghostty would never reach tmux.
 
 - **Question 4 - "Performance tweaks"** (header "Performance"), up to 3 options (no bundling
   needed - fits the 4-option cap directly): `window-vsync`, `scrollback-limit`, `resize-overlay: never`.
@@ -50,13 +52,18 @@ skill already uses elsewhere (see SKILL.md "What this skill does").
 For every bundle selected in Question 1's divider/resize option and Questions 2-4, append the
 matching config lines below to `~/.config/ghostty/config` (use Edit, not a heredoc, to avoid
 clobbering earlier Step 6 content). Only append the specific lines for bundles the user actually
-selected - do not write the whole block unconditionally. Every active line below has a working value (Dracula colours, to match the Step 6 theme). Lines
-that need a user-specific choice (a light theme name, a shader path) stay commented out; ask via
-free text if the user wants one filled in now. Never write a `<placeholder>` onto an active line:
-Ghostty rejects it and shows a "Configuration Errors" dialog on every launch.
+selected - do not write the whole block unconditionally. Every active line below has a working
+value (Dracula colours, to match the Step 6 theme). A line that repeats a key Step 6 already
+writes (`theme`, `background-opacity`, `background-blur`, `font-family`, `font-size`,
+`font-thicken`) carries the Step 6 value, so ticking a bundle never gives a smaller font or more
+transparency than the base config. Lines that need a user-specific choice (a light theme name, a
+shader path) stay commented out; ask via free text if the user wants one filled in now. Never
+write a `<placeholder>` onto an active line: Ghostty rejects it and shows a "Configuration
+Errors" dialog on every launch.
 
-After appending, run `/Applications/Ghostty.app/Contents/MacOS/ghostty +validate-config`. It must print nothing. If it names a line,
-fix or comment out that line and run it again before moving on.
+After appending, run `/Applications/Ghostty.app/Contents/MacOS/ghostty +validate-config`. It
+must print nothing. If it names a line, fix or comment out that line and run it again before
+moving on.
 
 ```
 # --- Issue fixes: Pane divider visibility + resize keybinds ---
@@ -70,19 +77,20 @@ keybind = super+ctrl+left_bracket=goto_split:previous
 
 # --- Appearance: Theme & colour overrides ---
 theme = dracula
-# Light and dark pair instead (names from `ghostty +list-themes`):
+# Light and dark pair instead (names from `ghostty +list-themes`). Also remove the Step 6
+# `background = #141026` line, or the light theme keeps the dark background:
 # theme = light:<light theme>,dark:dracula
 # background = #hex
 # foreground = #hex
 
 # --- Appearance: Background effects ---
-background-opacity = 0.85
+background-opacity = 0.98
 background-blur = true
 # custom-shader = <path-to-shader.glsl>
 
 # --- Appearance: Font tuning ---
 font-family = "MesloLGS NF"
-font-size = 15
+font-size = 16
 font-thicken = true
 # adjust-cell-height = 0
 
@@ -105,10 +113,10 @@ confirm-close-surface = false
 quick-terminal-size = 40%
 
 # --- Behaviour: Custom keybinds ---
-# (tmux-style pane/tab navigation - fill in to taste)
+# (comment-only bundle: no active lines; add your own keybind = ... lines here)
 
 # --- Performance ---
 window-vsync = true
-scrollback-limit = 10000
+scrollback-limit = 10000000
 resize-overlay = never
 ```

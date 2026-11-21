@@ -6,6 +6,9 @@ All notable changes to `terminal-setup-macos` are documented here. Format follow
 
 ### Fixed
 - **Placeholder values written into the Ghostty config.** The tweak bundles in `ghostty-config-tweaks.md` carried `split-divider-color = <hex-or-named-colour>`, `unfocused-split-fill = <hex>` and `theme = light:<light-theme>,dark:<dark-theme>` on active lines. Written as-is, Ghostty showed three errors in a "Configuration Errors" dialog on every launch. They now carry working Dracula values (`#6272a4`, `#282a36`, `theme = dracula`), and the light and dark theme pair is a commented example. Verified with `ghostty +validate-config` on Ghostty 1.3.1. Existing installs: replace those three lines in `~/.config/ghostty/config`.
+- **Ticking a bundle downgraded the base config.** The Background effects and Font tuning bundles reset `background-opacity` to 0.85 and `font-size` to 15 over Step 6's 0.98 and 16; they now carry the Step 6 values, and Step 10b says a bundle line never changes a value Step 6 wrote.
+- **Performance bundle cut scrollback to a thousandth.** `scrollback-limit` is in bytes, so `10000` kept about 10 KB of history; it is now `10000000`, Ghostty's own default.
+- **Custom keybinds bundle wrote nothing without saying so.** The question now marks it comment-only (no defaults ship, since a tmux-style prefix set in Ghostty never reaches tmux), and the light and dark theme example notes the Step 6 `background` line must go too.
 
 ### Added
 - **Config check after writing.** Step 10b and the Step 11 sanity tests run `ghostty +validate-config`, which must print nothing, so a bad line is caught before the hand-off instead of on the user's next launch.

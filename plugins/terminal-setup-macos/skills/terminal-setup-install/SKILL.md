@@ -2,10 +2,10 @@
 name: terminal-setup-install
 description: Idempotent macOS terminal installer for Ghostty, Oh My Zsh, Powerlevel10k, Glow, MesloLGS Nerd Font, plus optional markdown preview and clickable-path extras.
 allowed-tools: [Bash, Read, Write, Edit, AskUserQuestion, TaskCreate, TaskUpdate, TaskGet, TaskList]
-version: 1.5.0
+version: 1.5.2
 category: Setup
 tags: [terminal, macos, ghostty, ohmyzsh, powerlevel10k, glow, markdown, tmux]
-last-updated: 2026-09-16
+last-updated: 2026-11-21
 ---
 
 # terminal-setup-install
@@ -453,8 +453,10 @@ The exact config block for every bundle - Issue fixes, Appearance, Behaviour, Pe
 `references/ghostty-config-tweaks.md` under "Applying selected bundles". Only append the lines
 for bundles the user actually selected; lines needing a user-specific value (a light theme name,
 a shader path) stay commented out, and you ask via free text if the user wants one filled in now.
-Then run `/Applications/Ghostty.app/Contents/MacOS/ghostty +validate-config`: it must print nothing. Fix or comment out any line it
-names and run it again. Never leave a `<placeholder>` on an active line.
+A bundle line never changes a value Step 6 already wrote (for example `font-size` or
+`background-opacity`): it carries the Step 6 value. Then run
+`/Applications/Ghostty.app/Contents/MacOS/ghostty +validate-config`: it must print nothing. Fix or
+comment out any line it names and run it again. Never leave a `<placeholder>` on an active line.
 
 ### Step 11 - Sanity tests
 
