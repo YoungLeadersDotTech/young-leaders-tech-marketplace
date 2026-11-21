@@ -86,7 +86,7 @@ and a community config survey. None of these are applied by default. Full detail
 | Category | What you get |
 |-------|-------------|
 | Issue fixes | Pane divider visibility + resize keybinds (`split-divider-color`, `unfocused-split-opacity`, `resize_split`/`equalize_splits`/`goto_split` keybinds); tmux-resurrect session persistence (Ghostty has no native split-layout restore) - the installer explains what tmux's "prefix" key is and offers to remap it from the default `Ctrl-b` to `Ctrl-a` |
-| Appearance | Cursor & window chrome (block cursor, hidden title bar, window theme follows the system). Theme, background and font are already set by the core install, so they are not offered again |
+| Appearance | Cursor (block, blinking) and Window chrome (hidden title bar, window theme follows the system), offered as two options. Theme, background and font are already set by the core install, so they are not offered again |
 | Behaviour | Shell integration & cwd, mouse & selection, window/session behaviour, custom keybinds (comment-only: a heading for your own lines) |
 | Performance | `window-vsync`, `scrollback-limit` (100 MB of history), `resize-overlay` |
 

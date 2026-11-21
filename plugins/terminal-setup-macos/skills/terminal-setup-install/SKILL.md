@@ -111,7 +111,10 @@ classification, not from re-checking state ad hoc in later steps.
 
 ```bash
 brew --version >/dev/null 2>&1 || { echo "Homebrew not installed; install it first: https://brew.sh"; exit 1; }
-[ -d /Applications/Ghostty.app ] && GHOSTTY_INSTALLED=yes || GHOSTTY_INSTALLED=no
+# Resolve the Ghostty binary once; Step 10b and Step 11 reuse $GHOSTTY_BIN
+GHOSTTY_BIN=/Applications/Ghostty.app/Contents/MacOS/ghostty
+[ -x "$GHOSTTY_BIN" ] || GHOSTTY_BIN="$HOME/Applications/Ghostty.app/Contents/MacOS/ghostty"
+[ -x "$GHOSTTY_BIN" ] && GHOSTTY_INSTALLED=yes || GHOSTTY_INSTALLED=no
 [ -d "$HOME/.oh-my-zsh" ] && OMZ_INSTALLED=yes || OMZ_INSTALLED=no
 [ -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ] && P10K_INSTALLED=yes || P10K_INSTALLED=no
 which glow >/dev/null 2>&1 && GLOW_INSTALLED=yes || GLOW_INSTALLED=no
@@ -453,8 +456,9 @@ For every bundle selected in Step 6b, append the matching config lines to
 The exact config block for every bundle - Issue fixes, Appearance, Behaviour, Performance - is in
 `references/ghostty-config-tweaks.md` under "Applying selected bundles". Only append the lines
 for bundles the user actually selected; none of them repeats a key Step 6 already wrote. Then run
-`/Applications/Ghostty.app/Contents/MacOS/ghostty +validate-config`: it must print nothing. Fix or
-comment out any line it names and run it again (Step 11 repeats this check as a sanity test).
+`"$GHOSTTY_BIN" +validate-config` (the path resolved in Step 1, `/Applications` or
+`~/Applications`; re-resolve it the same way if the shell has changed): it must print nothing. Fix
+or comment out any line it names and run it again (Step 11 repeats this check as a sanity test).
 Never leave a `<placeholder>` on an active line.
 
 ### Step 11 - Sanity tests
@@ -463,8 +467,8 @@ Never leave a `<placeholder>` on an active line.
 zsh -i -c 'echo OK'
 zsh -i -c 'type p10k >/dev/null && echo "p10k OK" || echo "p10k MISSING"'
 zsh -i -c 'glow --version'
-G=/Applications/Ghostty.app/Contents/MacOS/ghostty; [ -x "$G" ] || G="$HOME/Applications/Ghostty.app/Contents/MacOS/ghostty"
-if [ ! -x "$G" ]; then echo "ghostty MISSING"; elif "$G" +validate-config; then echo "ghostty config OK"; else echo "ghostty config INVALID"; fi
+GHOSTTY_BIN=/Applications/Ghostty.app/Contents/MacOS/ghostty; [ -x "$GHOSTTY_BIN" ] || GHOSTTY_BIN="$HOME/Applications/Ghostty.app/Contents/MacOS/ghostty"
+if [ ! -x "$GHOSTTY_BIN" ]; then echo "ghostty MISSING"; elif "$GHOSTTY_BIN" +validate-config; then echo "ghostty config OK"; else echo "ghostty config INVALID"; fi
 # If user has SDKMAN:
 [ -d "$HOME/.sdkman" ] && zsh -i -c 'type sdk >/dev/null && echo "sdk OK" || echo "sdk MISSING"'
 ```

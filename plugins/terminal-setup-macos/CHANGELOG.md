@@ -6,15 +6,15 @@ All notable changes to `terminal-setup-macos` are documented here. Format follow
 
 ### Fixed
 - **Placeholder values written into the Ghostty config.** The tweak bundles in `ghostty-config-tweaks.md` carried `split-divider-color = <hex-or-named-colour>`, `unfocused-split-fill = <hex>` and `theme = light:<light-theme>,dark:<dark-theme>` on active lines. Written as-is, Ghostty showed three errors in a "Configuration Errors" dialog on every launch. They now carry working values: `#6272a4` for the divider, `#141026` (the Step 6 background) for the unfocused fill. Verified with `ghostty +validate-config` on Ghostty 1.3.1.
-- **Three Appearance bundles only repeated the base config, or quietly changed it.** In 1.5.1, Theme & colour overrides, Background effects and Font tuning re-wrote keys Step 6 already sets, and reset opacity to 0.85 and font size to 15. They are removed. Appearance now offers only Cursor & window chrome, and no bundle repeats a key Step 6 writes. Fewer questions for new users.
+- **Three Appearance bundles only repeated the base config, or quietly changed it.** In 1.5.1, Theme & colour overrides, Background effects and Font tuning re-wrote keys Step 6 already sets, and reset opacity to 0.85 and font size to 15. They are removed. Appearance now offers Cursor and Window chrome as two options (AskUserQuestion needs at least two), and no bundle repeats a key Step 6 writes. Window/session behaviour no longer promises a launch-into-tmux `command` it never wrote. Fewer questions for new users.
 - **Performance bundle cut scrollback to a thousandth.** `scrollback-limit` is in bytes, so `10000` kept about 10 KB of history. It is now `100000000` (100 MB), ten times Ghostty's 10 MB default, so ticking it does something.
 - **Custom keybinds bundle wrote nothing without saying so.** The question now marks it comment-only (no defaults ship, since a tmux-style prefix set in Ghostty never reaches tmux).
 - **Existing installs (1.5.0 or 1.5.1 with any tweak bundle):** in `~/.config/ghostty/config`, below the Step 6 block:
   - replace `split-divider-color = <...>` with `#6272a4` and `unfocused-split-fill = <...>` with `#141026`;
   - delete the `theme = light:<...>` line;
-  - delete the bundle copies of keys the Step 6 block already sets: `theme`, `background-opacity`, `background-blur`, `font-family`, `font-size` and `font-thicken` (keep the Step 6 lines at the top);
+  - delete the bundle copies of keys the Step 6 block already sets: `theme`, `background-opacity`, `background-blur`, `font-family`, `font-size` and `font-thicken` (keep the Step 6 lines at the top). This changes how the terminal looks: opacity goes back to 0.98 and the font to 16pt. If you liked the 1.5.1 look, change the values in the Step 6 lines instead (for example `background-opacity = 0.85`, `font-size = 15`) before deleting the copies;
   - change `scrollback-limit = 10000` to `100000000`.
-  Then run `/Applications/Ghostty.app/Contents/MacOS/ghostty +validate-config`; it should print nothing.
+  Then run `ghostty +validate-config` from the app bundle (`/Applications/Ghostty.app/Contents/MacOS/ghostty`, or `~/Applications/...` if you installed it there); it should print nothing.
 
 ### Added
 - **Config check after writing.** Step 10b and the Step 11 sanity tests run `ghostty +validate-config`, which must print nothing, so a bad line is caught before the hand-off instead of on the user's next launch. The Step 11 line prints `ghostty MISSING` when the app is not in `/Applications` or `~/Applications`, and `ghostty config INVALID` when the check fails, like the other sanity checks.

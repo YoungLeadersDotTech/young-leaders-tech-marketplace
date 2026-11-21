@@ -20,9 +20,10 @@ below.
      native split-layout restore; this is the lightest-weight real option. See Step 10 - if
      picked, this is installed as a full extra (like grip/mdwatch), not just a config line.
 
-- **Question 2 - "Appearance tweaks"** (header "Appearance"), one bundle:
-  1. **Cursor & window chrome** - `cursor-style`/`cursor-style-blink`, `macos-titlebar-style:
-     hidden`, `window-theme: system`.
+- **Question 2 - "Appearance tweaks"** (header "Appearance"), 2 options (AskUserQuestion needs 2
+  to 4 per question):
+  1. **Cursor** - `cursor-style: block`, `cursor-style-blink`.
+  2. **Window chrome** - `macos-titlebar-style: hidden`, `window-theme: system`.
 
   Theme, background and font are not offered here: Step 6 already sets them (Dracula, 0.98
   opacity with blur, MesloLGS NF at 16pt), and a bundle that only repeats them changes nothing.
@@ -31,7 +32,7 @@ below.
   1. **Shell integration & cwd** - `shell-integration` (already set in Step 6), `window-inherit-working-directory`.
   2. **Mouse & selection** - `mouse-hide-while-typing`, `copy-on-select: clipboard`, `macos-option-as-alt: left`.
   3. **Window/session behaviour** - `confirm-close-surface: false`, `quick-terminal-size` (Ghostty
-     1.2+), `command` (launch straight into tmux).
+     1.2+).
   4. **Custom keybinds** (comment-only: adds a commented heading and no active lines, for you
      to fill in) - tmux-style pane/tab navigation `keybind` entries. No defaults ship because a
      tmux-style prefix such as `ctrl+b` set in Ghostty would never reach tmux.
@@ -53,8 +54,8 @@ selected - do not write the whole block unconditionally. Every line below has a 
 key Step 6 already wrote. Never write a `<placeholder>` onto an active line: Ghostty rejects it
 and shows a "Configuration Errors" dialog on every launch.
 
-After appending, run `/Applications/Ghostty.app/Contents/MacOS/ghostty +validate-config`. It
-must print nothing. If it names a line, fix or comment out that line and run it again before
+After appending, run `"$GHOSTTY_BIN" +validate-config` (resolved in SKILL.md Step 1:
+`/Applications` or `~/Applications`). It must print nothing. If it names a line, fix or comment out that line and run it again before
 moving on.
 
 ```
@@ -67,9 +68,11 @@ keybind = super+ctrl+shift+equal=equalize_splits
 keybind = super+ctrl+right_bracket=goto_split:next
 keybind = super+ctrl+left_bracket=goto_split:previous
 
-# --- Appearance: Cursor & window chrome ---
+# --- Appearance: Cursor ---
 cursor-style = block
 cursor-style-blink = true
+
+# --- Appearance: Window chrome ---
 macos-titlebar-style = hidden
 window-theme = system
 
