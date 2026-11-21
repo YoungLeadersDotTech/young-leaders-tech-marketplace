@@ -86,9 +86,11 @@ and a community config survey. None of these are applied by default. Full detail
 | Category | What you get |
 |-------|-------------|
 | Issue fixes | Pane divider visibility + resize keybinds (`split-divider-color`, `unfocused-split-opacity`, `resize_split`/`equalize_splits`/`goto_split` keybinds); tmux-resurrect session persistence (Ghostty has no native split-layout restore) - the installer explains what tmux's "prefix" key is and offers to remap it from the default `Ctrl-b` to `Ctrl-a` |
-| Appearance | Theme & colour overrides, background effects (opacity/blur/shader), font tuning, cursor & window chrome |
-| Behaviour | Shell integration & cwd, mouse & selection, window/session behaviour, custom keybinds |
-| Performance | `window-vsync`, `scrollback-limit`, `resize-overlay` |
+| Appearance | Cursor & window chrome (block cursor, hidden title bar, window theme follows the system). Theme, background and font are already set by the core install, so they are not offered again |
+| Behaviour | Shell integration & cwd, mouse & selection, window/session behaviour, custom keybinds (comment-only: a heading for your own lines) |
+| Performance | `window-vsync`, `scrollback-limit` (100 MB of history), `resize-overlay` |
+
+After writing the config, the installer runs Ghostty's own check (`ghostty +validate-config`), which must come back clean, so a bad line never reaches your next launch.
 
 **Known limitations investigated, not fixable at config level**: Claude Code statusline
 truncation on narrow terminals (confirmed Claude Code issue, closed "not planned" upstream - not

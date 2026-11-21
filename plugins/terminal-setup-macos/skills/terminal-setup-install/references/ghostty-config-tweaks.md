@@ -20,18 +20,12 @@ below.
      native split-layout restore; this is the lightest-weight real option. See Step 10 - if
      picked, this is installed as a full extra (like grip/mdwatch), not just a config line.
 
-- **Question 2 - "Appearance tweaks"** (header "Appearance"), up to 4 bundles from the T-06
-  community survey:
-  1. **Theme & colour overrides** (asks one follow-up) - follow the system light or dark mode
-     with a `light:X,dark:Y` theme pair. Default pair: `light:GitHub Light Default,dark:dracula`.
-  2. **Background effects** (asks one follow-up) - a see-through terminal: `background-opacity`
-     (Step 6 writes 0.98; default here 0.85). `custom-shader` (GLSL CRT/cursor-trail effects) stays
-     a commented line because it can silently break `background-opacity` if the shader draws over
-     the background - [GH Discussion #4835](https://github.com/ghostty-org/ghostty/discussions/4835).
-  3. **Font tuning** (asks one follow-up) - `font-size` (Step 6 writes 16; 14-18pt common) and
-     extra line spacing via `adjust-cell-height` (default 10%).
-  4. **Cursor & window chrome** - `cursor-style`/`cursor-style-blink`/`adjust-cursor-thickness`,
-     `macos-titlebar-style: hidden`, `window-theme: system`.
+- **Question 2 - "Appearance tweaks"** (header "Appearance"), one bundle:
+  1. **Cursor & window chrome** - `cursor-style`/`cursor-style-blink`, `macos-titlebar-style:
+     hidden`, `window-theme: system`.
+
+  Theme, background and font are not offered here: Step 6 already sets them (Dracula, 0.98
+  opacity with blur, MesloLGS NF at 16pt), and a bundle that only repeats them changes nothing.
 
 - **Question 3 - "Behaviour tweaks"** (header "Behaviour"), up to 4 bundles:
   1. **Shell integration & cwd** - `shell-integration` (already set in Step 6), `window-inherit-working-directory`.
@@ -46,13 +40,6 @@ below.
   needed - fits the 4-option cap directly): `window-vsync`, `scrollback-limit` (raised to 100 MB
   of history, ten times Ghostty's 10 MB default), `resize-overlay: never`.
 
-**Follow-ups for the three Appearance bundles that take a value.** After the four questions,
-for each of Theme, Background effects and Font tuning that was ticked, ask one free-text
-question that states its default, for example "Opacity for the see-through background, from 0.5
-to 1? Press enter for 0.85." An empty answer takes the default. If the user wants no more
-questions, use the defaults. Never write the Step 6 value back as the bundle's "change": a
-ticked bundle must change something.
-
 If `AskUserQuestion` is unavailable, fall back to the same plain-text lettered-list pattern the
 skill already uses elsewhere (see SKILL.md "What this skill does").
 
@@ -61,17 +48,10 @@ skill already uses elsewhere (see SKILL.md "What this skill does").
 For every bundle selected in Question 1's divider/resize option and Questions 2-4, append the
 matching config lines below to `~/.config/ghostty/config` (use Edit, not a heredoc, to avoid
 clobbering earlier Step 6 content). Only append the specific lines for bundles the user actually
-selected - do not write the whole block unconditionally. Every active line below has a working
-value (Dracula colours, to match the Step 6 theme). The three lines marked `# answer:` take the
-user's follow-up answer, or the default shown. A bundle never repeats a key Step 6 already wrote
-with the same value: that would look like a change and do nothing. A shader path stays commented
-out. Never write a `<placeholder>` onto an active line: Ghostty rejects it and shows a
-"Configuration Errors" dialog on every launch.
-
-For the Theme pair, also comment out Step 6's `background = #141026` line, or the light theme
-keeps the dark background. Theme names come from
-`/Applications/Ghostty.app/Contents/MacOS/ghostty +list-themes` (a Homebrew cask install does not
-put `ghostty` on PATH).
+selected - do not write the whole block unconditionally. Every line below has a working value
+(colours match the Step 6 Dracula theme and its `#141026` background), and none of them repeats a
+key Step 6 already wrote. Never write a `<placeholder>` onto an active line: Ghostty rejects it
+and shows a "Configuration Errors" dialog on every launch.
 
 After appending, run `/Applications/Ghostty.app/Contents/MacOS/ghostty +validate-config`. It
 must print nothing. If it names a line, fix or comment out that line and run it again before
@@ -86,20 +66,6 @@ keybind = super+ctrl+shift+up=resize_split:up,10
 keybind = super+ctrl+shift+equal=equalize_splits
 keybind = super+ctrl+right_bracket=goto_split:next
 keybind = super+ctrl+left_bracket=goto_split:previous
-
-# --- Appearance: Theme & colour overrides ---
-# answer: the theme pair (also comment out Step 6's background line)
-theme = light:GitHub Light Default,dark:dracula
-
-# --- Appearance: Background effects ---
-# answer: the opacity, 0.5 to 1
-background-opacity = 0.85
-# custom-shader = <path-to-shader.glsl>
-
-# --- Appearance: Font tuning ---
-# answer: the font size
-font-size = 16
-adjust-cell-height = 10%
 
 # --- Appearance: Cursor & window chrome ---
 cursor-style = block
