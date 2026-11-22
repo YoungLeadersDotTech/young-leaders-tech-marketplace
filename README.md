@@ -67,7 +67,7 @@ Verify with `/plugin marketplace list`.
 | Plugin | Version | What it does |
 |---|---|---|
 | [skills-toolkit](./plugins/skills-toolkit/README.md) | 3.1.1 | Toolkit for authoring and validating Claude Code skills and agents. Ships `agent-author`, `agent-validator`, reusable templates, validator references, and installable commands for common authoring flows. |
-| [terminal-setup-macos](./plugins/terminal-setup-macos/README.md) | 1.5.1 | Idempotent macOS terminal installer covering Ghostty, Oh My Zsh, Powerlevel10k, Glow, and MesloLGS Nerd Font, plus optional markdown-preview and clickable-path extras. |
+| [terminal-setup-macos](./plugins/terminal-setup-macos/README.md) | 1.5.2 | Idempotent macOS terminal installer covering Ghostty, Oh My Zsh, Powerlevel10k, Glow, and MesloLGS Nerd Font, plus optional markdown-preview and clickable-path extras. |
 | [update-readme](./plugins/update-readme/README.md) | 1.2.1 | Type-driven README updater. Detects repo family, confirms it with the user, asks for style, audience, and depth, then generates a matched README preview before writing. |
 | [diy-build-companion](./plugins/diy-build-companion/README.md) | 2.1.1 | Plan and run DIY builds with energy-aware work blocks, enforced breaks, and an inline child-safety veto gate. Project state lives in the build repo. |
 | [diy-sketchup-mcp](./plugins/diy-sketchup-mcp/README.md) | 0.1.0 | Opt-in registration of the community SketchUp MCP server so Claude Code can drive SketchUp desktop. Includes `eval_ruby` (arbitrary Ruby); read its trust guidance first. |
@@ -75,6 +75,10 @@ Verify with `/plugin marketplace list`.
 | [enablement-html-renderer](./plugins/enablement-html-renderer/README.md) | 1.6.4 | Packages finished enablement content into one self-contained HTML handoff with multiple reader-selectable formats. |
 | [prompt-auditor](./plugins/prompt-auditor/README.md) | 0.1.0 | Deterministic offline auditor for skills, agents, and prompts. Runs static checks against SKILL.md, AGENTS.md, or CLAUDE.md files and prints findings by severity. |
 | [no-notes-talk-coach](./plugins/no-notes-talk-coach/README.md) | 1.1.0 | Learn a talk off without notes: a rehearsal pack and an offline HTML coach with a chapter map, cue words, a timed drill, a self-quiz and a two-day plan. Tailored for ADHD, useful for all. |
+
+### Coming soon
+
+- **mod-kit** - the kit I use to build Claude Code mods (a pane, band, status line or toast inside Claude Code itself), built so every mod is seen working on screen before any logic is written. Until it lands, [the Dashboard mod page](https://tools.youngleaders.tech/prototypes/session-plugin-dashboard-mod/) shows the pattern so you can build your own.
 
 ## Local development helper
 
