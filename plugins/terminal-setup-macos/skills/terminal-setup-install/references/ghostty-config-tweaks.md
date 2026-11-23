@@ -31,8 +31,7 @@ below.
 - **Question 3 - "Behaviour tweaks"** (header "Behaviour"), up to 4 bundles:
   1. **Shell integration & cwd** - `shell-integration` (already set in Step 6), `window-inherit-working-directory`.
   2. **Mouse & selection** - `mouse-hide-while-typing`, `copy-on-select: clipboard`, `macos-option-as-alt: left`.
-  3. **Window/session behaviour** - `confirm-close-surface: false`, `quick-terminal-size` (Ghostty
-     1.2+).
+  3. **Window/session behaviour** - `quick-terminal-size` (Ghostty 1.2+).
   4. **Custom keybinds** (comment-only: adds a commented heading and no active lines, for you
      to fill in) - tmux-style pane/tab navigation `keybind` entries. No defaults ship because a
      tmux-style prefix such as `ctrl+b` set in Ghostty would never reach tmux.
@@ -91,7 +90,6 @@ copy-on-select = clipboard
 macos-option-as-alt = left
 
 # --- Behaviour: Window/session behaviour ---
-confirm-close-surface = false
 quick-terminal-size = 40%
 
 # --- Behaviour: Custom keybinds ---

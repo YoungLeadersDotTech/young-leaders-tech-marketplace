@@ -2,6 +2,11 @@
 
 All notable changes to `terminal-setup-macos` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.3] - 2026-11-23
+
+### Removed
+- **`confirm-close-surface = false` is no longer written.** The Window/session behaviour bundle set it, so Ghostty closed any tab without asking, even one with Claude Code running in it. The bundle now writes only `quick-terminal-size`, and Ghostty's default applies: it asks before closing a tab with something running, and closes a tab at an empty prompt without asking.
+
 ## [1.5.2] - 2026-11-21
 
 ### Fixed
